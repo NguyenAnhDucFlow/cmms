@@ -30,7 +30,7 @@ const Navbar = () => {
           <FaHome />
           <span>Tổng quan</span>
         </Link>
-        <Link to="/hang-hoa" className="flex items-center space-x-2">
+        <Link to="/products" className="flex items-center space-x-2">
           <FaBox />
           <span>Hàng hóa</span>
         </Link>

@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard";
 
 // Lazy load components for better performance
 const ManLayout = lazy(() => import("../layouts/man"));
+const Products = lazy(() => import("../pages/Products"));
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/products",
+        element: <Products />,
       },
     ],
     errorElement: <ErrorPage />,
