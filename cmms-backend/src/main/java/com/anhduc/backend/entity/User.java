@@ -23,9 +23,9 @@ public class User extends AuditAble{
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String username;
+    String email;
     String password;
     LocalDate dateOfBirth;
-    String email;
     String firstName;
     String lastName;
     @ManyToMany

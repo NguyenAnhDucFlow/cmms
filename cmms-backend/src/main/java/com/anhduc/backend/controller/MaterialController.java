@@ -1,9 +1,9 @@
 package com.anhduc.backend.controller;
 
-import com.anhduc.backend.dto.request.ProductCreationRequest;
+import com.anhduc.backend.dto.request.MaterialCreationRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
-import com.anhduc.backend.dto.response.ProductResponse;
-import com.anhduc.backend.service.ProductService;
+import com.anhduc.backend.dto.response.MaterialResponse;
+import com.anhduc.backend.service.MaterialService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ProductController {
+public class MaterialController {
 
-    ProductService productService;
+    MaterialService materialService;
 
     @PostMapping
-    ApiResponse<ProductResponse> create(@RequestBody ProductCreationRequest request) {
-        return ApiResponse.<ProductResponse>builder()
-                .results(productService.create(request)).build();
+    ApiResponse<MaterialResponse> create(@RequestBody MaterialCreationRequest request) {
+        return ApiResponse.<MaterialResponse>builder()
+                .results(materialService.create(request)).build();
     }
 
 }

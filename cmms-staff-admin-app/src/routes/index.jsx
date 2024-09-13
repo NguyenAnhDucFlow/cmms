@@ -7,11 +7,19 @@ import Dashboard from "../pages/Dashboard";
 const ManLayout = lazy(() => import("../layouts/man"));
 const Products = lazy(() => import("../pages/Products"));
 
+const PATH_AFTER_LOGIN = "/dashboard";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center h-screen">
+            Loading...
+          </div>
+        }
+      >
         {" "}
         {/* Show a loading indicator while components load */}
         <ManLayout />
@@ -19,7 +27,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "/dashboard",
+        index: true,
         element: <Dashboard />,
       },
       {

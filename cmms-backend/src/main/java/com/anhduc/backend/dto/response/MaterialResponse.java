@@ -1,19 +1,24 @@
-package com.anhduc.backend.dto.request;
+package com.anhduc.backend.dto.response;
 
+import com.anhduc.backend.dto.request.BrandIdDto;
+import com.anhduc.backend.dto.request.CategoryIdDto;
+import com.anhduc.backend.dto.request.LocationIdDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreationRequest {
+public class MaterialResponse {
 
+    UUID id;
     String barcode;
     String name;
     String description;

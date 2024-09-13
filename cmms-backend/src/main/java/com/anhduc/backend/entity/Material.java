@@ -15,8 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "products")
-public class Product extends AuditAble{
+@Table(name = "materials")
+public class Material extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { AiOutlineInfoCircle } from "react-icons/ai";
-import { IoImageOutline } from "react-icons/io5";
+import { AiOutlineInfoCircle, AiOutlineDown } from "react-icons/ai";
+import defaultProductImg from "../assets/default-product-img.jpg";
+import { FaPlus } from "react-icons/fa6";
 
 // Reusable InputField Component
 const InputField = ({
@@ -63,6 +64,13 @@ const TooltipIcon = ({ tooltipId, tooltipContent }) => (
 );
 
 const AddProductPopup = ({ isOpen, onClose }) => {
+  const [showInputfield, setShowInputField] = useState(false);
+  const [isProperty, setIsProperty] = useState(false);
+
+  const toggleProperty = () => {
+    setIsProperty(!isProperty);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -143,13 +151,17 @@ const AddProductPopup = ({ isOpen, onClose }) => {
               tooltipContent="Vị trí là vị trí của sản phẩm"
             />
             {/* Images Section */}
-            <div className="grid grid-cols-4 gap-2 mt-4">
-              {[...Array(4)].map((_, i) => (
+            <div className="grid grid-cols-5 gap-2 mt-4">
+              {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="border-2 border-dashed border-gray-300 rounded-md p-2 h-20 flex items-center justify-center"
+                  className="border-[1px] border-dashed w-20 h-20 border-gray-300 flex items-center justify-center overflow-hidden"
                 >
-                  <IoImageOutline />
+                  <img
+                    src={defaultProductImg}
+                    alt={`Product placeholder ${i + 1}`}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
               ))}
             </div>
@@ -237,6 +249,29 @@ const AddProductPopup = ({ isOpen, onClose }) => {
         </div>
 
         {/* Property & Unit Buttons */}
+        <div className="p-6 ">
+          <div className="border rounded-lg">
+            <div
+              className="bg-gray-100 px-4 py-2 flex justify-between items-center cursor-pointer"
+              onClick={toggleProperty}
+            >
+              <span>Thuộc tính</span>
+              {isProperty ? (
+                <AiOutlineDown className="w-4 h-4" />
+              ) : (
+                <AiOutlineDown className="w-4 h-4 rotate-180" />
+              )}
+            </div>
+            {isProperty && (
+              <div className="p-4">
+                <button className="px-4 py-2 border rounded-lg flex items-center">
+                  <FaPlus className="w-4 h-4 mr-2" />
+                  Thêm thuộc tính
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <button className="border rounded-md text-left pl-4 py-2 border-gray-300 text-gray-700">
             Thuộc tính

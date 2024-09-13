@@ -25,6 +25,6 @@ public class Unit extends AuditAble{
     BigDecimal salePrice;
     String barcode;
     @ManyToOne
-    Product product;
+    Material material;
 
 }
