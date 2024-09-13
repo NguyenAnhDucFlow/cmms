@@ -2,11 +2,30 @@
 
 spring:
   datasource:
-    username: root
-    url: "jdbc:mysql://localhost:3306/lacoste?createDatabaseIfNotExist=true"
-    password: root
+    url: jdbc:sqlserver://cmms.database.windows.net:1433;database=cmms-db
+    username: cmms
+    password: Anhduc120101
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
 
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA4MTWL3ET3M4ZYFYP
+      secretKey: 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
+    region:
+      static: ap-southeast-1
+    s3:
+      bucket-name: mutantorchid
+
+
+jwt:
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds
