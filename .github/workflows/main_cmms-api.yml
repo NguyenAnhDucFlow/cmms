@@ -24,7 +24,7 @@ jobs:
 
       - name: Build with Maven
         run:
-          cd "cmms-staff-admin-app"
+          cd "cmms-staff-admin-app" &&
           mvn clean install
 
       - name: Upload artifact for deployment job
