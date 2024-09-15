@@ -22,7 +22,7 @@ public class UserController {
     @PostMapping
     ApiResponse<UserCreationResponse> create(@RequestBody UserCreationRequest request) {
         return ApiResponse.<UserCreationResponse>builder()
-                .results(userService.create(request)).build();
+                .data(userService.create(request)).build();
     }
 
     @DeleteMapping("/{userId}")

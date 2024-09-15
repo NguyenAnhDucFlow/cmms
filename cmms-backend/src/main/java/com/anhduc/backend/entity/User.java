@@ -5,8 +5,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,12 +21,20 @@ public class User extends AuditAble{
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String username;
+    String phone;
     String email;
     String password;
     LocalDate dateOfBirth;
     String firstName;
     String lastName;
-    @ManyToMany
-    Set<Role> roles = new HashSet<>();
+    String province;
+    String district;
+    String ward;
+    String address;
+    String note;
+    @ManyToOne
+    Role role;
+    @OneToOne
+    Store store;
 
 }

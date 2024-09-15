@@ -23,7 +23,7 @@ public class MaterialController {
     @PostMapping
     ApiResponse<MaterialResponse> create(@RequestBody MaterialCreationRequest request) {
         return ApiResponse.<MaterialResponse>builder()
-                .results(materialService.create(request)).build();
+                .data(materialService.create(request)).build();
     }
 
 }

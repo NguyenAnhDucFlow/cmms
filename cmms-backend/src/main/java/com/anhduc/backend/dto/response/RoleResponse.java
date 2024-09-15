@@ -1,26 +1,20 @@
-package com.anhduc.backend.entity;
+package com.anhduc.backend.dto.response;
 
-import jakarta.persistence.*;
+import com.anhduc.backend.entity.Permission;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-@Getter
-@Setter
-@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role {
+public class RoleResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    @Column(unique = true, nullable = false)
     String name;
-    @ManyToMany
     Set<Permission> permissions;
 }

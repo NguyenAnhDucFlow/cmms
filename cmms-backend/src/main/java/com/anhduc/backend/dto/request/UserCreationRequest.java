@@ -12,9 +12,17 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
     String username;
+    String phone;
+    String email;
     String password;
     LocalDate dateOfBirth;
-    String email;
     String firstName;
     String lastName;
+    String province;
+    String district;
+    String ward;
+    String address;
+    String note;
+    String role;
+    String store;
 }

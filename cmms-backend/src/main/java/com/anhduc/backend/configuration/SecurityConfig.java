@@ -36,7 +36,7 @@ public class SecurityConfig {
                         "/swagger-resources/**",
                         "/webjars/**").permitAll()
                 .anyRequest()
-                .authenticated());
+                .permitAll());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)
