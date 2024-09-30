@@ -31,4 +31,11 @@ public class UserController {
         return ApiResponse.<Void>builder()
                 .message("Deleted user successfully").build();
     }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserCreationResponse> getMyInfo() {
+        return ApiResponse.<UserCreationResponse>builder()
+                .data(userService.getMyInfo())
+                .build();
+    }
 }

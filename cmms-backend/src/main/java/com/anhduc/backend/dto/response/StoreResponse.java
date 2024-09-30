@@ -1,6 +1,5 @@
 package com.anhduc.backend.dto.response;
 
-import com.anhduc.backend.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,5 +15,4 @@ public class StoreResponse {
     UUID id;
     String name;
     String address;
-    User user;
 }

@@ -18,6 +18,10 @@ public enum ErrorCode {
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     USER_ROLE_NOT_EXISTED(1009, "User role not existed", HttpStatus.NOT_FOUND),
     STORE_NOT_EXISTED(1010, "Store not existed", HttpStatus.NOT_FOUND),
+    EMAIL_OR_PASSWORD_NOT_CORRECT(1011, "Email hoặc mật khẩu không chính xác", HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_EXISTED(1012, "Category not existed", HttpStatus.NOT_FOUND),
+    BRAND_NOT_EXISTED(1013, "Brand not existed", HttpStatus.NOT_FOUND),
+    LOCATION_NOT_EXISTED(1014, "Location not existed", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

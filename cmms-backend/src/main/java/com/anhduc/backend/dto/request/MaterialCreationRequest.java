@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -14,21 +15,24 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MaterialCreationRequest {
 
+    String materialCode;
     String barcode;
     String name;
-    String description;
     BigDecimal costPrice;
     BigDecimal salePrice;
     List<MultipartFile> imagesFile;
-    int stockQuantity;
-    float weight;
-    String dimensions;
-    String note;
-    Boolean isRewardEligible;
+    float weightValue;
+    String weightUnit;
+    float width;
+    float length;
+    String sizeUnit;
+    String description;
     int minStock;
     int maxStock;
+    Boolean isBatch;
+    String coverImageUrl;
 
-    CategoryIdDto category;
-    BrandIdDto brand;
-    LocationIdDto location;
+    UUID categoryId;
+    UUID brandId;
+    UUID locationId;
 }

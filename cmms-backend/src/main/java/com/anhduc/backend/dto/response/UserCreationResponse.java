@@ -16,7 +16,6 @@ public class UserCreationResponse {
     String username;
     String phone;
     String email;
-    String password;
     LocalDate dateOfBirth;
     String firstName;
     String lastName;

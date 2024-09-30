@@ -21,22 +21,25 @@ public class Material extends AuditAble{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    String materialCode;
     String barcode;
     String name;
-    String description;
     BigDecimal costPrice;
     BigDecimal salePrice;
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     List<String> images;
-    int stockQuantity;
-    float weight;
-    String dimensions;
-    String note;
-    Boolean isRewardEligible;
+    float weightValue;
+    String weightUnit;
+    float width;
+    float length;
+    String sizeUnit;
+    String description;
     int minStock;
     int maxStock;
+    Boolean isBatch;
+    String coverImageUrl;
 
     @ManyToOne
     Category category;

@@ -33,7 +33,7 @@ public class ApplicationInitConfig {
         return args -> {
             initializeRoles();
             if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-                Role adminRole = roleRepository.findByName("Senior Management")
+                Role adminRole = roleRepository.findByName("SENIOR_MANAGEMENT")
                         .orElseThrow(() -> new AppException((ErrorCode.USER_ROLE_NOT_EXISTED)));
                 User user = new User();
                 user.setEmail("admin@gmail.com");
@@ -45,33 +45,33 @@ public class ApplicationInitConfig {
     }
 
     private void initializeRoles() {
-        if (roleRepository.findByName("Senior Management").isEmpty()) {
+        if (roleRepository.findByName("SENIOR_MANAGEMENT").isEmpty()) {
             Role seniorManagement = new Role();
-            seniorManagement.setName("Senior Management");
+            seniorManagement.setName("SENIOR_MANAGEMENT");
             roleRepository.save(seniorManagement);
         }
 
-        if (roleRepository.findByName("Store Manager").isEmpty()) {
+        if (roleRepository.findByName("STORE_MANAGER").isEmpty()) {
             Role storeManagerRole = new Role();
-            storeManagerRole.setName("Store Manager");
+            storeManagerRole.setName("STORE_MANAGER");
             roleRepository.save(storeManagerRole);
         }
 
-        if (roleRepository.findByName("Sales Staff").isEmpty()) {
+        if (roleRepository.findByName("SALES_STAFF").isEmpty()) {
             Role salesStaffRole = new Role();
-            salesStaffRole.setName("Sales Staff");
+            salesStaffRole.setName("SALES_STAFF");
             roleRepository.save(salesStaffRole);
         }
 
-        if (roleRepository.findByName("Warehouse Staff").isEmpty()) {
+        if (roleRepository.findByName("WAREHOUSE_STAFF").isEmpty()) {
             Role warehouseStaffRole = new Role();
-            warehouseStaffRole.setName("Warehouse Staff");
+            warehouseStaffRole.setName("WAREHOUSE_STAFF");
             roleRepository.save(warehouseStaffRole);
         }
 
-        if (roleRepository.findByName("Customer").isEmpty()) {
+        if (roleRepository.findByName("CUSTOMER").isEmpty()) {
             Role customerRole = new Role();
-            customerRole.setName("Customer");
+            customerRole.setName("CUSTOMER");
             roleRepository.save(customerRole);
         }
 
