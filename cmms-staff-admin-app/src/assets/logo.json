@@ -1,0 +1,229 @@
+{
+  "v": "5.6.9",
+  "fr": 25,
+  "ip": 0,
+  "op": 200,
+  "w": 200,
+  "h": 200,
+  "nm": "C",
+  "ddd": 0,
+  "assets": [],
+  "layers": [
+    {
+      "ddd": 0,
+      "ind": 1,
+      "ty": 4,
+      "nm": "c Outlines",
+      "sr": 1,
+      "ks": {
+        "o": {
+          "a": 1,
+          "k": [
+            {
+              "i": { "x": [0.833], "y": [0.833] },
+              "o": { "x": [0.167], "y": [0.167] },
+              "t": 173,
+              "s": [100]
+            },
+            { "t": 199, "s": [0] }
+          ],
+          "ix": 11
+        },
+        "r": { "a": 0, "k": 0, "ix": 10 },
+        "p": {
+          "a": 0,
+          "k": [98.729, 100, 0],
+          "ix": 2,
+          "x": "var $bm_rt;\nvar p = 0.81;\nvar a = 50;\nvar s = 1.70158;\nfunction easeandwizz_inOutExpo(t, b, c, d) {\n    if (t == 0)\n        return b;\n    if (t == d)\n        return $bm_sum(b, c);\n    if ((t /= d / 2) < 1)\n        return $bm_sum($bm_mul($bm_div(c, 2), Math.pow(2, $bm_mul(10, $bm_sub(t, 1)))), b);\n    return $bm_sum($bm_mul($bm_div(c, 2), $bm_sum($bm_neg(Math.pow(2, $bm_mul(-10, --t))), 2)), b);\n}\nfunction easeAndWizz() {\n    var t, d, sX, eX, sY, eY, sZ, eZ, val1, val2, val2, val3;\n    var n = 0;\n    if (numKeys > 0) {\n        n = nearestKey(time).index;\n        if (key(n).time > time) {\n            n--;\n        }\n    }\n    try {\n        var key1 = key(n);\n        var key2 = key($bm_sum(n, 1));\n    } catch (e) {\n        return null;\n    }\n    var dim = 1;\n    try {\n        key(1)[1].length;\n        dim = 2;\n        key(1)[2].length;\n        dim = 3;\n    } catch (e) {\n    }\n    t = $bm_sub(time, key1.time);\n    d = $bm_sub(key2.time, key1.time);\n    sX = key1[0];\n    eX = $bm_sub(key2[0], key1[0]);\n    if (dim >= 2) {\n        sY = key1[1];\n        eY = $bm_sub(key2[1], key1[1]);\n        if (dim >= 3) {\n            sZ = key1[2];\n            eZ = $bm_sub(key2[2], key1[2]);\n        }\n    }\n    if (time < key1.time || time > key2.time) {\n        return value;\n    } else {\n        val1 = easeandwizz_inOutExpo(t, sX, eX, d, a, p, s);\n        switch (dim) {\n        case 1:\n            return val1;\n            break;\n        case 2:\n            val2 = easeandwizz_inOutExpo(t, sY, eY, d, a, p, s);\n            return [\n                val1,\n                val2\n            ];\n            break;\n        case 3:\n            val2 = easeandwizz_inOutExpo(t, sY, eY, d, a, p, s);\n            val3 = easeandwizz_inOutExpo(t, sZ, eZ, d, a, p, s);\n            return [\n                val1,\n                val2,\n                val3\n            ];\n            break;\n        default:\n            return null;\n        }\n    }\n}\n$bm_rt = easeAndWizz() || value;"
+        },
+        "a": { "a": 0, "k": [0.655, -92.482, 0], "ix": 1 },
+        "s": {
+          "a": 0,
+          "k": [61.766, 61.766, 100],
+          "ix": 6,
+          "x": "var $bm_rt;\nvar p = 0.81;\nvar a = 50;\nvar s = 1.70158;\nfunction easeandwizz_inOutExpo(t, b, c, d) {\n    if (t == 0)\n        return b;\n    if (t == d)\n        return $bm_sum(b, c);\n    if ((t /= d / 2) < 1)\n        return $bm_sum($bm_mul($bm_div(c, 2), Math.pow(2, $bm_mul(10, $bm_sub(t, 1)))), b);\n    return $bm_sum($bm_mul($bm_div(c, 2), $bm_sum($bm_neg(Math.pow(2, $bm_mul(-10, --t))), 2)), b);\n}\nfunction easeAndWizz() {\n    var t, d, sX, eX, sY, eY, sZ, eZ, val1, val2, val2, val3;\n    var n = 0;\n    if (numKeys > 0) {\n        n = nearestKey(time).index;\n        if (key(n).time > time) {\n            n--;\n        }\n    }\n    try {\n        var key1 = key(n);\n        var key2 = key($bm_sum(n, 1));\n    } catch (e) {\n        return null;\n    }\n    var dim = 1;\n    try {\n        key(1)[1].length;\n        dim = 2;\n        key(1)[2].length;\n        dim = 3;\n    } catch (e) {\n    }\n    t = $bm_sub(time, key1.time);\n    d = $bm_sub(key2.time, key1.time);\n    sX = key1[0];\n    eX = $bm_sub(key2[0], key1[0]);\n    if (dim >= 2) {\n        sY = key1[1];\n        eY = $bm_sub(key2[1], key1[1]);\n        if (dim >= 3) {\n            sZ = key1[2];\n            eZ = $bm_sub(key2[2], key1[2]);\n        }\n    }\n    if (time < key1.time || time > key2.time) {\n        return value;\n    } else {\n        val1 = easeandwizz_inOutExpo(t, sX, eX, d, a, p, s);\n        switch (dim) {\n        case 1:\n            return val1;\n            break;\n        case 2:\n            val2 = easeandwizz_inOutExpo(t, sY, eY, d, a, p, s);\n            return [\n                val1,\n                val2\n            ];\n            break;\n        case 3:\n            val2 = easeandwizz_inOutExpo(t, sY, eY, d, a, p, s);\n            val3 = easeandwizz_inOutExpo(t, sZ, eZ, d, a, p, s);\n            return [\n                val1,\n                val2,\n                val3\n            ];\n            break;\n        default:\n            return null;\n        }\n    }\n}\n$bm_rt = easeAndWizz() || value;"
+        }
+      },
+      "ao": 0,
+      "shapes": [
+        {
+          "ty": "gr",
+          "it": [
+            {
+              "ind": 0,
+              "ty": "sh",
+              "ix": 1,
+              "ks": {
+                "a": 0,
+                "k": {
+                  "i": [
+                    [-5.049, -12.915],
+                    [-9.041, -9.421],
+                    [-13.342, -5.429],
+                    [-15.835, 0],
+                    [-12.22, 5.54],
+                    [-7.358, 7.761],
+                    [0, 0],
+                    [15.209, 0],
+                    [10.721, 11.028],
+                    [0, 18.026],
+                    [-9.976, 11.343],
+                    [-16.583, 0],
+                    [-11.72, -11.343],
+                    [0, 0],
+                    [30.17, 0],
+                    [16.206, -9.403],
+                    [8.977, -16.194],
+                    [0, -19.683]
+                  ],
+                  "o": [
+                    [5.049, 12.915],
+                    [9.038, 9.421],
+                    [13.339, 5.426],
+                    [15.957, 0],
+                    [12.217, -5.54],
+                    [0, 0],
+                    [-13.465, 11.343],
+                    [-15.335, 0],
+                    [-10.724, -11.028],
+                    [0, -17.518],
+                    [9.973, -11.343],
+                    [16.331, 0],
+                    [0, 0],
+                    [-17.83, -18.029],
+                    [-20.075, 0],
+                    [-16.209, 9.406],
+                    [-8.977, 16.194],
+                    [0, 14.724]
+                  ],
+                  "v": [
+                    [-78.545, -50.551],
+                    [-57.413, -17.049],
+                    [-23.844, 5.225],
+                    [19.917, 13.366],
+                    [62.181, 5.053],
+                    [91.542, -14.899],
+                    [63.303, -49.28],
+                    [20.291, -32.265],
+                    [-18.795, -48.806],
+                    [-34.878, -92.389],
+                    [-19.917, -135.682],
+                    [19.917, -152.7],
+                    [61.994, -135.685],
+                    [91.542, -171.284],
+                    [19.543, -198.331],
+                    [-34.878, -184.223],
+                    [-72.654, -145.825],
+                    [-86.119, -92.009]
+                  ],
+                  "c": true
+                },
+                "ix": 2
+              },
+              "nm": "c",
+              "mn": "ADBE Vector Shape - Group",
+              "hd": false
+            },
+            {
+              "ty": "st",
+              "c": { "a": 0, "k": [0.1176, 0.5333, 0.898, 1], "ix": 3 },
+              "o": {
+                "a": 1,
+                "k": [
+                  {
+                    "i": { "x": [0.833], "y": [0.833] },
+                    "o": { "x": [0.167], "y": [0.167] },
+                    "t": 67,
+                    "s": [100]
+                  },
+                  { "t": 83, "s": [0] }
+                ],
+                "ix": 4
+              },
+              "w": { "a": 0, "k": 2, "ix": 5 },
+              "lc": 1,
+              "lj": 1,
+              "ml": 4,
+              "bm": 0,
+              "d": [
+                { "n": "d", "nm": "dash", "v": { "a": 0, "k": 4, "ix": 1 } },
+                { "n": "o", "nm": "offset", "v": { "a": 0, "k": 0, "ix": 7 } }
+              ],
+              "nm": "Stroke 1",
+              "mn": "ADBE Vector Graphic - Stroke",
+              "hd": false
+            },
+            {
+              "ty": "fl",
+              "c": { "a": 0, "k": [0.1176, 0.5333, 0.898, 1], "ix": 4 },
+              "o": {
+                "a": 1,
+                "k": [
+                  {
+                    "i": { "x": [0.833], "y": [0.833] },
+                    "o": { "x": [0.167], "y": [0.167] },
+                    "t": 61,
+                    "s": [0]
+                  },
+                  { "t": 81, "s": [100] }
+                ],
+                "ix": 5
+              },
+              "r": 1,
+              "bm": 0,
+              "nm": "Fill 1",
+              "mn": "ADBE Vector Graphic - Fill",
+              "hd": false
+            },
+            {
+              "ty": "tr",
+              "p": { "a": 0, "k": [0, 0], "ix": 2 },
+              "a": { "a": 0, "k": [0, 0], "ix": 1 },
+              "s": { "a": 0, "k": [100, 100], "ix": 3 },
+              "r": { "a": 0, "k": 0, "ix": 6 },
+              "o": { "a": 0, "k": 100, "ix": 7 },
+              "sk": { "a": 0, "k": 0, "ix": 4 },
+              "sa": { "a": 0, "k": 0, "ix": 5 },
+              "nm": "Transform"
+            }
+          ],
+          "nm": "c",
+          "np": 3,
+          "cix": 2,
+          "bm": 0,
+          "ix": 1,
+          "mn": "ADBE Vector Group",
+          "hd": false
+        },
+        {
+          "ty": "tm",
+          "s": { "a": 0, "k": 0, "ix": 1 },
+          "e": {
+            "a": 1,
+            "k": [
+              {
+                "i": { "x": [0.833], "y": [0.833] },
+                "o": { "x": [0.167], "y": [0.167] },
+                "t": 0,
+                "s": [0]
+              },
+              { "t": 56, "s": [100] }
+            ],
+            "ix": 2
+          },
+          "o": { "a": 0, "k": 86, "ix": 3 },
+          "m": 1,
+          "ix": 2,
+          "nm": "Trim Paths 1",
+          "mn": "ADBE Vector Filter - Trim",
+          "hd": false
+        }
+      ],
+      "ip": 0,
+      "op": 200,
+      "st": 0,
+      "bm": 0
+    }
+  ],
+  "markers": []
+}

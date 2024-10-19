@@ -1,23 +1,23 @@
 import React from "react";
 import Page from "../components/Page";
-import SaleResults from "../components/dashboard/SaleResults";
-import Revenue from "../components/dashboard/Revenue";
-import TopProducts from "../components/dashboard/TopProducts";
-import Notifications from "../components/dashboard/Notifications";
+import DailySalesReport from "../components/dashboard/DailySalesReport";
+import NetIncomeOverview from "../components/dashboard/NetIncomeOverview";
+import TopSellingProducts from "../components/dashboard/TopSellingProducts";
+import Notification from "../components/dashboard/Notification";
 
 const Dashboard = () => {
   return (
     <Page title="Dashboard">
-      <div className="grid grid-cols-[8fr,2fr] gap-x-4 gap-y-6">
-        <div className="space-y-6">
-          <SaleResults />
-          <Revenue />
-          <TopProducts />
+      <div className="flex gap-4">
+        <div
+          className="space-y-4 w-4/5
+    "
+        >
+          <DailySalesReport />
+          <NetIncomeOverview />
+          <TopSellingProducts />
         </div>
-
-        <div className="">
-          <Notifications />
-        </div>
+        <Notification className="w-1/5" />
       </div>
     </Page>
   );
