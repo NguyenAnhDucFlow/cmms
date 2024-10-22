@@ -1,19 +1,19 @@
 import React from "react";
 import Page from "../components/Page";
-import ProductFilterSidebar from "../components/products/ProductFilterSidebar";
-import ProductTable from "../components/products/ProductTable";
-import ProductSearch from "../components/products/ProductSearch";
-import ProductButtonGroup from "../components/products/ProductButtonGroup";
+import ProductFilterSidebar from "../sections/products/ProductFilterSidebar";
+import ProductTable from "../sections/products/ProductTable";
+import ProductSearch from "../sections/products/ProductSearch";
+import ProductButtonGroup from "../sections/products/ProductButtonGroup";
 
 const Products = () => {
   return (
     <Page title="Hàng hóa">
-      <div className="flex gap-4">
-        <div className="w-1/5">
+      <div className="flex gap-6">
+        <div className="w-[16%]">
           <ProductFilterSidebar />
         </div>
-        <div className="w-4/5">
-          <div className="flex items-center justify-between">
+        <div className="w-[84%] space-y-4">
+          <div className="flex items-center justify-between gap-4 pb-1">
             <ProductSearch />
             <ProductButtonGroup />
           </div>
