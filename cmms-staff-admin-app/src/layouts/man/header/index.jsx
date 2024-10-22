@@ -13,7 +13,7 @@ const ManHeader = () => {
           className="mx-auto"
           style={{ height: 30, width: 30 }}
         />
-        <div class="text-2xl font-sans text-primary">Cmms</div>
+        <div className="text-2xl font-sans text-primary">Cmms</div>
       </div>
 
       <div className="flex items-center">
