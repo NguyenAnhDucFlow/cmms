@@ -49,6 +49,7 @@ export default function RHFTextField({
             <Input
               {...field}
               placeholder={placeholder}
+              variant="borderless"
               className="px-0"
               style={{
                 border: "none",
@@ -57,7 +58,7 @@ export default function RHFTextField({
                 transition: "border-color 0.3s ease",
               }}
               onFocus={(e) =>
-                (e.target.style.borderBottom = "2px solid #1E88E5")
+                (e.target.style.borderBottom = "1px solid #1E88E5")
               }
               onBlur={(e) =>
                 (e.target.style.borderBottom = "1px solid #d9d9d9")

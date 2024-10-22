@@ -16,12 +16,12 @@ const themeConfig = {
   algorithm: defaultAlgorithm,
   token: {
     colorPrimary: lightThemeColors.primary, // Màu chủ đạo
-    colorSuccess: lightThemeColors.success, // Màu trạng thái thành công
-    colorWarning: lightThemeColors.warning, // Màu cảnh báo
-    colorError: lightThemeColors.error, // Màu lỗi
-    colorBgBase: lightThemeColors.background, // Màu nền
-    colorTextBase: lightThemeColors.text, // Màu chữ chính
-    colorTextSecondary: lightThemeColors.textSecondary, // Màu chữ phụ
+    // colorSuccess: lightThemeColors.success, // Màu trạng thái thành công
+    // colorWarning: lightThemeColors.warning, // Màu cảnh báo
+    // colorError: lightThemeColors.error, // Màu lỗi
+    // colorBgBase: lightThemeColors.background, // Màu nền
+    // colorTextBase: lightThemeColors.text, // Màu chữ chính
+    // colorTextSecondary: lightThemeColors.textSecondary, // Màu chữ phụ
   },
 };
 

@@ -56,14 +56,12 @@ export default function RHFUpload({ name, label, maxFiles = 4, ...other }) {
               }
               beforeUpload={(file) => {
                 field.onChange([...(field.value || []), file]);
-                return false; // Ngăn chặn upload tự động
+                return false;
               }}
               {...other}
             >
               {(field.value || []).length >= maxFiles ? null : uploadButton}
             </Upload>
-
-            {/* Preview hình ảnh */}
             {previewImage && (
               <Image
                 wrapperStyle={{ display: "none" }}
