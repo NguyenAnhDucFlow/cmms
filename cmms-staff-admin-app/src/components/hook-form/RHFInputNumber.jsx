@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { Controller, useFormContext } from "react-hook-form";
 import { InputNumber, Tooltip, ConfigProvider } from "antd";
 import { CiCircleInfo } from "react-icons/ci";
+import styled from "styled-components";
 
 // ----------------------------------------------------------------------
 
@@ -11,6 +12,15 @@ RHFInputNumber.propTypes = {
   tooltip: PropTypes.string,
   placeholder: PropTypes.string,
 };
+
+const CustomInput = styled(InputNumber)`
+  .ant-input-number-input {
+    border-radius: 0px !important;
+  }
+  .ant-input-number-input {
+    padding: 4px 0px;
+  }
+`;
 
 export default function RHFInputNumber({
   name,
@@ -44,14 +54,13 @@ export default function RHFInputNumber({
           control={control}
           render={({ field, fieldState: { error } }) => (
             <ConfigProvider direction="rtl">
-              <InputNumber
+              <CustomInput
                 {...field}
                 placeholder={placeholder}
-                className="px-0 border-b rounded-none"
+                className="px-0 border-b rounded-none hover:border-gray-100"
                 variant="borderless"
                 style={{
                   border: "none",
-                  borderBottom: "1px solid #d9d9d9",
                   borderRadius: "0",
                   transition: "border-color 0.3s ease",
                   width: "100%",

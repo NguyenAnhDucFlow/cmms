@@ -41,42 +41,40 @@ export default function RHFUpload({ name, label, maxFiles = 4, ...other }) {
   );
 
   return (
-    <Form.Item label={label} valuePropName="fileList">
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <>
-            <Upload
-              listType="picture-card"
-              fileList={field.value || []}
-              onPreview={handlePreview}
-              onChange={({ fileList: newFileList }) =>
-                field.onChange(newFileList)
-              }
-              beforeUpload={(file) => {
-                field.onChange([...(field.value || []), file]);
-                return false;
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <>
+          <Upload
+            listType="picture-card"
+            fileList={field.value || []}
+            onPreview={handlePreview}
+            onChange={({ fileList: newFileList }) =>
+              field.onChange(newFileList)
+            }
+            beforeUpload={(file) => {
+              field.onChange([...(field.value || []), file]);
+              return false;
+            }}
+            {...other}
+          >
+            {(field.value || []).length >= maxFiles ? null : uploadButton}
+          </Upload>
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: "none" }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
               }}
-              {...other}
-            >
-              {(field.value || []).length >= maxFiles ? null : uploadButton}
-            </Upload>
-            {previewImage && (
-              <Image
-                wrapperStyle={{ display: "none" }}
-                preview={{
-                  visible: previewOpen,
-                  onVisibleChange: (visible) => setPreviewOpen(visible),
-                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                }}
-                src={previewImage}
-              />
-            )}
-          </>
-        )}
-      />
-    </Form.Item>
+              src={previewImage}
+            />
+          )}
+        </>
+      )}
+    />
   );
 }
 
