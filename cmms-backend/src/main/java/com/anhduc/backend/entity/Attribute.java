@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,16 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "material_units")
-public class MaterialUnit extends AuditAble{
+@Table(name = "attributes")
+public class Attribute extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String name;
-    BigDecimal conversionRate;
-    BigDecimal salePrice;
+    @OneToMany(mappedBy = "attribute", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<AttributeValues> values;
 
-    @ManyToOne
-    Material material;
 }

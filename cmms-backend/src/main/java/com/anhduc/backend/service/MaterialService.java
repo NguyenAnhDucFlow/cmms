@@ -8,7 +8,6 @@ import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
 import com.anhduc.backend.repository.BrandRepository;
 import com.anhduc.backend.repository.CategoryRepository;
-import com.anhduc.backend.repository.LocationRepository;
 import com.anhduc.backend.repository.MaterialRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class MaterialService {
     S3StorageService s3StorageService;
     CategoryRepository categoryRepository;
     BrandRepository brandRepository;
-    LocationRepository locationRepository;
 
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
         Material material = modelMapper.map(request, Material.class);
@@ -46,8 +44,6 @@ public class MaterialService {
         material.setCategory(category);
         material.setBrand(brandRepository.findById(request.getBrandId())
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED)));
-        material.setLocation(locationRepository.findById(request.getLocationId())
-                .orElseThrow(() -> new AppException(ErrorCode.LOCATION_NOT_EXISTED)));
         List<String> images = new ArrayList<>();
         if (request.getImagesFile() != null && !request.getImagesFile().isEmpty()) {
             for (MultipartFile file : request.getImagesFile()) {
@@ -67,7 +63,6 @@ public class MaterialService {
         materialRepository.save(material);
         MaterialResponse materialResponse = modelMapper.map(material, MaterialResponse.class);
         materialResponse.setBrandName(material.getBrand().getName());
-        materialResponse.setLocationName(material.getLocation().getName());
         materialResponse.setCategoryName(material.getCategory().getName());
         return materialResponse;
     }

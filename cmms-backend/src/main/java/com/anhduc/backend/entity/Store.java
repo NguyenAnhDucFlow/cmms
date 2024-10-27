@@ -21,6 +21,10 @@ public class Store extends AuditAble{
     UUID id;
     String name;
     String address;
+    String phone;
+    String province;
+    String district;
+    String ward;
     @OneToOne(mappedBy = "store")
     User user;
 

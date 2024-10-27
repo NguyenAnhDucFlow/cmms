@@ -11,6 +11,7 @@ import {
 import { BsBoxes } from "react-icons/bs";
 import { LuTags } from "react-icons/lu";
 import { MdOutlineInventory } from "react-icons/md";
+import { FaTruckLoading } from "react-icons/fa";
 
 const navConfig = [
   {
@@ -35,7 +36,7 @@ const navConfig = [
     title: "Giao dịch",
     icon: FaExchangeAlt,
     items: [
-      { label: "Lịch sử giao dịch", path: "/giao-dich/lich-su" },
+      { label: "Nhập hàng", path: "/purchase-order", icon: FaTruckLoading },
       { label: "Tạo giao dịch mới", path: "/giao-dich/tao-moi" },
     ],
   },

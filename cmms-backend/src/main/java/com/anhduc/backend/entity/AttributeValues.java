@@ -13,15 +13,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "material_attributes")
-public class MaterialAttribute extends AuditAble{
+@Table(name = "attribute_values")
+public class AttributeValues extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    String name;
     String value;
     @ManyToOne
-    Material material;
+    Attribute attribute;
 
 }

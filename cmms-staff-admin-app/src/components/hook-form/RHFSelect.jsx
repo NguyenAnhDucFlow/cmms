@@ -1,11 +1,13 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Controller, useFormContext } from "react-hook-form";
-import { Select, Tooltip, Form } from "antd";
+import { Select, Tooltip, Form, Input } from "antd";
 import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { CiCircleInfo } from "react-icons/ci";
 import styled from "styled-components";
-
+import { Modal } from "antd";
+import RHFTextField from "./RHFTextField";
+import axios from "../../utils/axios";
 // ----------------------------------------------------------------------
 
 RHFSelect.propTypes = {
@@ -20,6 +22,7 @@ RHFSelect.propTypes = {
     })
   ).isRequired,
   placeholder: PropTypes.string,
+  apiUrl: PropTypes.string.isRequired,
 };
 
 const CustomSelect = styled(Select)`
@@ -34,13 +37,38 @@ export default function RHFSelect({
   tooltip,
   options,
   placeholder,
+  apiUrl,
   ...other
 }) {
   const {
     control,
     formState: { errors },
+    setValue,
   } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleOk = () => {
+    axios
+      .post(apiUrl, { name: inputValue })
+      .then((response) => {
+        const newOption = {
+          value: response.data.data.id,
+          label: inputValue,
+        };
+        setValue(name, newOption);
+        setInputValue("");
+      })
+      .finally(() => {
+        setIsModalOpen(false);
+      });
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <label className="flex items-center">
       {label && (
@@ -75,12 +103,48 @@ export default function RHFSelect({
                   variant="borderless"
                   placeholder={placeholder}
                 />
-                <button className="btn btn-circle btn-ghost btn-xs">
+                <button
+                  className="btn btn-circle btn-ghost btn-xs"
+                  onClick={() => setIsModalOpen(true)}
+                >
                   <PlusOutlined />
                 </button>
               </div>
             )}
           />
+          <Modal
+            title={`Thêm mới ${label}`}
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <label className="flex items-center whitespace-nowrap gap-6">
+              Tên {label.toLowerCase()}
+              <Input
+                variant="borderless"
+                className="px-0"
+                style={{
+                  border: "none",
+                  borderBottom: "1px solid #d9d9d9",
+                  borderRadius: "0",
+                  transition: "border-color 0.3s ease",
+                }}
+                onFocus={(e) =>
+                  (e.target.style.borderBottom = "1px solid #1E88E5")
+                }
+                onBlur={(e) =>
+                  (e.target.style.borderBottom = "1px solid #d9d9d9")
+                }
+                onMouseOver={(e) =>
+                  (e.target.style.borderBottom = "1px solid #1E88E5")
+                }
+                onMouseOut={(e) =>
+                  (e.target.style.borderBottom = "1px solid #d9d9d9")
+                }
+                onChange={(e) => setInputValue(e.target.value)}
+              />
+            </label>
+          </Modal>
           {errors[name] && (
             <span style={{ color: "red" }}>{errors[name].message}</span>
           )}

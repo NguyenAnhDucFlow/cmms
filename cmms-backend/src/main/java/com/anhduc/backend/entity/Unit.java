@@ -20,11 +20,10 @@ public class Unit extends AuditAble{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    String unitName;
+    String name;
     BigDecimal conversionRate;
     BigDecimal salePrice;
-    String barcode;
+
     @ManyToOne
     Material material;
-
 }

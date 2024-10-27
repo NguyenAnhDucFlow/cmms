@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,8 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "materials")
-public class Material extends AuditAble{
+@Table(name = "variants")
+public class Variant extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,4 +44,6 @@ public class Material extends AuditAble{
     Category category;
     @ManyToOne
     Brand brand;
+    @ManyToMany
+    Set<AttributeValues> attributeValues;
 }

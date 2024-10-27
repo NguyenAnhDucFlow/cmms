@@ -29,6 +29,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import ValuesInputField from "../ValuesInputField";
 import { CiCircleInfo } from "react-icons/ci";
 import styled from "styled-components";
+import axios from "../../utils/axios";
 
 const CustomSelect = styled(Select)`
   .ant-select-selector {
@@ -37,7 +38,7 @@ const CustomSelect = styled(Select)`
 `;
 
 const schema = yup.object().shape({
-  productName: yup.string().required("Tên sản phẩm là bắt buộc"),
+  // nameMaterial: yup.string().required("Tên sản phẩm là bắt buộc"),
 });
 
 const CreateProductModal = ({ visible, onClose }) => {
@@ -54,12 +55,46 @@ const CreateProductModal = ({ visible, onClose }) => {
   const [isOpenUnit, setIsOpenUnit] = useState(false);
   const [variantCombinations, setVariantCombinations] = useState([]);
   const basicUnit = watch("basicUnit");
-  const units = watch("units") ?? [];
   const [isCombinations, setCombinations] = useState(false);
-  const [items, setItems] = useState(["jack", "lucy"]);
+  const [items, setItems] = useState(["mau sac", "kich thuoc", "cao "]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
   const toggleDropdownUnit = () => setIsOpenUnit(!isOpenUnit);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/categories");
+        setCategories(response.data.data);
+        console.log("first", response.data.data);
+      } catch (error) {
+        console.error("Lỗi khi fetch categories:", error);
+      }
+    };
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("/brands");
+        setBrands(response.data.data);
+      } catch (error) {
+        console.error("Lỗi khi fetch brands", error);
+      }
+    };
+
+    fetchCategories();
+    fetchBrands();
+  }, []);
+
+  const optionsCategory = categories.map((category) => ({
+    value: category.id,
+    label: category.name,
+  }));
+
+  const optionsbrands = brands.map((brand) => ({
+    value: brand.id,
+    label: brand.name,
+  }));
 
   const {
     fields: attributeFields,
@@ -151,10 +186,6 @@ const CreateProductModal = ({ visible, onClose }) => {
     return combinations;
   };
 
-  const handleDeleteVariant = (index) => {
-    setVariantCombinations((prev) => prev.filter((_, i) => i !== index));
-  };
-
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       if (
@@ -178,8 +209,34 @@ const CreateProductModal = ({ visible, onClose }) => {
     return () => subscription.unsubscribe();
   }, [watch, getValues]);
 
-  const onSubmit = (data) => {
-    console.log("Dữ liệu form:", data);
+  const onSubmit = async (data) => {
+    console.log("data.imagesFile:", data.imagesFile);
+    const formData = new FormData();
+    // getValues("imagesFile").forEach((file) => {
+    //   if (typeof file === "string") return;
+    //   formData.append("imagesFile", file);
+    // });
+    formData.append("materialCode", data.materialCode);
+    formData.append("barcode", data.barcode);
+    formData.append("name", data.nameMaterial);
+    formData.append("categoryId", data.categoryId);
+    formData.append("brandID", data.brandId);
+    formData.append("costPrice", data.costPrice);
+    formData.append("salePrice", data.salePrice);
+    formData.append("weightValue", data.weightValue || "");
+    formData.append("weightUnit", data.weightUnit);
+    formData.append("minStock", data.minStock);
+    formData.append("maxStock", data.maxStock);
+    formData.append("description", data.description);
+    formData.append("basicUnit", data.basicUnit);
+    formData.append("isPoint", data.isPoint);
+
+    const response = await axios.post("/materials", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(console.log(response.data));
     onClose();
     reset();
   };
@@ -204,7 +261,7 @@ const CreateProductModal = ({ visible, onClose }) => {
                 tooltip="Mã hàng là thông tin duy nhất"
               />
               <RHFTextField
-                name="barCode"
+                name="barcode"
                 label="Mã vạch"
                 tooltip="Mã vạch hàng hóa thường được tạo ra bởi nhà sản xuất"
               />
@@ -214,26 +271,22 @@ const CreateProductModal = ({ visible, onClose }) => {
                 tooltip="Tên hàng là tên của sản phẩm"
               />
               <RHFSelect
-                name="category"
+                name="categoryId"
                 label="Nhóm hàng"
                 tooltip="Lựa chọn nhóm hàng cho sản phẩm"
                 placeholder="--Lựa chon--"
-                options={[
-                  { value: "color", label: "Màu sắc" },
-                  { value: "size", label: "Kích thước" },
-                ]}
+                apiUrl="/categories"
+                options={optionsCategory}
               />
               <RHFSelect
+                apiUrl="/brands"
                 name="brand"
                 label="Thương hiệu"
                 tooltip="Thương hiệu, nhãn hiệu của sản phẩm"
                 placeholder="--Chọn thương hiệu"
-                options={[
-                  { value: "color", label: "Màu sắc" },
-                  { value: "size", label: "Kích thước" },
-                ]}
+                options={optionsbrands}
               />
-              <RHFUpload name="imagesFlie" label="Ảnh sản phẩm" maxFiles={5} />
+              <RHFUpload name="imagesFile" label="Ảnh sản phẩm" maxFiles={5} />
             </div>
             <div className="w-[40%] space-y-4 ml-12">
               <RHFInputNumber
@@ -245,28 +298,46 @@ const CreateProductModal = ({ visible, onClose }) => {
               <div className="flex items-center">
                 <div className="w-1/3">Trọng lượng</div>
                 <div className="flex items-center w-2/3 gap-4">
-                  <RHFInputNumber name="weight" />
-                  <Select
-                    defaultValue="lucy"
-                    style={{
-                      width: 60,
-                    }}
-                    options={[
-                      {
-                        value: "jack",
-                        label: "g",
-                      },
-                      {
-                        value: "lucy",
-                        label: "kg",
-                      },
-                    ]}
+                  <RHFInputNumber name="weightValue" />
+                  <Controller
+                    name="weightUnit"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        defaultValue="lucy"
+                        style={{
+                          width: 60,
+                        }}
+                        options={[
+                          {
+                            value: "g",
+                            label: "g",
+                          },
+                          {
+                            value: "kg",
+                            label: "kg",
+                          },
+                        ]}
+                      />
+                    )}
                   />
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <Checkbox>Lô, hạn sử dụng</Checkbox>
-                <Checkbox>Tích điểm</Checkbox>
+                <Controller
+                  name="isPoint"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      {...field}
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    >
+                      Tích điểm
+                    </Checkbox>
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -662,8 +733,8 @@ const CreateProductModal = ({ visible, onClose }) => {
     >
       <FormProvider {...methods}>
         <Tabs defaultActiveKey="1" items={tabItems} />
+        <DevTool control={control} />
       </FormProvider>
-      <DevTool control={control} />
     </Modal>
   );
 };
@@ -671,14 +742,10 @@ const CreateProductModal = ({ visible, onClose }) => {
 export default CreateProductModal;
 
 const generateVariantName = (variant) => {
-  // Lọc các thuộc tính không phải là đơn vị, giá, giá trị quy đổi
   const attributeNames = Object.keys(variant).filter(
     (key) =>
       key !== "unitName" && key !== "conversionValue" && key !== "salePrice"
   );
-
-  // Tạo chuỗi chỉ bao gồm các giá trị của thuộc tính
   const attributeValues = attributeNames.map((name) => variant[name]).join("-");
-
   return attributeValues;
 };

@@ -3,13 +3,12 @@ package com.anhduc.backend.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LocationIdDto {
-    UUID id;
+public class CategoryCreationRequest {
+
+    String name;
 }

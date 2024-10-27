@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 @Service
@@ -34,9 +35,11 @@ public class UserService {
     public UserCreationResponse create(UserCreationRequest request) {
         User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName(request.getRole()).orElseThrow(
                 () -> new AppException(ErrorCode.USER_ROLE_NOT_EXISTED));
-        user.setRole(role);
+        roles.add(role);
+        user.setRoles(roles);
         Store store = storeRepository.findByName(request.getStore()).orElseThrow(
                 () -> new AppException(ErrorCode.STORE_NOT_EXISTED)
         );

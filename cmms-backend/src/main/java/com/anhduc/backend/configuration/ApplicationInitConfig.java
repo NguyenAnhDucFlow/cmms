@@ -38,7 +38,6 @@ public class ApplicationInitConfig {
                 User user = new User();
                 user.setEmail("admin@gmail.com");
                 user.setPassword(passwordEncoder.encode("admin"));
-                user.setRole(adminRole);
                 userRepository.save(user);
             }
         };

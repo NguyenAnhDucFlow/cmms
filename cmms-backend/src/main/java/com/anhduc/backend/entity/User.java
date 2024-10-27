@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,8 +33,8 @@ public class User extends AuditAble{
     String ward;
     String address;
     String note;
-    @ManyToOne
-    Role role;
+    @ManyToMany
+    Set<Role> roles;
     @OneToOne
     Store store;
 
