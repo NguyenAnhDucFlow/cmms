@@ -31,6 +31,7 @@ public class MaterialResponse {
     int maxStock;
     Boolean isBatch;
     String coverImageUrl;
+    Boolean isActive ;
 
     String categoryName;
     String brandName;

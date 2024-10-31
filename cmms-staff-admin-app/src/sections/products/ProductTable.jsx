@@ -1,139 +1,115 @@
 import React, { useState } from "react";
-import { Flex, Table, ConfigProvider, Button, Tabs } from "antd";
-
-const columns = [
-  {
-    title: "Mã hàng",
-    dataIndex: "name",
-  },
-  {
-    title: "Tên hàng",
-    dataIndex: "age",
-  },
-  {
-    title: "Giá bán",
-    dataIndex: "address",
-  },
-  {
-    title: "Giá vốn",
-    dataIndex: "address",
-  },
-  {
-    title: "Tồn kho",
-    dataIndex: "address",
-  },
-];
-
-const dataSource = Array.from({
-  length: 10,
-}).map((_, i) => ({
-  key: i,
-  name: `Edward King ${i}`,
-  age: 32,
-  address: `London, Park Lane no. ${i}`,
-}));
 
 const ProductTable = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [expandedRowKey, setExpandedRowKey] = useState(null);
+  const [expandedRow, setExpandedRow] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
 
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
+  const handleRowClick = (index) => {
+    setExpandedRow(expandedRow === index ? null : index);
+    setActiveTab(0); // Reset to the first tab when expanding a new row
   };
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
 
-  const handleExpand = (expanded, record) => {
-    setExpandedRowKey(expanded ? record.key : null);
-  };
+  const products = [
+    {
+      name: "Frozen yoghurt",
+      calories: 159,
+      fat: 6,
+      carbs: 24,
+      protein: 4,
+    },
+    {
+      name: "Ice cream sandwich",
+      calories: 237,
+      fat: 9,
+      carbs: 37,
+      protein: 4.3,
+    },
+    { name: "Eclair", calories: 262, fat: 16, carbs: 24, protein: 6 },
+    { name: "Cupcake", calories: 305, fat: 3.7, carbs: 67, protein: 4.3 },
+    {
+      name: "Gingerbread",
+      calories: 356,
+      fat: 16,
+      carbs: 49,
+      protein: 3.9,
+    },
+  ];
+
+  const tabs = [
+    { label: "Tab 1", content: "Content of tab 1" },
+    { label: "Tab 2", content: "Content of tab 2" },
+    { label: "Tab 3", content: "Content of tab 3" },
+  ];
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          borderRadius: 0,
-          colorBgContainer: "#FFFFFF",
-        },
-        components: {
-          Table: {
-            headerBg: "#BBDEFB",
-            rowHoverBg: "#BBDEFB",
-            borderColor: "#BBDEFB",
-            expandIconBg: "#BBDEFB",
-            algorithm: true,
-          },
-        },
-      }}
-    >
-      <Flex gap="middle" vertical>
-        <Flex align="center" gap="middle">
-          {/* <Button
-            type="primary"
-            onClick={start}
-            disabled={!hasSelected}
-            loading={loading}
-          >
-            Reload
-          </Button> */}
-          {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
-        </Flex>
-        <Table
-          pagination={false}
-          className="border"
-          rowSelection={rowSelection}
-          columns={columns}
-          expandable={{
-            expandRowByClick: true,
-            expandedRowRender: (record) => (
-              <div>
-                <Tabs
-                  defaultActiveKey="1"
-                  type="card"
-                  items={new Array(3).fill(null).map((_, i) => {
-                    const id = String(i + 1);
-                    return {
-                      label: `Card Tab ${id}`,
-                      key: id,
-                      children: `Content of card tab ${id}`,
-                    };
-                  })}
-                />
-              </div>
-            ),
-            onExpand: handleExpand,
-            expandedRowKeys: [expandedRowKey],
-            rowExpandable: (record) => record.name !== "Not Expandable",
-            expandIcon: () => null,
-            expandIconColumnIndex: -1,
-          }}
-          dataSource={dataSource}
-          onRow={(record, index) => ({
-            onClick: () => handleExpand(expandedRowKey !== record.key, record),
-            className: `
-              ${
-                expandedRowKey === record.key
-                  ? "bg-blue-200 border-2 border-blue-500"
-                  : ""
-              } 
-              ${index % 2 === 0 ? "bg-white" : "bg-gray-100"} 
-              cursor-pointer`,
-          })}
-        />
-      </Flex>
-    </ConfigProvider>
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white border border-gray-300">
+        <thead>
+          <tr className="bg-[#BBDEFB]">
+            <th className="p-3 text-left border-b border-gray-300 w-2/5">
+              Dessert (100g serving)
+            </th>
+            <th className="p-3 text-left border-b border-gray-300">Calories</th>
+            <th className="p-3 text-left border-b border-gray-300">Fat (g)</th>
+            <th className="p-3 text-left border-b border-gray-300">
+              Carbs (g)
+            </th>
+            <th className="p-3 text-left border-b border-gray-300">
+              Protein (g)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((row, index) => (
+            <React.Fragment key={index}>
+              {/* Main Row */}
+              <tr
+                onClick={() => handleRowClick(index)}
+                className={`cursor-pointer hover:bg-[#BBDEFB] ${
+                  expandedRow === index
+                    ? "border-x-2 border-t-2 border-blue-600 bg-[#BBDEFB]"
+                    : "border-b border-gray-300"
+                }`}
+              >
+                <td className="p-4">{row.name}</td>
+                <td className="p-4">{row.calories}</td>
+                <td className="p-4">{row.fat}</td>
+                <td className="p-4">{row.carbs}</td>
+                <td className="p-4">{row.protein}</td>
+              </tr>
+              {/* Expanded Row with Custom Tabs */}
+              {expandedRow === index && (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="border-x-2 border-blue-600 border-b-2 p-0 "
+                  >
+                    <div className="flex mb-4 bg-[#BBDEFB]">
+                      <div className="ml-6">
+                        {tabs.map((tab, tabIndex) => (
+                          <button
+                            key={tabIndex}
+                            onClick={() => setActiveTab(tabIndex)}
+                            className={`px-4 py-2 font-medium border-x-1 border-t   ${
+                              activeTab === tabIndex
+                                ? "border-gray-300 text-blue-500 bg-white"
+                                : "border-transparent text-gray-500"
+                            } hover:text-blue-500`}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="p-4">{tabs[activeTab].content}</div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

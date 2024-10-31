@@ -3,6 +3,7 @@ import Lottie from "lottie-react";
 import AccountPopover from "./AccountPopover";
 import SettingPopover from "./SettingPopover";
 import logo from "../../../assets/logo.json";
+import SelectedStore from "./SelectedStore";
 
 const ManHeader = () => {
   return (
@@ -17,6 +18,7 @@ const ManHeader = () => {
       </div>
 
       <div className="flex items-center">
+        <SelectedStore />
         <SettingPopover />
         <AccountPopover />
       </div>

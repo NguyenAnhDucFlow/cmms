@@ -38,6 +38,7 @@ public class Material extends AuditAble{
     int maxStock;
     String coverImageUrl;
     boolean isPoint;
+    Boolean isActive = true;
     @ManyToOne
     Unit basicUnit;
     @OneToMany(mappedBy = "material" , cascade = CascadeType.ALL, orphanRemoval = true)

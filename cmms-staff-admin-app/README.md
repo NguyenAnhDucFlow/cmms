@@ -20,3 +20,21 @@ Responsive: w-full trên mobile và w-auto trên desktop
 
 Padding lý tưởng: Từ 16px đến 24px (p-4 đến p-6) cho các thành phần bên trong card.
 Responsive: Sử dụng padding nhỏ hơn trên mobile (p-4) và lớn hơn trên desktop (p-6).
+
+ <!-- <ConfigProvider
+      theme={{
+        token: {
+          borderRadius: 0,
+          colorBgContainer: "#FFFFFF",
+        },
+        components: {
+          Table: {
+            headerBg: "#BBDEFB",
+            rowHoverBg: "#BBDEFB",
+            borderColor: "#BBDEFB",
+            expandIconBg: "#BBDEFB",
+            algorithm: true,
+          },
+        },
+      }}
+    > -->
