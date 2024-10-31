@@ -26,6 +26,11 @@ const DropdownSelectSearch = ({
   const [selectedOption, setSelectedOption] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
+  const optionSelect = options.map((option) => ({
+    value: option.id,
+    label: option.name,
+  }));
+
   const handleChange = (value) => {
     setSelectedOption(value);
     onOptionSelect(value);
@@ -57,7 +62,7 @@ const DropdownSelectSearch = ({
             }
             onChange={handleChange}
             suffixIcon={null}
-            options={options}
+            options={optionSelect}
             optionLabelProp="label"
           />
         )}

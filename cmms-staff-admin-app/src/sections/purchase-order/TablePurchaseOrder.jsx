@@ -3,10 +3,10 @@ import { Space, Table, Tag } from "antd";
 
 const columns = [
   {
-    title: "Name",
+    title: "Mã hang",
     dataIndex: "name",
     key: "name",
-    render: (text) => <a>{text}</a>,
+    render: (text) => <a>222{text}</a>,
   },
   {
     title: "Age",

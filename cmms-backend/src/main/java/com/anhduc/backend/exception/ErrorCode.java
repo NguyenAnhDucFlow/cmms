@@ -21,7 +21,8 @@ public enum ErrorCode {
     EMAIL_OR_PASSWORD_NOT_CORRECT(1011, "Email hoặc mật khẩu không chính xác", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_EXISTED(1012, "Category not existed", HttpStatus.NOT_FOUND),
     BRAND_NOT_EXISTED(1013, "Brand not existed", HttpStatus.NOT_FOUND),
-    LOCATION_NOT_EXISTED(1014, "Location not existed", HttpStatus.NOT_FOUND),
+    UNIT_NOT_EXISTED(1014, "Unit not existed", HttpStatus.NOT_FOUND),
+    STORE_MATERIAL_NOT_FOUND(1015, "Store Material not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

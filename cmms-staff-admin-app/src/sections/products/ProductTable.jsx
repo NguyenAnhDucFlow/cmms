@@ -1,17 +1,25 @@
 import React, { useState } from "react";
-import { Flex, Table, ConfigProvider, Button } from "antd";
+import { Flex, Table, ConfigProvider, Button, Tabs } from "antd";
 
 const columns = [
   {
-    title: "Name",
+    title: "Mã hàng",
     dataIndex: "name",
   },
   {
-    title: "Age",
+    title: "Tên hàng",
     dataIndex: "age",
   },
   {
-    title: "Address",
+    title: "Giá bán",
+    dataIndex: "address",
+  },
+  {
+    title: "Giá vốn",
+    dataIndex: "address",
+  },
+  {
+    title: "Tồn kho",
     dataIndex: "address",
   },
 ];
@@ -72,14 +80,14 @@ const ProductTable = () => {
     >
       <Flex gap="middle" vertical>
         <Flex align="center" gap="middle">
-          <Button
+          {/* <Button
             type="primary"
             onClick={start}
             disabled={!hasSelected}
             loading={loading}
           >
             Reload
-          </Button>
+          </Button> */}
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
         </Flex>
         <Table
@@ -89,8 +97,23 @@ const ProductTable = () => {
           columns={columns}
           expandable={{
             expandRowByClick: true,
-            expandedRowRender: (record) => <div>test </div>,
-            onExpand: handleExpand, // Điều khiển mở/đóng hàng
+            expandedRowRender: (record) => (
+              <div>
+                <Tabs
+                  defaultActiveKey="1"
+                  type="card"
+                  items={new Array(3).fill(null).map((_, i) => {
+                    const id = String(i + 1);
+                    return {
+                      label: `Card Tab ${id}`,
+                      key: id,
+                      children: `Content of card tab ${id}`,
+                    };
+                  })}
+                />
+              </div>
+            ),
+            onExpand: handleExpand,
             expandedRowKeys: [expandedRowKey],
             rowExpandable: (record) => record.name !== "Not Expandable",
             expandIcon: () => null,

@@ -23,12 +23,12 @@ const Products = () => {
     <Page title="Hàng hóa">
       {/* Modal tạo sản phẩm */}
       <CreateProductModal visible={isModalVisible} onClose={hideModal} />
-      
+
       <div className="flex gap-6">
         <div className="w-[16%]">
           <ProductFilterSidebar />
         </div>
-        <div className="w-[84%] space-y-4">
+        <div className="w-[84%] space-y-5">
           <div className="flex items-center justify-between gap-4 pb-1">
             <ProductSearch />
             <ProductButtonGroup onAddNewClick={showModal} />

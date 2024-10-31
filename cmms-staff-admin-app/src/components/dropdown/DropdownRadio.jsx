@@ -15,7 +15,6 @@ const DropdownRadio = ({
   const handleOptionChange = (value) => {
     setSelectedOption(value);
     onOptionChange(value);
-    setIsOpen(false);
   };
 
   return (

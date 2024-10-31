@@ -13,14 +13,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "attribute_values")
-public class AttributeValues extends AuditAble{
+public class MaterialUnit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    String value;
     @ManyToOne
-    Attribute attribute;
+    Unit unit;
+    @ManyToOne
+    Material material;
+    double conversionRate;
+    double price;
 
 }

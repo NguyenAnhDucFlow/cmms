@@ -1,7 +1,5 @@
 package com.anhduc.backend.dto.request;
 
-import com.anhduc.backend.entity.Attribute;
-import com.anhduc.backend.entity.Unit;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +28,8 @@ public class MaterialCreationRequest {
     int maxStock;
     String coverImageUrl;
     boolean isPoint;
-    int basicUnit;
-    List<Unit> units;
-    List<Attribute> attributes;
+    UUID basicUnitId;
+    List<MaterialUnitDto> materialUnitDtoList;
     UUID categoryId;
     UUID brandId;
 }

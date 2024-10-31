@@ -1,10 +1,12 @@
 package com.anhduc.backend.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -14,16 +16,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "units")
-public class Unit extends AuditAble{
+public class Unit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String name;
-    BigDecimal conversionRate;
-    BigDecimal salePrice;
 
-    @ManyToOne
-    Material material;
 }

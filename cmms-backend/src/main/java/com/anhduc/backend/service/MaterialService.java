@@ -2,13 +2,13 @@ package com.anhduc.backend.service;
 
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
 import com.anhduc.backend.dto.response.MaterialResponse;
-import com.anhduc.backend.entity.Category;
-import com.anhduc.backend.entity.Material;
+import com.anhduc.backend.entity.*;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
 import com.anhduc.backend.repository.BrandRepository;
 import com.anhduc.backend.repository.CategoryRepository;
 import com.anhduc.backend.repository.MaterialRepository;
+import com.anhduc.backend.repository.UnitRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,14 +36,47 @@ public class MaterialService {
     S3StorageService s3StorageService;
     CategoryRepository categoryRepository;
     BrandRepository brandRepository;
+    UnitRepository unitRepository;
 
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
-        Material material = modelMapper.map(request, Material.class);
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        material.setCategory(category);
-        material.setBrand(brandRepository.findById(request.getBrandId())
-                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED)));
+        Brand brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        Unit basicUnit = unitRepository.findById(request.getBasicUnitId()).orElseThrow(
+                () -> new AppException(ErrorCode.UNIT_NOT_EXISTED)
+        );
+        Material material = Material.builder()
+                .name(request.getName())
+                .barcode(request.getBarcode())
+                .category(category)
+                .brand(brand)
+                .materialCode(request.getMaterialCode())
+                .basicUnit(basicUnit)
+                .costPrice(request.getCostPrice())
+                .salePrice(request.getSalePrice())
+                .isPoint(request.isPoint())
+                .description(request.getDescription())
+                .maxStock(request.getMaxStock())
+                .minStock(request.getMinStock())
+                .weightUnit(request.getWeightUnit())
+                .weightValue(request.getWeightValue())
+                .build();
+        if (request.getMaterialUnitDtoList() != null && !request.getMaterialUnitDtoList().isEmpty()) {
+            List<MaterialUnit> materialUnits = request.getMaterialUnitDtoList().stream().map(
+                    materialUnitDto -> {
+                        Unit unit = unitRepository.findById(materialUnitDto.getUnitId())
+                                .orElseThrow(() -> new AppException(ErrorCode.UNIT_NOT_EXISTED));
+                        return MaterialUnit.builder()
+                                .unit(unit)
+                                .material(material)
+                                .conversionRate(materialUnitDto.getConversionRate())
+                                .price(materialUnitDto.getPrice())
+                                .build();
+                    }
+            ).toList();
+            material.setMaterialUnits(materialUnits);
+        }
         List<String> images = new ArrayList<>();
         if (request.getImagesFile() != null && !request.getImagesFile().isEmpty()) {
             for (MultipartFile file : request.getImagesFile()) {

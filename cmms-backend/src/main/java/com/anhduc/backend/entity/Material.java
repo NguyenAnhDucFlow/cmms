@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +38,10 @@ public class Material extends AuditAble{
     int maxStock;
     String coverImageUrl;
     boolean isPoint;
-    int basic_unit_id;
-
+    @ManyToOne
+    Unit basicUnit;
+    @OneToMany(mappedBy = "material" , cascade = CascadeType.ALL, orphanRemoval = true)
+    List<MaterialUnit> materialUnits = new ArrayList<>();
     @ManyToOne
     Category category;
     @ManyToOne

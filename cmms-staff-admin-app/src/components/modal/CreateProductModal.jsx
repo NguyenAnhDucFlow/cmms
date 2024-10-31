@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { DevTool } from "@hookform/devtools";
-import {
-  Modal,
-  Tabs,
-  Button,
-  Tooltip,
-  Input,
-  InputNumber,
-  ConfigProvider,
-  Select,
-  Checkbox,
-} from "antd";
+import { Modal, Tabs, Button, Input, Select, Checkbox, message } from "antd";
 import {
   useForm,
   FormProvider,
   useFieldArray,
   Controller,
 } from "react-hook-form";
+
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -24,93 +15,73 @@ import RHFTextField from "../hook-form/RHFTextField";
 import RHFSelect from "../hook-form/RHFSelect";
 import RHFUpload from "../hook-form/RHFUpload";
 import RHFInputNumber from "../hook-form/RHFInputNumber";
+import RHFInputNumberInLine from "../hook-form/RHFInputNumberInLine";
 import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 import { FaRegTrashCan } from "react-icons/fa6";
-import ValuesInputField from "../ValuesInputField";
-import { CiCircleInfo } from "react-icons/ci";
-import styled from "styled-components";
+import RHFSelectLabelCol from "../hook-form/RHFSelectLabelCol";
 import axios from "../../utils/axios";
 
-const CustomSelect = styled(Select)`
-  .ant-select-selector {
-    padding: 0px !important;
-  }
-`;
+const { TextArea } = Input;
 
 const schema = yup.object().shape({
-  // nameMaterial: yup.string().required("Tên sản phẩm là bắt buộc"),
+  nameMaterial: yup.string().required("Tên sản phẩm là bắt buộc"),
+  categoryId: yup.string().required("Nhóm hàng là bắt buộc"),
+  brandId: yup.string().required("Thương hiệu là bắt buộc"),
+  basicUnit: yup.string().required("Đơn vị cơ bản là bắt buộc"),
 });
 
 const CreateProductModal = ({ visible, onClose }) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      attributes: [],
+      nameMaterial: "",
+      categoryId: "",
+      brandId: "",
+      basicUnit: "",
+      weightUnit: "g",
+      costPrice: 0,
+      salePrice: 0,
+      minStock: 0,
+      maxStock: 0,
+      materialUnitDtoList: [],
     },
   });
-  const { control, register, getValues, setValue, watch } = methods;
+  const { control, watch } = methods;
 
-  const [isFocused, setIsFocused] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenUnit, setIsOpenUnit] = useState(false);
-  const [variantCombinations, setVariantCombinations] = useState([]);
+  const [isOpenUnit, setIsOpenUnit] = useState(true);
   const basicUnit = watch("basicUnit");
-  const [isCombinations, setCombinations] = useState(false);
-  const [items, setItems] = useState(["mau sac", "kich thuoc", "cao "]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [units, setUnits] = useState([]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
   const toggleDropdownUnit = () => setIsOpenUnit(!isOpenUnit);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("/categories");
-        setCategories(response.data.data);
-        console.log("first", response.data.data);
+        const [categoriesRes, brandsRes, unitsRes] = await Promise.all([
+          axios.get("/categories"),
+          axios.get("/brands"),
+          axios.get("/units"),
+        ]);
+        setCategories(categoriesRes.data.data);
+        setBrands(brandsRes.data.data);
+        setUnits(unitsRes.data.data);
       } catch (error) {
-        console.error("Lỗi khi fetch categories:", error);
+        toast.error("Failed to fetch data");
+        console.error(error);
       }
     };
-    const fetchBrands = async () => {
-      try {
-        const response = await axios.get("/brands");
-        setBrands(response.data.data);
-      } catch (error) {
-        console.error("Lỗi khi fetch brands", error);
-      }
-    };
-
-    fetchCategories();
-    fetchBrands();
+    fetchData();
   }, []);
 
-  const optionsCategory = categories.map((category) => ({
-    value: category.id,
-    label: category.name,
-  }));
-
-  const optionsbrands = brands.map((brand) => ({
-    value: brand.id,
-    label: brand.name,
-  }));
-
-  const {
-    fields: attributeFields,
-    append: appendAttribute,
-    remove: removeAttribute,
-  } = useFieldArray({
-    control,
-    name: "attributes",
-  });
   const {
     fields: unitFields,
     append: appendUnit,
     remove: removeUnit,
   } = useFieldArray({
     control,
-    name: "units",
+    name: "materialUnitDtoList",
   });
 
   const {
@@ -121,124 +92,56 @@ const CreateProductModal = ({ visible, onClose }) => {
 
   const handleAddUnit = () => {
     if (!basicUnit) {
-      toast.error("Chưa nhập đơn vị cơ bản");
+      message.error("Chưa nhập đơn vị cơ bản");
     } else {
-      appendUnit({
-        unitName: "",
-        conversionRate: "",
-        salePrice: "",
-      });
+      appendUnit({ unitId: "", conversionRate: 0, price: 0 });
     }
   };
 
-  const generateCombinations = (attributes, basicUnit, units) => {
-    const combinations = [];
-
-    const generate = (currentVariant, index) => {
-      // Nếu đã hết thuộc tính hoặc không có thuộc tính nào
-      if (index === attributes.length || attributes.length === 0) {
-        // Chỉ tạo biến thể nếu có thuộc tính hoặc có đơn vị quy đổi
-        if (attributes.length > 0 || units?.length > 0) {
-          // Luôn tạo biến thể với basicUnit (đơn vị cơ bản)
-          combinations.push({
-            ...currentVariant,
-            unitName: basicUnit,
-          });
-
-          // Nếu có đơn vị quy đổi, tạo thêm biến thể với các đơn vị khác (units)
-          if (units?.length > 0) {
-            units.forEach((unit) => {
-              combinations.push({
-                ...currentVariant,
-                unitName: unit.unitName,
-                conversionValue: unit.conversionValue,
-                salePrice: unit.salePrice,
-              });
-            });
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      if (Array.isArray(data.imagesFile)) {
+        for (const file of data.imagesFile) {
+          if (file.type.startsWith("image/")) {
+            formData.append("imagesFile", file.originFileObj);
           }
         }
-        return;
       }
-
-      const attribute = attributes[index];
-      const values = Array.isArray(attribute.values) ? attribute.values : [];
-
-      // Nếu không có giá trị cho thuộc tính hiện tại, bỏ qua nó.
-      if (values.length === 0) {
-        generate(currentVariant, index + 1);
-        return;
-      }
-
-      // Đệ quy cho từng giá trị thuộc tính
-      values.forEach((value) => {
-        generate(
-          {
-            ...currentVariant,
-            [attribute.name]: value,
-          },
-          index + 1
+      formData.append("barcode", data.barcode || "");
+      formData.append("name", data.nameMaterial || "");
+      formData.append("categoryId", data.categoryId);
+      formData.append("brandId", data.brandId);
+      formData.append("basicUnitId", data.basicUnit);
+      formData.append("costPrice", data.costPrice || 0);
+      formData.append("salePrice", data.salePrice || 0);
+      formData.append("weightValue", data.weightValue || 0);
+      formData.append("weightUnit", data.weightUnit);
+      formData.append("minStock", data.minStock || 0);
+      formData.append("maxStock", data.maxStock || 0);
+      formData.append("description", data.description || "");
+      formData.append("isPoint", data.isPoint || false);
+      // add units
+      data.materialUnitDtoList.forEach((unit, index) => {
+        formData.append(`materialUnitDtoList[${index}].unitId`, unit.unitId);
+        formData.append(
+          `materialUnitDtoList[${index}].conversionRate`,
+          unit.conversionRate
         );
+        formData.append(`materialUnitDtoList[${index}].price`, unit.price);
       });
-    };
 
-    generate({}, 0);
-
-    return combinations;
-  };
-
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (
-        name &&
-        (name.startsWith("attributes") ||
-          name === "basicUnit" ||
-          name.startsWith("units"))
-      ) {
-        const attributes = getValues("attributes");
-        const basicUnit = getValues("basicUnit");
-        const units = getValues("units");
-        const combinations = generateCombinations(attributes, basicUnit, units);
-        if (combinations.length > 0) {
-          setCombinations(true);
-        } else setCombinations(false);
-        console.log("combinations", combinations);
-        setVariantCombinations(combinations);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch, getValues]);
-
-  const onSubmit = async (data) => {
-    console.log("data.imagesFile:", data.imagesFile);
-    const formData = new FormData();
-    // getValues("imagesFile").forEach((file) => {
-    //   if (typeof file === "string") return;
-    //   formData.append("imagesFile", file);
-    // });
-    formData.append("materialCode", data.materialCode);
-    formData.append("barcode", data.barcode);
-    formData.append("name", data.nameMaterial);
-    formData.append("categoryId", data.categoryId);
-    formData.append("brandID", data.brandId);
-    formData.append("costPrice", data.costPrice);
-    formData.append("salePrice", data.salePrice);
-    formData.append("weightValue", data.weightValue || "");
-    formData.append("weightUnit", data.weightUnit);
-    formData.append("minStock", data.minStock);
-    formData.append("maxStock", data.maxStock);
-    formData.append("description", data.description);
-    formData.append("basicUnit", data.basicUnit);
-    formData.append("isPoint", data.isPoint);
-
-    const response = await axios.post("/materials", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log(console.log(response.data));
-    onClose();
-    reset();
+      await axios.post("/materials", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      message.success("Tạo hàng hóa thành công");
+      onClose();
+      reset();
+    } catch (error) {
+      message.error("Tạo hàng hóa thất bại");
+    }
   };
 
   const handleCancel = () => {
@@ -254,12 +157,12 @@ const CreateProductModal = ({ visible, onClose }) => {
         <div>
           <div className="flex ">
             <div className="space-y-4 w-[60%] ">
-              <RHFTextField
+              {/* <RHFTextField
                 name="materialCode"
                 label="Mã hàng"
                 placeholder="Mã hàng tự động"
                 tooltip="Mã hàng là thông tin duy nhất"
-              />
+              /> */}
               <RHFTextField
                 name="barcode"
                 label="Mã vạch"
@@ -276,15 +179,17 @@ const CreateProductModal = ({ visible, onClose }) => {
                 tooltip="Lựa chọn nhóm hàng cho sản phẩm"
                 placeholder="--Lựa chon--"
                 apiUrl="/categories"
-                options={optionsCategory}
+                options={categories}
+                setOptions={setCategories}
               />
               <RHFSelect
                 apiUrl="/brands"
-                name="brand"
+                name="brandId"
                 label="Thương hiệu"
                 tooltip="Thương hiệu, nhãn hiệu của sản phẩm"
                 placeholder="--Chọn thương hiệu"
-                options={optionsbrands}
+                setOptions={setBrands}
+                options={brands}
               />
               <RHFUpload name="imagesFile" label="Ảnh sản phẩm" maxFiles={5} />
             </div>
@@ -305,7 +210,7 @@ const CreateProductModal = ({ visible, onClose }) => {
                     render={({ field }) => (
                       <Select
                         {...field}
-                        defaultValue="lucy"
+                        defaultValue="g"
                         style={{
                           width: 60,
                         }}
@@ -344,101 +249,6 @@ const CreateProductModal = ({ visible, onClose }) => {
           <div className="space-y-4 mt-8">
             <div className="border rounded-md overflow-hidden">
               <div>
-                <div>
-                  <div className="flex items-center justify-between px-3 py-2 bg-gray-200">
-                    <div className="text-sm font-semibold">Thuộc tính</div>
-                    <button onClick={toggleDropdown}>
-                      <div className="flex items-center gap-2">
-                        <DownOutlined
-                          size={16}
-                          className={`transform transition-transform ${
-                            isOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                {isOpen && (
-                  <div className="p-4">
-                    {attributeFields.map((field, attrIndex) => (
-                      <div
-                        key={field.id}
-                        className="flex items-center justify-between mt-4 gap-x-28"
-                      >
-                        <div className="w-1/3">
-                          <Controller
-                            name={`attributes.${attrIndex}.name`}
-                            control={control}
-                            render={({ field }) => {
-                              const selectedValues = getValues("attributes")
-                                .filter((_, index) => index !== attrIndex)
-                                .map((attr) => attr.name);
-
-                              const availableOptions = items
-                                .filter(
-                                  (item) => !selectedValues.includes(item)
-                                )
-                                .map((item) => ({
-                                  label: item,
-                                  value: item,
-                                }));
-                              return (
-                                <div className="flex items-center">
-                                  <CustomSelect
-                                    {...field}
-                                    options={[...availableOptions]}
-                                    className="w-full border-b"
-                                    value={field.value || undefined}
-                                    style={{
-                                      borderColor: isFocused
-                                        ? "#1E88E5"
-                                        : undefined,
-                                      padding: 0,
-                                    }}
-                                    onFocus={() => setIsFocused(true)}
-                                    onBlur={() => setIsFocused(false)}
-                                    variant="borderless"
-                                    placeholder="Chọn thuộc tính..."
-                                  />
-                                  <button className="btn btn-circle btn-ghost btn-xs">
-                                    <PlusOutlined />
-                                  </button>
-                                </div>
-                              );
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between w-2/3 ">
-                          <ValuesInputField
-                            register={register}
-                            getValues={getValues}
-                            setValue={setValue}
-                            attrIndex={attrIndex}
-                            errors={errors}
-                          />
-
-                          <FaRegTrashCan
-                            className="w-5 h-5 cursor-pointer"
-                            onClick={() => removeAttribute(attrIndex)}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                    <Button
-                      className="mt-4"
-                      icon={<PlusOutlined />}
-                      onClick={() => appendAttribute({ name: "", values: [] })}
-                    >
-                      Thêm thuộc tính
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="border rounded-md overflow-hidden">
-              <div className="">
                 <div className="   px-3 py-2 flex items-center justify-between bg-gray-200 ">
                   <div className="text-sm font-semibold ">Đơn vị tính</div>
                   <button onClick={toggleDropdownUnit}>
@@ -454,185 +264,38 @@ const CreateProductModal = ({ visible, onClose }) => {
                 </div>
                 {isOpenUnit && (
                   <div className="p-4">
-                    <label className="flex flex-col w-28">
-                      <div className="flex items-center space-x-2">
-                        <div className="text-sm font-semibold">Đơn vị tính</div>
-                        <Tooltip
-                          title="Đơn vị của hàng hóa như hộp, lốc, thùng..."
-                          placement="right"
-                          color="blue"
-                        >
-                          <CiCircleInfo />
-                        </Tooltip>
-                      </div>
-                      <div>
-                        <Controller
-                          name="basicUnit"
-                          control={control}
-                          render={({ field, fieldState: { error } }) => (
-                            <Input
-                              {...field}
-                              variant="borderless"
-                              className="px-0"
-                              style={{
-                                border: "none",
-                                borderBottom: "1px solid #d9d9d9",
-                                borderRadius: "0",
-                                transition: "border-color 0.3s ease",
-                              }}
-                              onFocus={(e) =>
-                                (e.target.style.borderBottom =
-                                  "2px solid #1E88E5")
-                              }
-                              onBlur={(e) =>
-                                (e.target.style.borderBottom =
-                                  "1px solid #d9d9d9")
-                              }
-                              onMouseOver={(e) =>
-                                (e.target.style.borderBottom =
-                                  "1px solid #1E88E5")
-                              }
-                              onMouseOut={(e) =>
-                                (e.target.style.borderBottom =
-                                  "1px solid #d9d9d9")
-                              }
-                            />
-                          )}
-                        />
-                      </div>
-                    </label>
+                    <RHFSelectLabelCol
+                      name="basicUnit"
+                      label="Đơn vị cơ bản"
+                      tooltip="Đơn vị của hàng hóa như hộp, lốc, thùng..."
+                      apiUrl="/units"
+                      options={units}
+                      setOptions={setUnits}
+                    />
                     {unitFields.map((field, index) => (
                       <div
                         key={field.id}
                         className="flex items-center justify-between mt-4 gap-x-12"
                       >
-                        <label className="flex flex-col w-48">
-                          <div className="text-sm font-semibold">
-                            Tên đơn vị
-                          </div>
-                          <Controller
-                            name={`units.${index}.unitName`}
-                            control={control}
-                            render={({ field, fieldState: { error } }) => (
-                              <Input
-                                {...field}
-                                variant="borderless"
-                                className="px-0"
-                                style={{
-                                  border: "none",
-                                  borderBottom: "1px solid #d9d9d9",
-                                  borderRadius: "0",
-                                  transition: "border-color 0.3s ease",
-                                }}
-                                onFocus={(e) =>
-                                  (e.target.style.borderBottom =
-                                    "2px solid #1E88E5")
-                                }
-                                onBlur={(e) =>
-                                  (e.target.style.borderBottom =
-                                    "1px solid #d9d9d9")
-                                }
-                                onMouseOver={(e) =>
-                                  (e.target.style.borderBottom =
-                                    "1px solid #1E88E5")
-                                }
-                                onMouseOut={(e) =>
-                                  (e.target.style.borderBottom =
-                                    "1px solid #d9d9d9")
-                                }
-                              />
-                            )}
-                          />
-                        </label>
+                        <RHFSelectLabelCol
+                          name={`materialUnitDtoList.${index}.unitId`}
+                          label="Đơn vị cơ bản"
+                          options={units}
+                          showAddButton={false}
+                        />
                         <label className="flex flex-col w-48">
                           <div className="text-sm font-semibold">
                             Giá trị quy đổi
                           </div>
-                          <Controller
-                            name={`units.${index}.conversionValue`}
-                            control={control}
-                            render={({ field, fieldState: { error } }) => (
-                              <ConfigProvider direction="rtl">
-                                <InputNumber
-                                  {...field}
-                                  className="px-0 border-b rounded-none"
-                                  variant="borderless"
-                                  style={{
-                                    border: "none",
-                                    borderBottom: "1px solid #d9d9d9",
-                                    borderRadius: "0",
-                                    transition: "border-color 0.3s ease",
-                                    width: "100%",
-                                  }}
-                                  onFocus={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #1E88E5")
-                                  }
-                                  onBlur={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #d9d9d9")
-                                  }
-                                  onMouseOver={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #1E88E5")
-                                  }
-                                  onMouseOut={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #d9d9d9")
-                                  }
-                                />
-                              </ConfigProvider>
-                            )}
+                          <RHFInputNumber
+                            name={`materialUnitDtoList.${index}.conversionRate`}
                           />
-                          {errors[name] && (
-                            <span style={{ color: "red" }}>
-                              {errors[name]?.message}
-                            </span>
-                          )}
                         </label>
                         <label className="flex flex-col w-48">
                           <div className="text-sm font-semibold">Giá bán</div>
-                          <Controller
-                            name={`units.${index}.salePrice`}
-                            control={control}
-                            render={({ field, fieldState: { error } }) => (
-                              <ConfigProvider direction="rtl">
-                                <InputNumber
-                                  {...field}
-                                  className="px-0 border-b rounded-none"
-                                  variant="borderless"
-                                  style={{
-                                    border: "none",
-                                    borderBottom: "1px solid #d9d9d9",
-                                    borderRadius: "0",
-                                    transition: "border-color 0.3s ease",
-                                    width: "100%",
-                                  }}
-                                  onFocus={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #1E88E5")
-                                  }
-                                  onBlur={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #d9d9d9")
-                                  }
-                                  onMouseOver={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #1E88E5")
-                                  }
-                                  onMouseOut={(e) =>
-                                    (e.target.style.borderBottom =
-                                      "1px solid #d9d9d9")
-                                  }
-                                />
-                              </ConfigProvider>
-                            )}
+                          <RHFInputNumber
+                            name={`materialUnitDtoList.${index}.price`}
                           />
-                          {errors[name] && (
-                            <span style={{ color: "red" }}>
-                              {errors[name]?.message}
-                            </span>
-                          )}
                         </label>
                         <div className="flex items-center justify-between w-2/3 ">
                           <FaRegTrashCan
@@ -654,54 +317,6 @@ const CreateProductModal = ({ visible, onClose }) => {
               </div>
             </div>
           </div>
-          {isCombinations && (
-            <div className="mt-4">
-              <div className="border rounded-lg">
-                <div className=" ">
-                  <div className="text-sm bg-gray-100 px-4 py-2 flex font-semibold">
-                    Tên đơn vị
-                  </div>
-                  <table className="min-w-full table-auto ">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-left font-semibold">
-                          Tên
-                        </th>
-                        <th className="px-4 py-2 text-left font-semibold">
-                          Đơn vị
-                        </th>
-                        <th className="px-4 py-2 text-left font-semibold">
-                          Giá bán
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {variantCombinations.map((combination, index) => (
-                        <tr key={index}>
-                          <td className="py-2">
-                            <div className="ml-4">
-                              {generateVariantName(combination)}
-                            </div>
-                          </td>
-                          <td className="py-2">
-                            <div className="ml-4">{combination.unitName}</div>
-                          </td>
-                          <td className="py-2">
-                            <div className="ml-4">{combination.salePrice}</div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-
-                  <div className="text-right text-sm text-gray-600 px-4 py-2">
-                    Danh sách bao gồm {variantCombinations.length} hàng hóa cùng
-                    loại
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       ),
     },
@@ -709,13 +324,49 @@ const CreateProductModal = ({ visible, onClose }) => {
       key: "2",
       label: "Mô tả chi tiết",
       children: (
-        <div>
-          <RHFTextField
-            name="productDescription"
-            label="Mô tả sản phẩm"
-            placeholder="Nhập mô tả sản phẩm"
-            tooltip="Cung cấp mô tả chi tiết"
-          />
+        <div className="space-y-4">
+          <div className="border rounded-md overflow-hidden">
+            <div className="px-3 py-2 flex items-center justify-between bg-gray-200 ">
+              <div className="text-sm font-semibold ">Định mức tồn</div>
+            </div>
+            <div className="flex items-center justify-between px-3 py-5 gap-8">
+              <RHFInputNumberInLine
+                name="minStock"
+                label="Ít nhất
+                
+"
+                tooltip="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng dưới định mức tồn kho < Tồn ít nhất"
+              />
+              <RHFInputNumberInLine
+                name="maxStock"
+                label="Nhiều nhất
+"
+                tooltip="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng dưới định mức tồn kho < Tồn ít nhất"
+              />
+            </div>
+          </div>
+
+          <div className="border rounded-md overflow-hidden">
+            <div className="px-3 py-2 flex items-center justify-between bg-gray-200 ">
+              <div className="text-sm font-semibold ">Mô tả</div>
+            </div>
+            <div className="flex items-center justify-between  gap-8">
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <TextArea
+                    {...field}
+                    variant="borderless"
+                    autoSize={{
+                      minRows: 3,
+                      maxRows: 5,
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
         </div>
       ),
     },
@@ -740,12 +391,3 @@ const CreateProductModal = ({ visible, onClose }) => {
 };
 
 export default CreateProductModal;
-
-const generateVariantName = (variant) => {
-  const attributeNames = Object.keys(variant).filter(
-    (key) =>
-      key !== "unitName" && key !== "conversionValue" && key !== "salePrice"
-  );
-  const attributeValues = attributeNames.map((name) => variant[name]).join("-");
-  return attributeValues;
-};
