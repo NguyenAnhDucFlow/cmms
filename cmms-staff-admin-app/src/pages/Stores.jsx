@@ -4,7 +4,7 @@ import StoreFilterSidebar from "../sections/stores/StoreFilterSidebar";
 import StoreTable from "../sections/stores/StoreTable";
 import StoreSearch from "../sections/stores/StoreSearch";
 import StoreButton from "../sections/stores/StoreButton";
-import CreateProductModal from "../components/modal/CreateProductModal";
+import CreateStoreModal from "../components/modal/CreateStoreModal";
 
 const Stores = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -22,7 +22,7 @@ const Stores = () => {
   return (
     <Page title="Quản lí cửa hàng">
       {/* Modal tạo sản phẩm */}
-      <CreateProductModal visible={isModalVisible} onClose={hideModal} />
+      <CreateStoreModal visible={isModalVisible} onClose={hideModal} />
 
       <div className="flex gap-6">
         <div className="w-[16%]">

@@ -7,10 +7,7 @@ import com.anhduc.backend.service.StoreService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class StoreController {
     StoreService storeService;
 
     @PostMapping
-    ApiResponse<StoreResponse> create(StoreCreationRequest request) {
+    ApiResponse<StoreResponse> create(@RequestBody StoreCreationRequest request) {
         return  ApiResponse.<StoreResponse>builder()
                 .data(storeService.create(request)).build();
     }
