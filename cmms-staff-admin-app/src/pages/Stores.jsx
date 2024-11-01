@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Page from "../components/Page";
-import ProductFilterSidebar from "../sections/products/ProductFilterSidebar";
-import ProductTable from "../sections/products/ProductTable";
-import ProductSearch from "../sections/products/ProductSearch";
-import ProductButtonGroup from "../sections/products/ProductButtonGroup";
+import StoreFilterSidebar from "../sections/stores/StoreFilterSidebar";
+import StoreTable from "../sections/stores/StoreTable";
+import StoreSearch from "../sections/stores/StoreSearch";
+import StoreButton from "../sections/stores/StoreButton";
 import CreateProductModal from "../components/modal/CreateProductModal";
 
-const Products = () => {
+const Stores = () => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   // Hàm mở modal
@@ -20,24 +20,24 @@ const Products = () => {
   };
 
   return (
-    <Page title="Hàng hóa">
+    <Page title="Quản lí cửa hàng">
       {/* Modal tạo sản phẩm */}
       <CreateProductModal visible={isModalVisible} onClose={hideModal} />
 
       <div className="flex gap-6">
         <div className="w-[16%]">
-          <ProductFilterSidebar />
+          <StoreFilterSidebar />
         </div>
         <div className="w-[84%] space-y-3">
           <div className="flex items-center justify-between gap-4 pb-1">
-            <ProductSearch />
-            <ProductButtonGroup onAddNewClick={showModal} />
+            <StoreSearch />
+            <StoreButton onAddNewClick={showModal} />
           </div>
-          <ProductTable />
+          <StoreTable />
         </div>
       </div>
     </Page>
   );
 };
 
-export default Products;
+export default Stores;

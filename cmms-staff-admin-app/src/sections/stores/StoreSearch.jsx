@@ -1,10 +1,11 @@
+import { Input } from "antd";
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Input } from "antd";
-const ProductSearch = ({ onSearch }) => {
+
+const StoreSearch = () => {
   return (
     <Input
-      placeholder="Tìm kiếm theo tên hàng"
+      placeholder="Tìm cửa hàng"
       prefix={<SearchOutlined />}
       size="large"
       className="w-[40%]"
@@ -12,4 +13,4 @@ const ProductSearch = ({ onSearch }) => {
   );
 };
 
-export default ProductSearch;
+export default StoreSearch;

@@ -27,9 +27,9 @@ const SettingPopover = () => {
           </Link>
         </li>
         <li>
-          <Link>
+          <Link to="/stores">
             <MdOutlineStoreMallDirectory />
-            Quản lí chi nhánh
+            Quản lí cửa hàng
           </Link>
         </li>
       </ul>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ProductTable = () => {
+const StoreTable = () => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -9,7 +9,7 @@ const ProductTable = () => {
     setActiveTab(0); // Reset to the first tab when expanding a new row
   };
 
-  const products = [
+  const stores = [
     {
       name: "Frozen yoghurt",
       calories: 159,
@@ -47,24 +47,24 @@ const ProductTable = () => {
         <thead>
           <tr className="bg-[#BBDEFB]">
             <th className="p-3 text-left border-b border-gray-300 text-sm font-semibold w-2/5">
-              Mã hàng
+              Tên cửa hàng
             </th>
             <th className="p-3 text-left border-b border-gray-300 text-sm font-semibold">
-              Tên hàng
+              Địa chỉ
             </th>
             <th className="p-3 text-left border-b border-gray-300 text-sm font-semibold">
-              Giá bán
+              Điện thoại
             </th>
             <th className="p-3 text-left border-b border-gray-300 text-sm font-semibold">
-              Giá vốn
+              Số lượng người dùng
             </th>
             <th className="p-3 text-left border-b border-gray-300 text-sm font-semibold">
-              Tồn kho
+              Trạng thai
             </th>
           </tr>
         </thead>
         <tbody>
-          {products.map((row, index) => (
+          {stores.map((row, index) => (
             <React.Fragment key={index}>
               {/* Main Row */}
               <tr
@@ -117,4 +117,4 @@ const ProductTable = () => {
   );
 };
 
-export default ProductTable;
+export default StoreTable;

@@ -15,6 +15,7 @@ const Dashboard = Loadable(lazy(() => import("../pages/Dashboard")));
 const Products = Loadable(lazy(() => import("../pages/Products")));
 const ErrorPage = Loadable(lazy(() => import("../pages/ErrorPage")));
 const PurchaseOrder = Loadable(lazy(() => import("../pages/PurchaseOrder")));
+const Stores = Loadable(lazy(() => import("../pages/Stores")));
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       },
       { path: "/products", element: <Products /> },
       { path: "/purchase-order", element: <PurchaseOrder /> },
+      { path: "/stores", element: <Stores /> },
     ],
   },
 ]);
