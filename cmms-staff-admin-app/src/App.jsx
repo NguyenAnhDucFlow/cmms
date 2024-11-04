@@ -7,16 +7,19 @@ import themeConfig from "./themes/themeConfig";
 import { queryClient } from "./services/queryClient";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { StoreProvider } from "./contexts/StoreContext";
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <ConfigProvider theme={themeConfig}>
-          <ToastContainer />
-          <RouterProvider router={router} />
-        </ConfigProvider>
-      </HelmetProvider>
+      <StoreProvider>
+        <HelmetProvider>
+          <ConfigProvider theme={themeConfig}>
+            <ToastContainer />
+            <RouterProvider router={router} />
+          </ConfigProvider>
+        </HelmetProvider>
+      </StoreProvider>
     </QueryClientProvider>
   );
 };

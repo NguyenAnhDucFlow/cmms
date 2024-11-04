@@ -21,7 +21,7 @@ const SettingPopover = () => {
         className="dropdown-content menu bg-base-100 rounded-md z-[1] w-52 p-2 shadow"
       >
         <li>
-          <Link>
+          <Link to="users">
             <MdOutlineManageAccounts />
             Quản lí người dùng
           </Link>

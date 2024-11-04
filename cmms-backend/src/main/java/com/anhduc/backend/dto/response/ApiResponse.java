@@ -15,5 +15,7 @@ public class ApiResponse<T> {
     @Builder.Default
     int code = 1000;
     String message;
+    Integer totalPages;
+    Long totalElements;
     T data;
 }

@@ -12,8 +12,10 @@ const AccountPopover = () => {
         role="button"
         className="btn glass btn-sm my-1 text-sm rounded-md "
       >
-        0837525245
-        <FaUserCircle size={16} />
+        <div className="whitespace-nowrap flex items-center gap-2">
+          <div>0837525245</div>
+          <FaUserCircle size={16} />
+        </div>
       </div>
       <ul
         tabIndex={0}

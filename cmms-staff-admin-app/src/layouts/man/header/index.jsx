@@ -18,7 +18,9 @@ const ManHeader = () => {
       </div>
 
       <div className="flex items-center">
-        <SelectedStore />
+        <div className="w-44">
+          <SelectedStore />
+        </div>
         <SettingPopover />
         <AccountPopover />
       </div>

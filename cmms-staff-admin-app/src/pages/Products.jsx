@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Page from "../components/Page";
 import ProductFilterSidebar from "../sections/products/ProductFilterSidebar";
 import ProductTable from "../sections/products/ProductTable";
 import ProductSearch from "../sections/products/ProductSearch";
 import ProductButtonGroup from "../sections/products/ProductButtonGroup";
 import CreateProductModal from "../components/modal/CreateProductModal";
+import useAuth from "../hooks/useAuth";
 
 const Products = () => {
+  const { user } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {}, []);
 
   // Hàm mở modal
   const showModal = () => {

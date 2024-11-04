@@ -15,6 +15,9 @@ const CustomSelect = styled(Select)`
   .ant-select-selector {
     padding: 0px !important;
   }
+  .ant-select-selection-search {
+    inset-inline-start: 0px !important;
+  }
 `;
 
 const StyledPhoneInputWrapper = styled.div`
@@ -61,7 +64,6 @@ const CreateStoreModal = ({ visible, onClose }) => {
   const { provinces, districts, wards, fetchDistricts, fetchWards } =
     useRegionData();
 
-  const [isFocused, setIsFocused] = useState(false);
   const selectedProvinceCode = watch("provinceCode");
   const selectedDistrictCode = watch("districtCode");
 
@@ -167,114 +169,120 @@ const CreateStoreModal = ({ visible, onClose }) => {
             tooltip="Địa chỉ cần điền chính xác. VD số x, ngách y, ngõ z tên đường ...."
           />
 
-          {/* Province Select */}
           <label className="flex items-center">
-            <div className="w-1/3"> Chọn Tỉnh/Thành phố</div>
+            <div className="w-1/3">Chọn Tỉnh/Thành phố</div>
             <div className="w-2/3">
               <Controller
                 name="province"
                 control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    {...field}
-                    className="w-full border-b"
-                    style={{
-                      borderColor: isFocused ? "#1E88E5" : undefined,
-                      padding: 0,
-                    }}
-                    showSearch
-                    optionFilterProp="label"
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    variant="borderless"
-                    options={provinces.map((prov) => ({
-                      value: prov.code,
-                      label: prov.name,
-                    }))}
-                    onChange={(value) => {
-                      const selectedProvince = provinces.find(
-                        (prov) => prov.code === value
-                      );
-                      field.onChange(selectedProvince?.name); // Set name to form value
-                      setValue("provinceCode", value); // Set code for fetching districts
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+                  const [isFocused, setIsFocused] = useState(false);
+                  return (
+                    <CustomSelect
+                      {...field}
+                      className="w-full border-b"
+                      style={{
+                        borderColor: isFocused ? "#1E88E5" : undefined,
+                        padding: 0,
+                      }}
+                      showSearch
+                      optionFilterProp="label"
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      variant="borderless"
+                      options={provinces.map((prov) => ({
+                        value: prov.code,
+                        label: prov.name,
+                      }))}
+                      onChange={(value) => {
+                        const selectedProvince = provinces.find(
+                          (prov) => prov.code === value
+                        );
+                        field.onChange(selectedProvince?.name);
+                        setValue("provinceCode", value);
+                      }}
+                    />
+                  );
+                }}
               />
             </div>
           </label>
 
-          {/* District Select */}
           <label className="flex items-center">
             <div className="w-1/3">Chọn Quận/Huyện</div>
             <div className="w-2/3">
               <Controller
                 name="district"
                 control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    {...field}
-                    className="w-full border-b"
-                    style={{
-                      borderColor: isFocused ? "#1E88E5" : undefined,
-                      padding: 0,
-                    }}
-                    showSearch
-                    optionFilterProp="label"
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    variant="borderless"
-                    options={districts.map((dist) => ({
-                      value: dist.code,
-                      label: dist.name,
-                    }))}
-                    disabled={!selectedProvinceCode}
-                    onChange={(value) => {
-                      const selectedDistrict = districts.find(
-                        (dist) => dist.code === value
-                      );
-                      field.onChange(selectedDistrict?.name); // Set name to form value
-                      setValue("districtCode", value); // Set code for fetching wards
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+                  const [isFocused, setIsFocused] = useState(false);
+                  return (
+                    <CustomSelect
+                      {...field}
+                      className="w-full border-b"
+                      style={{
+                        borderColor: isFocused ? "#1E88E5" : undefined,
+                        padding: 0,
+                      }}
+                      showSearch
+                      optionFilterProp="label"
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      variant="borderless"
+                      options={districts.map((dist) => ({
+                        value: dist.code,
+                        label: dist.name,
+                      }))}
+                      disabled={!selectedProvinceCode}
+                      onChange={(value) => {
+                        const selectedDistrict = districts.find(
+                          (dist) => dist.code === value
+                        );
+                        field.onChange(selectedDistrict?.name);
+                        setValue("districtCode", value);
+                      }}
+                    />
+                  );
+                }}
               />
             </div>
           </label>
 
-          {/* Ward Select */}
           <label className="flex items-center">
             <div className="w-1/3">Chọn Phường/Xã</div>
             <div className="w-2/3">
               <Controller
                 name="ward"
                 control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    {...field}
-                    className="w-full border-b"
-                    style={{
-                      borderColor: isFocused ? "#1E88E5" : undefined,
-                      padding: 0,
-                    }}
-                    showSearch
-                    optionFilterProp="label"
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    variant="borderless"
-                    options={wards.map((ward) => ({
-                      value: ward.code,
-                      label: ward.name,
-                    }))}
-                    disabled={!selectedDistrictCode}
-                    onChange={(value) => {
-                      const selectedWard = wards.find(
-                        (ward) => ward.code === value
-                      );
-                      field.onChange(selectedWard?.name); // Set name to form value
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+                  const [isFocused, setIsFocused] = useState(false);
+                  return (
+                    <CustomSelect
+                      {...field}
+                      className="w-full border-b"
+                      style={{
+                        borderColor: isFocused ? "#1E88E5" : undefined,
+                        padding: 0,
+                      }}
+                      showSearch
+                      optionFilterProp="label"
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      variant="borderless"
+                      options={wards.map((ward) => ({
+                        value: ward.code,
+                        label: ward.name,
+                      }))}
+                      disabled={!selectedDistrictCode}
+                      onChange={(value) => {
+                        const selectedWard = wards.find(
+                          (ward) => ward.code === value
+                        );
+                        field.onChange(selectedWard?.name);
+                      }}
+                    />
+                  );
+                }}
               />
             </div>
           </label>

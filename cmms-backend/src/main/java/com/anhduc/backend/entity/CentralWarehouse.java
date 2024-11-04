@@ -21,4 +21,6 @@ public class CentralWarehouse {
     double quantity;
     @ManyToOne
     Material material;
+    @ManyToOne
+    Store company;
 }

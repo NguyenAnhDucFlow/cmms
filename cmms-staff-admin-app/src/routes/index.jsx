@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import LoadingScreen from "../components/LoadingScreen";
+import AuthGuard from "../guards/AuthGuard";
+import GuestGuard from "../guards/GuestGuard";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -16,21 +18,37 @@ const Products = Loadable(lazy(() => import("../pages/Products")));
 const ErrorPage = Loadable(lazy(() => import("../pages/ErrorPage")));
 const PurchaseOrder = Loadable(lazy(() => import("../pages/PurchaseOrder")));
 const Stores = Loadable(lazy(() => import("../pages/Stores")));
+const Users = Loadable(lazy(() => import("../pages/Users")));
+const Login = Loadable(lazy(() => import("../pages/Login")));
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ManLayout />,
+    element: (
+      // <AuthGuard>
+      <ManLayout />
+      // </AuthGuard>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         element: <Dashboard />,
       },
-      { path: "/products", element: <Products /> },
-      { path: "/purchase-order", element: <PurchaseOrder /> },
-      { path: "/stores", element: <Stores /> },
+      { path: "products", element: <Products /> },
+      { path: "purchase-order", element: <PurchaseOrder /> },
+      { path: "stores", element: <Stores /> },
+      { path: "users", element: <Users /> },
     ],
+  },
+  {
+    path: "/login",
+    element: (
+      <GuestGuard>
+        <Login />
+      </GuestGuard>
+    ),
+    errorElement: <ErrorPage />,
   },
 ]);
 

@@ -5,6 +5,8 @@ import LoadingScreen from "../components/LoadingScreen";
 
 const AuthGuard = ({ children }) => {
   const { isAuthenticated, isInitialized } = useAuth();
+  console.log("dwdw", isAuthenticated);
+  console.log("e2e2e", isInitialized);
   const location = useLocation();
   const [requestedLocation, setRequestedLocation] = useState(null);
 
