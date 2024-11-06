@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,6 +25,6 @@ public class UserCreationResponse {
     String ward;
     String address;
     String note;
-    Role role;
+    Set<Role> roles;
     Store store;
 }

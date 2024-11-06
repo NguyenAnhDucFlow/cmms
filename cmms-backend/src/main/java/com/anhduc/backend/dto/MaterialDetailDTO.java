@@ -1,7 +1,7 @@
-package com.anhduc.backend.dto.response;
+package com.anhduc.backend.dto;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,14 +9,9 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class MaterialResponse {
-
+public class MaterialDetailDTO {
     UUID id;
     String materialCode;
-    String barcode;
     String name;
     BigDecimal costPrice;
     BigDecimal salePrice;
@@ -24,11 +19,12 @@ public class MaterialResponse {
     float weightValue;
     String weightUnit;
     String description;
-    int minStock;
-    int maxStock;
     String coverImageUrl;
     boolean isPoint;
     Boolean isActive;
-    String categoryName;
-    String brandName;
+    String basicUnit;
+    String category;
+    String brand;
+    int minStock;
+    int maxStock;
 }

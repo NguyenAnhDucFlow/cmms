@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Page from "../components/Page";
 import ProductFilterSidebar from "../sections/products/ProductFilterSidebar";
 import ProductTable from "../sections/products/ProductTable";
@@ -6,27 +6,54 @@ import ProductSearch from "../sections/products/ProductSearch";
 import ProductButtonGroup from "../sections/products/ProductButtonGroup";
 import CreateProductModal from "../components/modal/CreateProductModal";
 import useAuth from "../hooks/useAuth";
+import { useStore } from "../hooks/useStore";
+import axios from "../utils/axios";
 
 const Products = () => {
-  const { user } = useAuth();
-  const [isModalVisible, setModalVisible] = useState(false);
+  const { roles, user } = useAuth();
+  const { storeId, stores } = useStore();
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {}, []);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const storeCentralId = stores.find(
+    (store) => store.name === "Cửa hàng trung tâm"
+  );
+  const hasRoleAdmin = useMemo(
+    () => roles.some((role) => role.name === "SENIOR_MANAGEMENT"),
+    [roles]
+  );
 
-  // Hàm mở modal
+  const url = useMemo(() => {
+    const baseUrl = "/material";
+    if (hasRoleAdmin && storeId) return `${baseUrl}/${storeId}`;
+    return hasRoleAdmin
+      ? `${baseUrl}/${storeCentralId}`
+      : `${baseUrl}/${user.store.id}`;
+  }, [storeId, roles, user?.store?.id]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const response = await axios.get("/materials/central-materials");
+        setProducts(response.data.data);
+        console.log("materials", response.data.data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    loadProducts();
+  }, []);
+
   const showModal = () => {
     setModalVisible(true);
   };
 
-  // Hàm đóng modal
   const hideModal = () => {
     setModalVisible(false);
   };
 
   return (
     <Page title="Hàng hóa">
-      {/* Modal tạo sản phẩm */}
       <CreateProductModal visible={isModalVisible} onClose={hideModal} />
 
       <div className="flex gap-6">
@@ -38,7 +65,7 @@ const Products = () => {
             <ProductSearch />
             <ProductButtonGroup onAddNewClick={showModal} />
           </div>
-          <ProductTable />
+          <ProductTable products={products} />
         </div>
       </div>
     </Page>

@@ -1,26 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { IoStorefront } from "react-icons/io5";
-import axios from "../../../utils/axios";
 import { useStore } from "../../../hooks/useStore";
 import useAuth from "../../../hooks/useAuth";
 
 const SelectedStore = () => {
-  const [stores, setStores] = useState([]);
   const { user } = useAuth();
-  const { storeId, changeStore } = useStore();
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get("/stores");
-        setStores(response.data.data);
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
-    fetchStores();
-  }, []);
-
+  const { stores, changeStore } = useStore();
   const handleStoreChange = (value) => {
     const selectedStore = stores.find((store) => store.id === value);
     if (selectedStore) {

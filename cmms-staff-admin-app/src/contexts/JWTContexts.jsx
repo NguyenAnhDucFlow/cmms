@@ -6,16 +6,18 @@ const initialState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  roles: [],
 };
 
 const handlers = {
   INITIALIZE: (state, action) => {
-    const { isAuthenticated, user } = action.payload;
+    const { isAuthenticated, user, roles } = action.payload;
     return {
       ...state,
       isAuthenticated,
       isInitialized: true,
       user,
+      roles,
     };
   },
   LOGIN: (state, action) => {
@@ -24,6 +26,7 @@ const handlers = {
       ...state,
       isAuthenticated: true,
       user,
+      roles,
     };
   },
   LOGOUT: (state) => {
@@ -31,6 +34,7 @@ const handlers = {
       ...state,
       isAuthenticated: false,
       user: null,
+      roles: [],
     };
   },
   REGISTER: (state, action) => {
@@ -39,6 +43,7 @@ const handlers = {
       ...state,
       isAuthenticated: true,
       user,
+      roles,
     };
   },
 };
@@ -66,12 +71,14 @@ function AuthProvider({ children }) {
           setSession(accessToken);
 
           const response = await axios.get("/users/my-info");
-          const user = response.data;
+          const user = response.data.data;
+          const roles = user.roles;
           dispatch({
             type: "INITIALIZE",
             payload: {
               isAuthenticated: true,
               user,
+              roles,
             },
           });
         } else {
@@ -80,6 +87,7 @@ function AuthProvider({ children }) {
             payload: {
               isAuthenticated: false,
               user: null,
+              roles: [],
             },
           });
         }
@@ -90,6 +98,7 @@ function AuthProvider({ children }) {
           payload: {
             isAuthenticated: false,
             user: null,
+            roles: [],
           },
         });
       }
@@ -100,11 +109,13 @@ function AuthProvider({ children }) {
   const login = async (email, password) => {
     const response = await axios.post("/auth/login", { email, password });
     const { token, user } = response.data.data;
+    const roles = user.roles;
     setSession(token);
     dispatch({
       type: "LOGIN",
       payload: {
         user,
+        roles,
       },
     });
   };

@@ -1,26 +1,25 @@
 package com.anhduc.backend.service;
 
+import com.anhduc.backend.dto.MaterialDetailDTO;
+import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
+import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.dto.response.MaterialResponse;
 import com.anhduc.backend.entity.*;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
-import com.anhduc.backend.repository.BrandRepository;
-import com.anhduc.backend.repository.CategoryRepository;
-import com.anhduc.backend.repository.MaterialRepository;
-import com.anhduc.backend.repository.UnitRepository;
+import com.anhduc.backend.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,8 @@ public class MaterialService {
     CategoryRepository categoryRepository;
     BrandRepository brandRepository;
     UnitRepository unitRepository;
+    StoreRepository storeRepository;
+    StoreMaterialRepository storeMaterialRepository;
 
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -98,6 +99,117 @@ public class MaterialService {
         materialResponse.setBrandName(material.getBrand().getName());
         materialResponse.setCategoryName(material.getCategory().getName());
         return materialResponse;
+    }
+
+    public MaterialResponse update(MaterialCreationRequest request, UUID materialId, UUID storeId) throws IOException {
+        Material material = materialRepository.findById(materialId).orElseThrow(
+                () -> new AppException(ErrorCode.MATERIAL_NOT_FOUND)
+        );
+        material.setName(request.getName());
+        material.setBarcode(request.getBarcode());
+        material.setPoint(request.isPoint());
+        material.setDescription(request.getDescription());
+        Store store = storeRepository.findById(storeId).orElseThrow(
+                () -> new AppException(ErrorCode.STORE_NOT_EXISTED)
+        );
+        StoreMaterial storeMaterial = new StoreMaterial();
+        storeMaterial.setMaterial(material);
+        storeMaterial.setStore(store);
+        storeMaterial.setMinStock(request.getMinStock());
+        storeMaterial.setMaxStock(request.getMaxStock());
+        storeMaterialRepository.save(storeMaterial);
+
+
+        if (request.getMaterialUnitDtoList() != null && !request.getMaterialUnitDtoList().isEmpty()) {
+            List<MaterialUnit> materialUnits = request.getMaterialUnitDtoList().stream().map(
+                    materialUnitDto -> {
+                        Unit unit = unitRepository.findById(materialUnitDto.getUnitId())
+                                .orElseThrow(() -> new AppException(ErrorCode.UNIT_NOT_EXISTED));
+                        return MaterialUnit.builder()
+                                .unit(unit)
+                                .material(material)
+                                .conversionRate(materialUnitDto.getConversionRate())
+                                .price(materialUnitDto.getPrice())
+                                .build();
+                    }
+            ).toList();
+            material.setMaterialUnits(materialUnits);
+        }
+        List<String> images = new ArrayList<>();
+        if (request.getImagesFile() != null && !request.getImagesFile().isEmpty()) {
+            for (MultipartFile file : request.getImagesFile()) {
+                String filename = file.getOriginalFilename();
+                String extension = filename != null ? filename.substring(filename.lastIndexOf(".")) : null;
+                String newFilename = UUID.randomUUID() + extension;
+                String fileUrl = s3StorageService.uploadFile(newFilename, file);
+                images.add(fileUrl);
+                if (request.getCoverImageUrl() == null)
+                    material.setCoverImageUrl(fileUrl);
+            }
+            material.setImages(images);
+        }
+        materialRepository.save(material);
+        MaterialResponse materialResponse = modelMapper.map(material, MaterialResponse.class);
+        materialResponse.setBrandName(material.getBrand().getName());
+        materialResponse.setCategoryName(material.getCategory().getName());
+        return materialResponse;
+    }
+
+    public Page<ListStoreMaterialResponse> listMaterialsByCompanyWithFilters(MaterialFilterDTO filter) {
+        PageRequest pageRequest = PageRequest.of(filter.getCurrentPage(), filter.getSize());
+        return materialRepository.listMaterialsByCompanyWithFilters(filter, pageRequest);
+    }
+
+    public MaterialDetailDTO findMaterialDetailByStore(UUID materialId, UUID storeId) {
+        Optional<StoreMaterial> storeMaterialOpt = storeMaterialRepository.findByMaterialIdAndStoreId(materialId, storeId);
+
+        if (storeMaterialOpt.isPresent()) {
+            StoreMaterial storeMaterial = storeMaterialOpt.get();
+            Material material = storeMaterial.getMaterial();
+
+            return new MaterialDetailDTO(
+                    material.getId(),
+                    material.getMaterialCode(),
+                    material.getName(),
+                    material.getCostPrice(),
+                    material.getSalePrice(),
+                    material.getImages(),
+                    material.getWeightValue(),
+                    material.getWeightUnit(),
+                    material.getDescription(),
+                    material.getCoverImageUrl(),
+                    material.isPoint(),
+                    material.getIsActive(),
+                    material.getBasicUnit().getName(),
+                    material.getCategory().getName(),
+                    material.getBrand().getName(),
+                    storeMaterial.getMinStock() >= 0 ? storeMaterial.getMinStock() : material.getMinStock(),
+                    storeMaterial.getMaxStock() >= 0 ? storeMaterial.getMaxStock() : material.getMaxStock()
+            );
+        } else {
+            Material material = materialRepository.findById(materialId)
+                    .orElseThrow(() -> new AppException(ErrorCode.MATERIAL_NOT_FOUND));
+
+            return new MaterialDetailDTO(
+                    material.getId(),
+                    material.getMaterialCode(),
+                    material.getName(),
+                    material.getCostPrice(),
+                    material.getSalePrice(),
+                    material.getImages(),
+                    material.getWeightValue(),
+                    material.getWeightUnit(),
+                    material.getDescription(),
+                    material.getCoverImageUrl(),
+                    material.isPoint(),
+                    material.getIsActive(),
+                    material.getBasicUnit().getName(),
+                    material.getCategory().getName(),
+                    material.getBrand().getName(),
+                    material.getMinStock(),
+                    material.getMaxStock()
+            );
+        }
     }
 
 
