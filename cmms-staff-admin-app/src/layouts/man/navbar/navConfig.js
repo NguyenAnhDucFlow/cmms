@@ -24,10 +24,10 @@ const navConfig = [
     icon: BsBoxes,
     items: [
       { label: "Danh mục", path: "/products", icon: FaRegListAlt },
-      { label: "Thiết lập giá", path: "/hang-hoa/them-moi", icon: LuTags },
+      { label: "Thiết lập giá", path: "/price-book", icon: LuTags },
       {
         label: "Kiểm kho",
-        path: "/hang-hoa/them-moi",
+        path: "/stock-takes",
         icon: MdOutlineInventory,
       },
     ],

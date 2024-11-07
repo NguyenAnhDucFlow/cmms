@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import AuthGuard from "../guards/AuthGuard";
 import GuestGuard from "../guards/GuestGuard";
+import { element } from "prop-types";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -20,6 +21,8 @@ const PurchaseOrder = Loadable(lazy(() => import("../pages/PurchaseOrder")));
 const Stores = Loadable(lazy(() => import("../pages/Stores")));
 const Users = Loadable(lazy(() => import("../pages/Users")));
 const Login = Loadable(lazy(() => import("../pages/Login")));
+const PriceBook = Loadable(lazy(() => import("../pages/PriceBook")));
+const StockTakes = Loadable(lazy(() => import("../pages/StockTakes")));
 
 const router = createBrowserRouter([
   {
@@ -39,6 +42,8 @@ const router = createBrowserRouter([
       { path: "purchase-order", element: <PurchaseOrder /> },
       { path: "stores", element: <Stores /> },
       { path: "users", element: <Users /> },
+      { path: "price-book", element: <PriceBook /> },
+      { path: "stock-takes", element: <StockTakes /> },
     ],
   },
   {

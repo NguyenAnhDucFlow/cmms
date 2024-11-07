@@ -3,7 +3,6 @@ import DropdownRadio from "../../components/dropdown/DropdownRadio";
 import DropdownSelectSearch from "../../components/dropdown/DropdownSelectSearch";
 import axios from "../../utils/axios";
 
-const displayOption = ["Hàng đang kinh doanh", "Hàng ngừng kinh doanh"];
 const inventoryOption = [
   "Dưới định mức tồn kho",
   "Vượt định mức tồn kho",
@@ -11,19 +10,14 @@ const inventoryOption = [
   "Hết hàng trong kho",
 ];
 
-const ProductFilterSidebar = () => {
+const PriceBookFilterSidebar = () => {
   const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesRes, brandsRes, unitsRes] = await Promise.all([
-          axios.get("/categories"),
-          axios.get("/brands"),
-        ]);
+        const categoriesRes = await axios.get("/categories");
         setCategories(categoriesRes.data.data);
-        setBrands(brandsRes.data.data);
       } catch (error) {
         console.error(error);
       }
@@ -33,17 +27,11 @@ const ProductFilterSidebar = () => {
   return (
     <div className="space-y-4">
       <h1 className="h-8 text-xl font-bold">
-        <div className="mt-2">Hàng hóa</div>
+        <div className="mt-2">Bảng giá chung</div>
       </h1>
       <DropdownSelectSearch title="Nhóm hàng" options={categories} />
-      <DropdownSelectSearch title="Thương hiệu" options={brands} />
       <DropdownRadio
-        name="displayOption"
-        title="Lựa chọn hiển thị"
-        options={displayOption}
-      />
-      <DropdownRadio
-        name="inventoryOption"
+        name="inventoryOptionPriceBook"
         title="Tồn kho"
         options={inventoryOption}
       />
@@ -51,4 +39,4 @@ const ProductFilterSidebar = () => {
   );
 };
 
-export default ProductFilterSidebar;
+export default PriceBookFilterSidebar;

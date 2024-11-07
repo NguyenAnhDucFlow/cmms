@@ -11,7 +11,7 @@ const inventoryOption = [
   "Hết hàng trong kho",
 ];
 
-const ProductFilterSidebar = () => {
+const StockTakesFilterSidebar = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
@@ -33,17 +33,17 @@ const ProductFilterSidebar = () => {
   return (
     <div className="space-y-4">
       <h1 className="h-8 text-xl font-bold">
-        <div className="mt-2">Hàng hóa</div>
+        <div className="mt-2">Phiếu kiểm kho</div>
       </h1>
       <DropdownSelectSearch title="Nhóm hàng" options={categories} />
       <DropdownSelectSearch title="Thương hiệu" options={brands} />
       <DropdownRadio
-        name="displayOption"
+        name="displayStockTakes"
         title="Lựa chọn hiển thị"
         options={displayOption}
       />
       <DropdownRadio
-        name="inventoryOption"
+        name="inventoryStockTakes"
         title="Tồn kho"
         options={inventoryOption}
       />
@@ -51,4 +51,4 @@ const ProductFilterSidebar = () => {
   );
 };
 
-export default ProductFilterSidebar;
+export default StockTakesFilterSidebar;

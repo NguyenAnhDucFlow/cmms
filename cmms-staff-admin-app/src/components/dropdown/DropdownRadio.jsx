@@ -6,6 +6,7 @@ const DropdownRadio = ({
   title = "Hàng hóa",
   defaultOption = "Tất cả",
   onOptionChange = () => {},
+  name, // Nhận thuộc tính name từ ngoài vào
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -29,7 +30,7 @@ const DropdownRadio = ({
             <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="radio"
-                name="dropdown-radio"
+                name={name} // Sử dụng name khác nhau
                 value="Tất cả"
                 checked={selectedOption === "Tất cả"}
                 onChange={() => handleOptionChange("Tất cả")}
@@ -42,7 +43,7 @@ const DropdownRadio = ({
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
-                  name="dropdown-radio"
+                  name={name} // Sử dụng name khác nhau
                   value={option}
                   checked={selectedOption === option}
                   onChange={() => handleOptionChange(option)}
