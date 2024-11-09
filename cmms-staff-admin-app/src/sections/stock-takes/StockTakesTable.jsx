@@ -6,7 +6,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import axios from "../../utils/axios";
 import { useStore } from "../../hooks/useStore";
 
-const ProductTable = ({ products }) => {
+const StockTakesTable = ({ products }) => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [productDetails, setProductDetails] = useState({});
@@ -249,4 +249,4 @@ const DetailRow = ({ label, data }) => (
   </div>
 );
 
-export default ProductTable;
+export default StockTakesTable;

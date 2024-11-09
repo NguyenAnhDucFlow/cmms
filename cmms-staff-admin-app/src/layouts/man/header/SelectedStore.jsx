@@ -19,7 +19,7 @@ const SelectedStore = () => {
     <Select
       className="w-full"
       showSearch
-      defaultValue={user?.store?.id}
+      defaultValue={user?.store}
       placeholder="Chọn cửa hàng"
       optionFilterProp="label"
       suffixIcon={

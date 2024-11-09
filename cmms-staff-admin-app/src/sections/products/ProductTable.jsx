@@ -75,12 +75,17 @@ const ProductTable = ({ products }) => {
                     : "border-b border-gray-300"
                 }`}
               >
-                <td className="p-2 ">
-                  <Image
-                    className="ml-4"
-                    width={40}
-                    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                  />
+                <td className="p-2">
+                  <div className="ml-6">
+                    <Image
+                      width={40}
+                      height={40}
+                      src={
+                        row?.coverImageUrl ||
+                        "https://cdn-app.kiotviet.vn/retailler/Content/img/default-product-img.jpg"
+                      }
+                    />
+                  </div>
                 </td>
                 <td className="p-2">{row.materialCode}</td>
                 <td className="p-2">{row.name}</td>

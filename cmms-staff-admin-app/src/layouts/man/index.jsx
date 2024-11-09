@@ -8,8 +8,8 @@ const ManLayout = () => {
     <>
       <ManHeader />
       <ManNavbar />
-      <main className=" bg-background min-h-screen">
-        <div className="container py-4 ">
+      <main className=" bg-background h-screen">
+        <div className="container pt-4 ">
           <Outlet />
         </div>
       </main>

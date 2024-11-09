@@ -31,16 +31,17 @@ const Products = () => {
       : `${baseUrl}/${user.store.id}`;
   }, [storeId, roles, user?.store?.id]);
 
+  const loadProducts = async () => {
+    try {
+      const response = await axios.get("/materials/central-materials");
+      setProducts(response.data.data);
+      console.log("materials", response.data.data);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const response = await axios.get("/materials/central-materials");
-        setProducts(response.data.data);
-        console.log("materials", response.data.data);
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
     loadProducts();
   }, []);
 

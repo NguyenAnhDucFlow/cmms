@@ -22,6 +22,7 @@ public class MaterialUnit {
     Unit unit;
     @ManyToOne
     Material material;
+    String variantCode;
     double conversionRate;
     double price;
 

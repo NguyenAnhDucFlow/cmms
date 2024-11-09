@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { LuLogOut } from "react-icons/lu";
+import useAuth from "../../../hooks/useAuth";
 
 const AccountPopover = () => {
+  const { logout, user } = useAuth();
   return (
     <div className="dropdown dropdown-hover dropdown-end">
       <div
@@ -28,10 +30,10 @@ const AccountPopover = () => {
           </Link>
         </li>
         <li>
-          <Link>
+          <button onClick={logout}>
             <LuLogOut />
             Đăng xuất
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

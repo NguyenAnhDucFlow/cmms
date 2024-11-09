@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Page from "../components/Page";
-import ProductFilterSidebar from "../sections/products/ProductFilterSidebar";
-import ProductTable from "../sections/products/ProductTable";
-import ProductSearch from "../sections/products/ProductSearch";
-import ProductButtonGroup from "../sections/products/ProductButtonGroup";
+import StockTakesFilterSidebar from "../sections/stock-takes/StockTakesFilterSidebar";
+import StockTakesTable from "../sections/stock-takes/StockTakesTable";
+import StockTakesSearch from "../sections/stock-takes/StockTakesSearch";
+import StockTakesButton from "../sections/stock-takes/StockTakesButton";
 import CreateProductModal from "../components/modal/CreateProductModal";
 import useAuth from "../hooks/useAuth";
 import { useStore } from "../hooks/useStore";
@@ -53,19 +53,19 @@ const StockTakes = () => {
   };
 
   return (
-    <Page title="Hàng hóa">
+    <Page title="Hàng hóa-Kiểm kho">
       <CreateProductModal visible={isModalVisible} onClose={hideModal} />
 
       <div className="flex gap-6">
         <div className="w-[16%]">
-          <ProductFilterSidebar />
+          <StockTakesFilterSidebar />
         </div>
         <div className="w-[84%] space-y-3">
           <div className="flex items-center justify-between gap-4 pb-1">
-            <ProductSearch />
-            <ProductButtonGroup onAddNewClick={showModal} />
+            <StockTakesSearch />
+            <StockTakesButton onAddNewClick={showModal} />
           </div>
-          <ProductTable products={products} />
+          <StockTakesTable products={products} />
         </div>
       </div>
     </Page>

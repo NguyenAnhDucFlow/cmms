@@ -35,17 +35,10 @@ const StockTakesFilterSidebar = () => {
       <h1 className="h-8 text-xl font-bold">
         <div className="mt-2">Phiếu kiểm kho</div>
       </h1>
-      <DropdownSelectSearch title="Nhóm hàng" options={categories} />
-      <DropdownSelectSearch title="Thương hiệu" options={brands} />
-      <DropdownRadio
-        name="displayStockTakes"
-        title="Lựa chọn hiển thị"
-        options={displayOption}
-      />
-      <DropdownRadio
-        name="inventoryStockTakes"
-        title="Tồn kho"
-        options={inventoryOption}
+      <DropdownSelectSearch
+        title="Người tạo"
+        placeholder="Chọn người tạo"
+        options={categories}
       />
     </div>
   );

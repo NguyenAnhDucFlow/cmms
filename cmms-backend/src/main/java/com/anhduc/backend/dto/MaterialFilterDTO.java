@@ -20,6 +20,8 @@ public class MaterialFilterDTO {
     Boolean belowMinStock;
     Boolean aboveMaxStock;
     Boolean outOfStock;
+    @Builder.Default
     Integer currentPage = 0;
-    Integer size = 10;
+    @Builder.Default
+    Integer size = 8;
 }

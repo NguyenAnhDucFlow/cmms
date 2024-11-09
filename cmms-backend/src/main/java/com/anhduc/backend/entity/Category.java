@@ -20,7 +20,4 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String name;
-    UUID parentId;
-
-
 }

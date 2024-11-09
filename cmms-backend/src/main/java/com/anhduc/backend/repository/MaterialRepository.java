@@ -40,4 +40,8 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
             Pageable pageable
     );
 
+    @Query("SELECT MAX(m.materialCode) FROM Material m " +
+            "WHERE m.materialCode LIKE :prefix%")
+    String findMaxMaterialCodeWithPrefix(@Param("prefix") String prefix);
+
 }

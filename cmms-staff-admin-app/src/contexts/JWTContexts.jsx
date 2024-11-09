@@ -21,7 +21,7 @@ const handlers = {
     };
   },
   LOGIN: (state, action) => {
-    const { user } = action.payload;
+    const { user, roles } = action.payload;
     return {
       ...state,
       isAuthenticated: true,

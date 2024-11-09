@@ -1,84 +1,50 @@
 import React from "react";
-import { Space, Table, Tag } from "antd";
+import { Empty } from "antd";
 
-const columns = [
-  {
-    title: "Mã hang",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>222{text}</a>,
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
-
-const TablePurchaseOrder = () => {
+const TablePurchaseOrder = ({ products }) => {
   return (
-    <div className="mt-6">
-      <Table columns={columns} dataSource={data} size="small" />
-    </div>
+    <table className="min-w-full bg-white border border-gray-300 h-[88%]">
+      <thead>
+        <tr className="bg-[#BBDEFB]">
+          <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
+            Mã hàng
+          </th>
+          <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold ">
+            Tên hàng
+          </th>
+          <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%] ">
+            Giá vốn
+          </th>
+          <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%] ">
+            Giá nhập cuối
+          </th>
+          <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%] ">
+            Giá chung
+          </th>
+        </tr>
+      </thead>
+      <tbody className="overflow-y-auto">
+        {products && products.length > 0 ? (
+          products.map((row, index) => (
+            <React.Fragment key={index}>
+              <tr className="cursor-pointer hover:bg-[#BBDEFB]">
+                <td className="p-4">{row.materialCode}</td>
+                <td className="p-4">{row.name}</td>
+                <td className="p-4">{row.salePrice}</td>
+                <td className="p-4">{row.costPrice}</td>
+                <td className="p-4">{row.quantity}</td>
+              </tr>
+            </React.Fragment>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="5">
+              <Empty description="No data available" />
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
   );
 };
 
