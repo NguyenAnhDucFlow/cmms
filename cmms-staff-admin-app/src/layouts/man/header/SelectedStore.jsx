@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Select } from "antd";
 import { IoStorefront } from "react-icons/io5";
 import { useStore } from "../../../hooks/useStore";
 import useAuth from "../../../hooks/useAuth";
 
 const SelectedStore = () => {
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const { stores, changeStore } = useStore();
+  const [defaultStore, setDefaultStore] = useState(null);
+
   const handleStoreChange = (value) => {
     const selectedStore = stores.find((store) => store.id === value);
     if (selectedStore) {
@@ -15,19 +17,45 @@ const SelectedStore = () => {
     }
   };
 
+  // Check if the user has a senior management role
+  const hasRoleAdmin = useMemo(
+    () => roles.some((role) => role.name === "SENIOR_MANAGEMENT"),
+    [roles]
+  );
+
+  // Determine which store should be the default based on the role
+  useEffect(() => {
+    const storeCentral = stores.find(
+      (store) => store.name === "Cửa hàng trung tâm"
+    );
+
+    if (hasRoleAdmin && storeCentral) {
+      setDefaultStore(storeCentral.id); // Default to the central store if user is admin
+    } else {
+      setDefaultStore(user?.store?.id); // Default to user's assigned store otherwise
+    }
+  }, [hasRoleAdmin, stores, user]);
+
+  // Filter available stores based on role (Admins see all stores)
+  const filteredStores = useMemo(() => {
+    return hasRoleAdmin
+      ? stores
+      : stores.filter((store) => store.id === user?.store?.id);
+  }, [hasRoleAdmin, stores, user]);
+
   return (
     <Select
       className="w-full"
       showSearch
-      defaultValue={user?.store}
+      value={defaultStore}
       placeholder="Chọn cửa hàng"
+      variant="borderless"
       optionFilterProp="label"
       suffixIcon={
         <IoStorefront style={{ color: "#1a1a1a", fontSize: "16px" }} />
       }
       onChange={handleStoreChange}
-      variant="borderless"
-      options={stores.map((store) => ({
+      options={filteredStores.map((store) => ({
         value: store.id,
         label: store.name,
       }))}

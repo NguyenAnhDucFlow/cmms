@@ -73,7 +73,7 @@ const ProductTable = ({ products }) => {
                   expandedRow === index
                     ? "border-x-2 border-t-2 border-blue-600 bg-[#BBDEFB]"
                     : "border-b border-gray-300"
-                }`}
+                } `}
               >
                 <td className="p-2">
                   <div className="ml-6">
@@ -144,11 +144,24 @@ const ProductTable = ({ products }) => {
 
                           <div className="space-y-8">
                             <div className="flex gap-8">
-                              <div className="flex gap-2 w-1/3">
+                              <div className="flex gap-3 ">
                                 <Image
                                   width={296}
-                                  src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                                  src={productDetails[row.id]?.coverImageUrl}
                                 />
+                                <div>
+                                  {productDetails[row.id]?.images.map(
+                                    (image, index) => (
+                                      <div key={index}>
+                                        <Image
+                                          width={60}
+                                          height={60}
+                                          src={image}
+                                        />
+                                      </div>
+                                    )
+                                  )}
+                                </div>
                               </div>
                               <div className="w-1/3 space-y-4">
                                 <DetailRow
@@ -195,21 +208,31 @@ const ProductTable = ({ products }) => {
                                   } ${productDetails[row.id]?.weightUnit}`}
                                 />
                               </div>
-                              <div className="w-1/3">
-                                <DetailRow
-                                  label="Mô tả:"
-                                  data={productDetails[row.id]?.description}
-                                />
-                                <Divider />
-                                <DetailRow
-                                  label="Ghi chú đặt hàng:"
-                                  data={productDetails[row.id]?.orderNotes}
-                                />
-                                <Divider />
-                                <DetailRow
-                                  label="Nhà cung cấp:"
-                                  data={productDetails[row.id]?.supplier}
-                                />
+                              <div className="w-1/3 flex flex-col justify-between">
+                                <div>
+                                  <div className="text-sm">Mô tả:</div>
+                                  <Divider className="my-4" />
+                                  <div className="text-sm">
+                                    {productDetails[row.id]?.description ||
+                                      "N/A"}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-sm">
+                                    Ghi chú đặt hàng:
+                                  </div>
+                                  <Divider className="my-4" />
+                                  <div className="text-sm">
+                                    {productDetails[row.id]?.orderNotes || ""}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-sm">Nhà cung cấp:</div>
+                                  <Divider className="my-4" />
+                                  <div className="text-sm">
+                                    {productDetails[row.id]?.supplier || ""}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center justify-end gap-2 ">

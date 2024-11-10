@@ -52,7 +52,7 @@ const Login = () => {
               type="email"
               id="email"
               {...register("email")}
-              className="w-full py-2 border-b border-gray-300 outline-none focus:border-green-500"
+              className="w-full py-2 border-b border-gray-300 outline-none hover:border-primary focus:border-primary"
               placeholder="Email đăng nhập"
               autoComplete="Email"
             />
@@ -63,7 +63,7 @@ const Login = () => {
               type="password"
               id="password"
               {...register("password")}
-              className="w-full py-2 border-b border-gray-300 outline-none focus:border-green-500"
+              className="w-full py-2 border-b border-gray-300 outline-none hover:border-primary focus:border-primary"
               placeholder="Mật khẩu"
               autoComplete="current-password"
             />

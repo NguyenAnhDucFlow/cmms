@@ -235,15 +235,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("3"))
                             .salePrice(new BigDecimal("5"))
                             .images(List.of(
-                                    "https://xaydungtuvansongda.com/wp-content/uploads/2020/11/gach-do-4.jpg",
-                                    "https://vatlieuxaydunghanoi.vn/upload/images/gach-do-xay-dung.jpg"
+                                    "https://xaydungso.vn/webroot/img/images/2(65).jpg",
+                                    "https://tse1.mm.bing.net/th?id=OIP.T0khP45LrU-4UzCDqiTKhQHaFj&pid=Api"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Viên")
                             .description("Gạch đỏ dùng cho xây dựng, độ bền cao")
                             .minStock(500)
                             .maxStock(5000)
-                            .coverImageUrl("https://xaydungminhphat.com.vn/wp-content/uploads/2022/03/gach-do-6.jpg")
+                            .coverImageUrl("https://xaydungso.vn/webroot/img/images/gach-xay-dung.jpg")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Viên").orElse(null))
@@ -258,15 +258,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("120"))
                             .salePrice(new BigDecimal("150"))
                             .images(List.of(
-                                    "https://sieuthisatthep.net/wp-content/uploads/2020/08/sat-thep-phi-16.jpg",
-                                    "https://vattusanxuat.com/wp-content/uploads/2021/06/thep-cay-phi-16.jpg"
+                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-2.jpg",
+                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-3.jpg"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Cây")
                             .description("Thép cây phi 16 chịu lực tốt, độ bền cao")
                             .minStock(50)
                             .maxStock(500)
-                            .coverImageUrl("https://thietbixaydungminhchau.com/upload/images/thep-phi-16.jpg")
+                            .coverImageUrl("https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-1.jpg")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Cây").orElse(null))
@@ -281,15 +281,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("30"))
                             .salePrice(new BigDecimal("50"))
                             .images(List.of(
-                                    "https://vatlieuxaydungsymanh.com/wp-content/uploads/2020/11/cat-san-lap.jpg",
-                                    "https://kientrucpho.com.vn/wp-content/uploads/2022/03/cat-san-lap.jpg"
+                                    "https://dungphatdat.vn/wp-content/uploads/2022/01/cat2.jpg",
+                                    "https://static1.cafeland.vn/cafelandnew/hinh-anh/2020/09/09/95/image-20200909141842-1.png"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("M3")
                             .description("Cát san lấp dùng cho các công trình nền móng")
                             .minStock(20)
                             .maxStock(200)
-                            .coverImageUrl("https://vnrealty.com/wp-content/uploads/2021/09/cat-san-lap-gia-bao-nhieu.jpg")
+                            .coverImageUrl("https://muabanvatlieuxaydung.com/upload/post/16/22/59/tim-hieu-ve-cat-san-lap-20210602092949-179022.jpg")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("M3").orElse(null))
@@ -304,15 +304,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("10"))
                             .salePrice(new BigDecimal("15"))
                             .images(List.of(
-                                    "https://vattuaz.vn/wp-content/uploads/2021/05/ong-nuoc-pvc.jpg",
-                                    "https://vatlieuxaydunghcm.com/wp-content/uploads/2021/03/ong-nuoc-pvc-d25.jpg"
+                                    "https://reemart.vn/upload/sanpham/ong-dien-1529391799.png",
+                                    "https://thietbidienlegrand.com/wp-content/uploads/2017/12/ong-dien-PVC-legrand.jpg"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Mét")
                             .description("Ống nước nhựa PVC D25 chịu lực tốt")
                             .minStock(100)
                             .maxStock(1000)
-                            .coverImageUrl("https://nhuachinhhang.vn/upload/images/ong-nuoc.jpg")
+                            .coverImageUrl("https://vattudiennuoc247.com/wp-content/uploads/2022/07/Ong-nhua-pvc-d25-SP-luon-day-dien-chong-chay.png")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Mét").orElse(null))
@@ -327,15 +327,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("150"))
                             .salePrice(new BigDecimal("200"))
                             .images(List.of(
-                                    "https://nhaxinhsaigon.com/wp-content/uploads/2021/02/kinh-cuong-luc-8mm.jpg",
-                                    "https://kinhsat.vn/wp-content/uploads/2020/07/kinh-cuong-luc.jpg"
+                                    "https://havaco.vn/wp-content/uploads/mai-kinh-cap-treo-chan-nhen-spider.jpg",
+                                    "https://havaco.vn/wp-content/uploads/lan-can-ban-cong.jpg"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Mét")
                             .description("Kính cường lực dày 8mm an toàn, chịu lực tốt")
                             .minStock(10)
                             .maxStock(100)
-                            .coverImageUrl("https://nhaxinhsaigon.com/wp-content/uploads/2021/01/kinh-cuong-luc.jpg")
+                            .coverImageUrl("https://tapdoankinhvietlong.vn/wp-content/uploads/2022/06/kinh-cuong-luc-3.jpg")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Mét").orElse(null))
@@ -349,15 +349,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("80"))
                             .salePrice(new BigDecimal("100"))
                             .images(List.of(
-                                    "https://vatlieuxaydungsymanh.com/wp-content/uploads/2021/02/xi-mang-trang.jpg",
-                                    "https://thegioivatlieuxaydung.vn/wp-content/uploads/2021/04/xi-mang-trang-3.jpg"
+                                    "https://tse3.mm.bing.net/th?id=OIP.CkaWQqSUZDH-yvAbebXEnwHaC8&pid=Api&P=0&h=220",
+                                    "https://tse3.mm.bing.net/th?id=OIP.0bJDzCN4wTxqSwuEnLSHSgHaD9&pid=Api&P=0&h=220"
                             ))
                             .weightValue(40.0f)
                             .weightUnit("Bao")
                             .description("Xi măng trắng, chất lượng cao cho các công trình thẩm mỹ")
                             .minStock(40)
                             .maxStock(400)
-                            .coverImageUrl("https://xaydungcuonggiahieu.com/wp-content/uploads/2020/12/xi-mang-trang.jpg")
+                            .coverImageUrl("https://product.hstatic.net/1000238808/product/ximang-insee_grande.png")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Bao").orElse(null))
@@ -372,15 +372,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("40"))
                             .salePrice(new BigDecimal("55"))
                             .images(List.of(
-                                    "https://cdn.vatlieuxaydungthuduc.com/wp-content/uploads/2021/01/vua-xay-dung.jpg",
-                                    "https://www.xaydungso.vn/wp-content/uploads/2021/10/vua-mau-vua-xay.jpg"
+                                    "https://tse4.mm.bing.net/th?id=OIP.wir26qm-YxXPrLoPeONsWgHaFD&pid=Api&P=0&h=220",
+                                    "https://tse1.mm.bing.net/th?id=OIP.L_qFbOrH4PGLrbVB1bjzhQHaEj&pid=Api&P=0&h=220"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Bao")
                             .description("Vữa xây dựng, kết dính cao cho các công trình xây dựng")
                             .minStock(50)
                             .maxStock(500)
-                            .coverImageUrl("https://vatlieuxaydunghanoi.vn/upload/images/vua-xay.jpg")
+                            .coverImageUrl("https://tse4.mm.bing.net/th?id=OIP.7ltt5xKPL5xBs49O2rOD6QHaK8&pid=Api&P=0&h=220")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Bao").orElse(null))
@@ -395,15 +395,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("90"))
                             .salePrice(new BigDecimal("120"))
                             .images(List.of(
-                                    "https://thepgiavinh.vn/wp-content/uploads/2020/08/thep-hop-vuong.jpg",
-                                    "https://catthanh.vn/wp-content/uploads/2020/09/thep-hop.jpg"
+                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs2-400x400.jpg",
+                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs5.jpg"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Kg")
                             .description("Thép hộp vuông 30x30, độ bền cao, sử dụng trong công trình xây dựng")
                             .minStock(60)
                             .maxStock(600)
-                            .coverImageUrl("https://saigonhoa.vn/wp-content/uploads/2019/06/thep-hop-vuong.jpg")
+                            .coverImageUrl("https://vinhtansteel.vn/wp-content/uploads/2022/11/hs6-e1669783476378.jpg")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Kg").orElse(null))
@@ -418,15 +418,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("25"))
                             .salePrice(new BigDecimal("35"))
                             .images(List.of(
-                                    "https://vatlieuxaydungcmc.vn/wp-content/uploads/2020/12/cat-den.jpg",
-                                    "https://vatlieuxaydungsaigon.vn/wp-content/uploads/2020/08/cat-den-san-lap.jpg"
+                                    "https://up.yimg.com/ib/th?id=OIP.qjsxagelonUE5nIXhtm-awHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107",
+                                    "https://tse1.mm.bing.net/th?id=OIP.oQMber3ajjuLEKgl-8gb0gHaFj&pid=Api&P=0&h=220"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("M3")
                             .description("Cát đen dùng cho san lấp, thích hợp cho nền móng")
                             .minStock(25)
                             .maxStock(250)
-                            .coverImageUrl("https://vatlieuxaydunghcm.vn/wp-content/uploads/2020/12/cat-den-3.jpg")
+                            .coverImageUrl("https://up.yimg.com/ib/th?id=OIP.lZXtnbRjuFXnZTzgL_CzfwHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("M3").orElse(null))
@@ -441,15 +441,15 @@ public class ApplicationInitConfig {
                             .costPrice(new BigDecimal("12"))
                             .salePrice(new BigDecimal("18"))
                             .images(List.of(
-                                    "https://nhua.net.vn/wp-content/uploads/2020/08/ong-nhua-pvc.jpg",
-                                    "https://saigonplastic.com.vn/wp-content/uploads/2021/03/ong-nhua-pvc-d32.jpg"
+                                    "https://tse4.mm.bing.net/th?id=OIP.8rfycKeEHpk9UYkQScx3rwHaHa&pid=Api&P=0&h=220",
+                                    "https://tse3.mm.bing.net/th?id=OIP.OAlMgrceaB3aubP_71sRMwAAAA&pid=Api&P=0&h=220"
                             ))
                             .weightValue(1.0f)
                             .weightUnit("Mét")
                             .description("Ống nhựa PVC D32, chịu lực tốt, bền vững cho hệ thống cấp nước")
                             .minStock(80)
                             .maxStock(800)
-                            .coverImageUrl("https://vietplast.vn/wp-content/uploads/2021/04/ong-nhua.jpg")
+                            .coverImageUrl("https://tse1.mm.bing.net/th?id=OIP.9cUgjhfEGdzGmNaJ71aP3wHaFC&pid=Api&P=0&h=220")
                             .isPoint(false)
                             .isActive(true)
                             .basicUnit(unitRepository.findByName("Mét").orElse(null))

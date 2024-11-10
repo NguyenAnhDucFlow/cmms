@@ -59,7 +59,7 @@ const PriceBook = () => {
         <div className="w-[16%]">
           <PriceBookFilterSidebar />
         </div>
-        <div className="w-[84%] space-y-3">
+        <div className="w-[84%] space-y-5">
           <div className="flex items-center justify-end pb-1">
             <PriceBookButton onAddNewClick={showModal} />
           </div>

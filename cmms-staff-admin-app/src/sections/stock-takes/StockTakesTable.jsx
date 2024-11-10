@@ -73,7 +73,7 @@ const StockTakesTable = ({ products }) => {
                   expandedRow === index
                     ? "border-x-2 border-t-2 border-blue-600 bg-[#BBDEFB]"
                     : "border-b border-gray-300"
-                }`}
+                } ${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
               >
                 <td className="p-2 ">
                   <Image

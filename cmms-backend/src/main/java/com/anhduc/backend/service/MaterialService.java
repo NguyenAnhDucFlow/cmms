@@ -158,7 +158,7 @@ public class MaterialService {
     }
 
     public Page<ListStoreMaterialResponse> listMaterialsByCompanyWithFilters(MaterialFilterDTO filter) {
-        PageRequest pageRequest = PageRequest.of(filter.getCurrentPage(), filter.getSize(), Sort.by("materialCode").ascending());
+        PageRequest pageRequest = PageRequest.of(filter.getCurrentPage(), filter.getSize(), Sort.by("materialCode").descending());
         return materialRepository.listMaterialsByCompanyWithFilters(filter, pageRequest);
     }
 
