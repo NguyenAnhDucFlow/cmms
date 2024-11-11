@@ -8,18 +8,21 @@ import { queryClient } from "./services/queryClient";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { StoreProvider } from "./contexts/StoreContext";
+import { DataProvider } from "./contexts/DataContext";
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <HelmetProvider>
-          <ConfigProvider theme={themeConfig}>
-            <ToastContainer />
-            <RouterProvider router={router} />
-          </ConfigProvider>
-        </HelmetProvider>
-      </StoreProvider>
+      <HelmetProvider>
+        <StoreProvider>
+          <DataProvider>
+            <ConfigProvider theme={themeConfig}>
+              <ToastContainer />
+              <RouterProvider router={router} />
+            </ConfigProvider>
+          </DataProvider>
+        </StoreProvider>
+      </HelmetProvider>
     </QueryClientProvider>
   );
 };

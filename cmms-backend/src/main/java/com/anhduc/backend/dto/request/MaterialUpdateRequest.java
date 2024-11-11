@@ -13,8 +13,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MaterialCreationRequest {
+public class MaterialUpdateRequest {
 
+    UUID materialId;
+    UUID storeId;
     String materialCode;
     String barcode;
     String name;
@@ -28,8 +30,6 @@ public class MaterialCreationRequest {
     int maxStock;
     String coverImageUrl;
     Boolean isPoint;
-    UUID basicUnitId;
-    List<MaterialUnitDto> materialUnitDtoList;
     UUID categoryId;
     UUID brandId;
 }

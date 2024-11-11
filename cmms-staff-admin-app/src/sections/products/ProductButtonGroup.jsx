@@ -1,5 +1,9 @@
 import React from "react";
-import { PlusOutlined, ImportOutlined, ExportOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  ImportOutlined,
+  ExportOutlined,
+} from "@ant-design/icons";
 import { Button } from "antd";
 
 const ProductButtonGroup = ({ onAddNewClick }) => {
@@ -12,7 +16,7 @@ const ProductButtonGroup = ({ onAddNewClick }) => {
       <Button type="primary" icon={<ImportOutlined />}>
         Import
       </Button>
-      
+
       <Button type="primary" icon={<ExportOutlined />}>
         Xuất file
       </Button>

@@ -15,13 +15,6 @@ RHFSelectLabelCol.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   tooltip: PropTypes.string,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-      label: PropTypes.string.isRequired,
-    })
-  ).isRequired,
   placeholder: PropTypes.string,
   apiUrl: PropTypes.string.isRequired,
   showAddButton: PropTypes.bool,
@@ -46,6 +39,7 @@ export default function RHFSelectLabelCol({
   setOptions,
   apiUrl,
   showAddButton,
+  disabled,
   ...other
 }) {
   const {
@@ -119,6 +113,7 @@ export default function RHFSelectLabelCol({
                         borderColor: isFocused ? "#1E88E5" : undefined,
                         padding: 0,
                       }}
+                      disabled={disabled}
                       showSearch
                       optionFilterProp="label"
                       onFocus={() => setIsFocused(true)}

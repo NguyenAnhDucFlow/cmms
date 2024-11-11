@@ -13,13 +13,6 @@ RHFSelect.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   tooltip: PropTypes.string,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-      label: PropTypes.string.isRequired,
-    })
-  ).isRequired,
   placeholder: PropTypes.string,
   apiUrl: PropTypes.string.isRequired,
 };

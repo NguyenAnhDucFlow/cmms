@@ -3,6 +3,7 @@ package com.anhduc.backend.controller;
 import com.anhduc.backend.dto.MaterialDetailDTO;
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
+import com.anhduc.backend.dto.request.MaterialUpdateRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
 import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.dto.response.MaterialResponse;
@@ -31,10 +32,19 @@ public class MaterialController {
                 .data(materialService.create(request)).build();
     }
 
+    @PatchMapping("/{id}/status")
+    ApiResponse<Void> updateMaterialStatus(@PathVariable UUID id, @RequestParam boolean status) {
+        materialService.updateMaterialStatus(id, status);
+        return ApiResponse.<Void>builder()
+                .message("Material status updated")
+                .build();
+    }
+
     @PutMapping
-    ApiResponse<MaterialResponse> update(@ModelAttribute MaterialCreationRequest request, UUID materialId, UUID storeId) throws IOException {
+    ApiResponse<MaterialResponse> update(@ModelAttribute MaterialUpdateRequest request) throws IOException {
         return ApiResponse.<MaterialResponse>builder()
-                .data(materialService.update(request, materialId, storeId)).build();
+                .data(materialService.update(request))
+                .build();
     }
 
     @GetMapping("/central-materials")

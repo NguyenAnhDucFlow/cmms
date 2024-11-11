@@ -82,34 +82,6 @@ public class ApplicationInitConfig {
     }
 
     private void initializeUsersAndStores() {
-        // Tạo tài khoản admin
-        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-            Set<Role> roles = new HashSet<>();
-            Role adminRole = roleRepository.findByName(RoleType.SENIOR_MANAGEMENT.name())
-                    .orElseThrow(() -> new AppException((ErrorCode.USER_ROLE_NOT_EXISTED)));
-            roles.add(adminRole);
-            User adminUser = new User();
-            adminUser.setEmail("admin@gmail.com");
-            adminUser.setRoles(roles);
-            adminUser.setPassword(passwordEncoder.encode("admin"));
-            userRepository.save(adminUser);
-        }
-
-        // Tạo tài khoản cho STORE_MANAGER
-        if (userRepository.findByEmail("storemanager@gmail.com").isEmpty()) {
-            Set<Role> roles = new HashSet<>();
-            Role storeManagerRole = roleRepository.findByName("STORE_MANAGER")
-                    .orElseThrow(() -> new AppException((ErrorCode.USER_ROLE_NOT_EXISTED)));
-            roles.add(storeManagerRole);
-            User storeManagerUser = new User();
-            storeManagerUser.setEmail("storemanager@gmail.com");
-            storeManagerUser.setRoles(roles);
-            storeManagerUser.setPassword(passwordEncoder.encode("storemanager"));
-            userRepository.save(storeManagerUser);
-        }
-
-        // Tạo tài khoản cho các role khác nếu cần
-        // ...
 
         // Tạo cửa hàng mặc định
         if (storeRepository.findByName("Cửa hàng trung tâm").isEmpty()) {
@@ -127,6 +99,39 @@ public class ApplicationInitConfig {
             store.setName("Cửa hàng quận 2");
             storeRepository.save(store);
         }
+
+        // Tạo tài khoản admin
+        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            Set<Role> roles = new HashSet<>();
+            Role adminRole = roleRepository.findByName(RoleType.SENIOR_MANAGEMENT.name())
+                    .orElseThrow(() -> new AppException((ErrorCode.USER_ROLE_NOT_EXISTED)));
+            roles.add(adminRole);
+            User adminUser = new User();
+            adminUser.setUsername("admin");
+            adminUser.setEmail("admin@gmail.com");
+            adminUser.setRoles(roles);
+            adminUser.setPassword(passwordEncoder.encode("admin"));
+            userRepository.save(adminUser);
+        }
+
+        // Tạo tài khoản cho STORE_MANAGER
+        if (userRepository.findByEmail("manager@gmail.com").isEmpty()) {
+            Set<Role> roles = new HashSet<>();
+            Store store = storeRepository.findByName("Cửa hàng quận 1").orElseThrow(
+                    () -> new AppException((ErrorCode.STORE_MATERIAL_NOT_FOUND))
+            );
+            Role storeManagerRole = roleRepository.findByName("STORE_MANAGER")
+                    .orElseThrow(() -> new AppException((ErrorCode.USER_ROLE_NOT_EXISTED)));
+            roles.add(storeManagerRole);
+            User storeManagerUser = new User();
+            storeManagerUser.setEmail("manager@gmail.com");
+            storeManagerUser.setRoles(roles);
+            storeManagerUser.setUsername("manager");
+            storeManagerUser.setStore(store);
+            storeManagerUser.setPassword(passwordEncoder.encode("manager"));
+            userRepository.save(storeManagerUser);
+        }
+
     }
 
     private void initializeMaterials() {

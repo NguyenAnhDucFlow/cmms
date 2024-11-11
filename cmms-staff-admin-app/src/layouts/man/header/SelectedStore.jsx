@@ -5,8 +5,8 @@ import { useStore } from "../../../hooks/useStore";
 import useAuth from "../../../hooks/useAuth";
 
 const SelectedStore = () => {
-  const { user, roles } = useAuth();
-  const { stores, changeStore } = useStore();
+  const { user } = useAuth();
+  const { stores, changeStore, hasRoleAdmin } = useStore();
   const [defaultStore, setDefaultStore] = useState(null);
 
   const handleStoreChange = (value) => {
@@ -16,12 +16,6 @@ const SelectedStore = () => {
       changeStore(id, name);
     }
   };
-
-  // Check if the user has a senior management role
-  const hasRoleAdmin = useMemo(
-    () => roles.some((role) => role.name === "SENIOR_MANAGEMENT"),
-    [roles]
-  );
 
   // Determine which store should be the default based on the role
   useEffect(() => {

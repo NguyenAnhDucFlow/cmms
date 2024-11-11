@@ -3,6 +3,7 @@ package com.anhduc.backend.service;
 import com.anhduc.backend.dto.MaterialDetailDTO;
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
+import com.anhduc.backend.dto.request.MaterialUpdateRequest;
 import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.dto.response.MaterialResponse;
 import com.anhduc.backend.entity.*;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -52,13 +52,14 @@ public class MaterialService {
         Material material = Material.builder()
                 .name(request.getName())
                 .materialCode(materialCode)
+                .isActive(true)
                 .barcode(request.getBarcode())
                 .category(category)
                 .brand(brand)
                 .basicUnit(basicUnit)
                 .costPrice(request.getCostPrice())
                 .salePrice(request.getSalePrice())
-                .isPoint(request.isPoint())
+                .isPoint(request.getIsPoint())
                 .description(request.getDescription())
                 .maxStock(request.getMaxStock())
                 .minStock(request.getMinStock())
@@ -66,12 +67,11 @@ public class MaterialService {
                 .weightValue(request.getWeightValue())
                 .build();
         if (request.getMaterialUnitDtoList() != null && !request.getMaterialUnitDtoList().isEmpty()) {
-            AtomicInteger variantCodeCounter = new AtomicInteger(Integer.parseInt(materialCode.replace("SP", "")));
             List<MaterialUnit> materialUnits = request.getMaterialUnitDtoList().stream().map(
                     materialUnitDto -> {
                         Unit unit = unitRepository.findById(materialUnitDto.getUnitId())
                                 .orElseThrow(() -> new AppException(ErrorCode.UNIT_NOT_EXISTED));
-                        String variantCode = "SP" + String.format("%06d", variantCodeCounter.incrementAndGet());
+                        String variantCode = materialCode + "_" +unit.getName().toUpperCase();
                         return MaterialUnit.builder()
                                 .unit(unit)
                                 .variantCode(variantCode)
@@ -103,17 +103,29 @@ public class MaterialService {
         return materialResponse;
     }
 
-    public MaterialResponse update(MaterialCreationRequest request, UUID materialId, UUID storeId) throws IOException {
-        Material material = materialRepository.findById(materialId).orElseThrow(
+    public MaterialResponse update(MaterialUpdateRequest request) throws IOException {
+        Material material = materialRepository.findById(request.getMaterialId()).orElseThrow(
                 () -> new AppException(ErrorCode.MATERIAL_NOT_FOUND)
         );
-        material.setName(request.getName());
-        material.setBarcode(request.getBarcode());
-        material.setPoint(request.isPoint());
-        material.setDescription(request.getDescription());
-        Store store = storeRepository.findById(storeId).orElseThrow(
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Brand brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        Store store = storeRepository.findById(request.getStoreId()).orElseThrow(
                 () -> new AppException(ErrorCode.STORE_NOT_EXISTED)
         );
+
+        material.setName(request.getName());
+        material.setBarcode(request.getBarcode());
+        material.setPoint(request.getIsPoint());
+        material.setDescription(request.getDescription());
+        material.setCostPrice(request.getCostPrice());
+        material.setSalePrice(request.getSalePrice());
+        material.setWeightUnit(request.getWeightUnit());
+        material.setWeightValue(request.getWeightValue());
+        material.setCategory(category);
+        material.setBrand(brand);
+
         StoreMaterial storeMaterial = new StoreMaterial();
         storeMaterial.setMaterial(material);
         storeMaterial.setStore(store);
@@ -121,22 +133,6 @@ public class MaterialService {
         storeMaterial.setMaxStock(request.getMaxStock());
         storeMaterialRepository.save(storeMaterial);
 
-
-        if (request.getMaterialUnitDtoList() != null && !request.getMaterialUnitDtoList().isEmpty()) {
-            List<MaterialUnit> materialUnits = request.getMaterialUnitDtoList().stream().map(
-                    materialUnitDto -> {
-                        Unit unit = unitRepository.findById(materialUnitDto.getUnitId())
-                                .orElseThrow(() -> new AppException(ErrorCode.UNIT_NOT_EXISTED));
-                        return MaterialUnit.builder()
-                                .unit(unit)
-                                .material(material)
-                                .conversionRate(materialUnitDto.getConversionRate())
-                                .price(materialUnitDto.getPrice())
-                                .build();
-                    }
-            ).toList();
-            material.setMaterialUnits(materialUnits);
-        }
         List<String> images = new ArrayList<>();
         if (request.getImagesFile() != null && !request.getImagesFile().isEmpty()) {
             for (MultipartFile file : request.getImagesFile()) {
@@ -155,6 +151,14 @@ public class MaterialService {
         materialResponse.setBrandName(material.getBrand().getName());
         materialResponse.setCategoryName(material.getCategory().getName());
         return materialResponse;
+    }
+
+    public void updateMaterialStatus(UUID materialId, boolean isActive) {
+        Material material = materialRepository.findById(materialId).orElseThrow(
+                () -> new AppException(ErrorCode.MATERIAL_NOT_FOUND)
+        );
+        material.setIsActive(isActive);
+        materialRepository.save(material);
     }
 
     public Page<ListStoreMaterialResponse> listMaterialsByCompanyWithFilters(MaterialFilterDTO filter) {

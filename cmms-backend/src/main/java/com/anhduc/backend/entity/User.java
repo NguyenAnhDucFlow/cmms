@@ -1,5 +1,6 @@
 package com.anhduc.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +37,7 @@ public class User extends AuditAble{
     @ManyToMany
     Set<Role> roles;
     @OneToOne
+    @JsonBackReference
     Store store;
 
 }

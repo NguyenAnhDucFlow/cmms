@@ -35,7 +35,6 @@ const PriceBook = () => {
       try {
         const response = await axios.get("/materials/central-materials");
         setPriceBook(response.data.data);
-        console.log("materials", response.data.data);
       } catch (error) {
         console.error(error.message);
       }

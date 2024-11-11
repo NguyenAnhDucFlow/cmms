@@ -1,14 +1,14 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "../utils/axios";
+import useAuth from "../hooks/useAuth";
 
 export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [stores, setStores] = useState([]);
-  const [storeId, setStoreId] = useState(
-    localStorage.getItem("selectedStoreId") || null
-  );
+  const { user, roles } = useAuth();
+  const [storeId, setStoreId] = useState(null);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -20,20 +20,37 @@ export const StoreProvider = ({ children }) => {
           "Error loading stores:",
           error.response?.data || error.message
         );
-        toast.error("Failed to load stores.");
       }
     };
     loadStores();
   }, []);
 
+  const hasRoleAdmin = useMemo(
+    () => roles.some((role) => role.name === "SENIOR_MANAGEMENT"),
+    [roles]
+  );
+
+  useEffect(() => {
+    const storeCentral = stores.find(
+      (store) => store.name === "Cửa hàng trung tâm"
+    );
+
+    if (hasRoleAdmin && storeCentral) {
+      setStoreId(storeCentral.id);
+    } else {
+      setStoreId(user?.store?.id);
+    }
+  }, [hasRoleAdmin, stores, user]);
+
   const changeStore = (newStoreId, storeName) => {
     setStoreId(newStoreId);
-    localStorage.setItem("selectedStoreId", newStoreId);
     toast.success(`Đã chuyển sang cửa hàng ${storeName}`);
   };
 
   return (
-    <StoreContext.Provider value={{ stores, storeId, changeStore }}>
+    <StoreContext.Provider
+      value={{ stores, storeId, changeStore, hasRoleAdmin }}
+    >
       {children}
     </StoreContext.Provider>
   );

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { DevTool } from "@hookform/devtools";
 import { Modal, Tabs, Button, Input, Select, Checkbox, message } from "antd";
 import {
   useForm,
@@ -7,7 +8,6 @@ import {
   Controller,
 } from "react-hook-form";
 
-import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import RHFTextField from "../hook-form/RHFTextField";
@@ -19,22 +19,21 @@ import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 import { FaRegTrashCan } from "react-icons/fa6";
 import RHFSelectLabelCol from "../hook-form/RHFSelectLabelCol";
 import axios from "../../utils/axios";
-import { useData } from "../../hooks/useData";
+import { useStore } from "../../hooks/useStore";
 
 const { TextArea } = Input;
 
 const schema = yup.object().shape({
-  nameMaterial: yup.string().required("Tên sản phẩm là bắt buộc"),
+  name: yup.string().required("Tên sản phẩm là bắt buộc"),
   categoryId: yup.string().required("Nhóm hàng là bắt buộc"),
   brandId: yup.string().required("Thương hiệu là bắt buộc"),
-  basicUnit: yup.string().required("Đơn vị cơ bản là bắt buộc"),
 });
 
-const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
+const UpdateProductModal = ({ visible, onClose, productId }) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      nameMaterial: "",
+      name: "",
       categoryId: "",
       brandId: "",
       basicUnit: "",
@@ -46,14 +45,82 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
       materialUnitDtoList: [],
     },
   });
-  const { control, watch } = methods;
+  const { control, watch, reset } = methods;
 
-  const { categories, brands, units, setCategories, setUnits, setBrands } =
-    useData();
   const [isOpenUnit, setIsOpenUnit] = useState(true);
   const basicUnit = watch("basicUnit");
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [units, setUnits] = useState([]);
+  const { storeId } = useStore();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Cập nhật hàng hóa thành công",
+    });
+  };
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Cập nhật hàng hóa thất bại",
+    });
+  };
 
   const toggleDropdownUnit = () => setIsOpenUnit(!isOpenUnit);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesRes, brandsRes, unitsRes] = await Promise.all([
+          axios.get("/categories"),
+          axios.get("/brands"),
+          axios.get("/units"),
+        ]);
+        setCategories(categoriesRes.data.data);
+        setBrands(brandsRes.data.data);
+        setUnits(unitsRes.data.data);
+
+        if (productId) {
+          const productRes = await axios.get(
+            `/materials/${productId}/stores/${storeId}`
+          );
+          const productData = productRes.data.data;
+
+          const matchingBrand = brandsRes.data.data.find(
+            (brand) => brand.name === productData.brand
+          );
+          const brandId = matchingBrand ? matchingBrand.id : "";
+
+          const matchingCategory = categoriesRes.data.data.find(
+            (category) => category.name === productData.category
+          );
+
+          const categoryId = matchingCategory ? matchingCategory.id : "";
+
+          const imagesFile = productData.images.map((url, index) => ({
+            uid: `-${index}`,
+            name: `image-${index}.png`,
+            status: "done",
+            url: url,
+          }));
+
+          reset({
+            ...productData,
+            categoryId,
+            brandId,
+            imagesFile,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (visible) {
+      fetchData();
+    }
+  }, [visible, productId, reset]);
 
   const {
     fields: unitFields,
@@ -67,50 +134,30 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
   const {
     handleSubmit,
     formState: { errors },
-    reset,
   } = methods;
 
   const handleAddUnit = () => {
     if (!basicUnit) {
-      message.error("Chưa nhập đơn vị cơ bản");
+      // message.error("Chưa nhập đơn vị cơ bản");
     } else {
       appendUnit({ unitId: "", conversionRate: 0, price: 0 });
     }
   };
 
   const onSubmit = async (data) => {
-    const hasEmptyUnitId = data.materialUnitDtoList.some(
-      (unit) => !unit.unitId
-    );
-
-    if (hasEmptyUnitId) {
-      message.error("Vui lòng nhập tên đơn vị quy đổi trước khi lưu");
-      return;
-    }
-
-    const basicUnit = watch("basicUnit");
-    const hasDuplicateUnit = data.materialUnitDtoList.some(
-      (unit) => unit.unitId === basicUnit
-    );
-    if (hasDuplicateUnit) {
-      message.error("Tên đơn vị phải khác với đơn vị cơ bản");
-      return;
-    }
-
     try {
       const formData = new FormData();
       if (Array.isArray(data.imagesFile)) {
         for (const file of data.imagesFile) {
-          if (file.type.startsWith("image/")) {
+          if (file.originFileObj) {
             formData.append("imagesFile", file.originFileObj);
           }
         }
       }
       formData.append("barcode", data.barcode || "");
-      formData.append("name", data.nameMaterial || "");
+      formData.append("name", data.name || "");
       formData.append("categoryId", data.categoryId);
       formData.append("brandId", data.brandId);
-      formData.append("basicUnitId", data.basicUnit);
       formData.append("costPrice", data.costPrice || 0);
       formData.append("salePrice", data.salePrice || 0);
       formData.append("weightValue", data.weightValue || 0);
@@ -119,27 +166,19 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
       formData.append("maxStock", data.maxStock || 0);
       formData.append("description", data.description || "");
       formData.append("isPoint", data.isPoint || false);
-      // add units
-      data.materialUnitDtoList.forEach((unit, index) => {
-        formData.append(`materialUnitDtoList[${index}].unitId`, unit.unitId);
-        formData.append(
-          `materialUnitDtoList[${index}].conversionRate`,
-          unit.conversionRate
-        );
-        formData.append(`materialUnitDtoList[${index}].price`, unit.price);
-      });
+      formData.append("materialId", productId);
+      formData.append("storeId", storeId);
 
-      await axios.post("/materials", formData, {
+      await axios.put(`/materials`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      message.success("Tạo hàng hóa thành công");
-      if (handleProductCreated) handleProductCreated();
+      success();
       onClose();
       reset();
-    } catch (error) {
-      message.error("Tạo hàng hóa thất bại");
+    } catch (e) {
+      error();
     }
   };
 
@@ -157,12 +196,17 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
           <div className="flex ">
             <div className="space-y-4 w-[60%] ">
               <RHFTextField
+                name="materialCode"
+                label="Mã Hàng"
+                tooltip="Mã hàng tự động tăng"
+              />
+              <RHFTextField
                 name="barcode"
                 label="Mã vạch"
                 tooltip="Mã vạch hàng hóa thường được tạo ra bởi nhà sản xuất"
               />
               <RHFTextField
-                name="nameMaterial"
+                name="name"
                 label="Tên hàng"
                 tooltip="Tên hàng là tên của sản phẩm"
               />
@@ -262,6 +306,7 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
                       label="Đơn vị cơ bản"
                       tooltip="Đơn vị của hàng hóa như hộp, lốc, thùng..."
                       apiUrl="/units"
+                      disabled
                       options={units}
                       setOptions={setUnits}
                     />
@@ -272,9 +317,10 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
                       >
                         <RHFSelectLabelCol
                           name={`materialUnitDtoList.${index}.unitId`}
-                          label="Tên đơn vị"
+                          label="Đơn vị cơ bản"
                           options={units}
                           showAddButton={false}
+                          disabled
                         />
                         <label className="flex flex-col w-48">
                           <div className="text-sm font-semibold">
@@ -325,15 +371,12 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
             <div className="flex items-center justify-between px-3 py-5 gap-8">
               <RHFInputNumberInLine
                 name="minStock"
-                label="Ít nhất
-                
-"
+                label="Ít nhất"
                 tooltip="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng dưới định mức tồn kho < Tồn ít nhất"
               />
               <RHFInputNumberInLine
                 name="maxStock"
-                label="Nhiều nhất
-"
+                label="Nhiều nhất"
                 tooltip="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng dưới định mức tồn kho < Tồn ít nhất"
               />
             </div>
@@ -368,18 +411,20 @@ const CreateProductModal = ({ visible, onClose, handleProductCreated }) => {
   return (
     <Modal
       width={960}
-      title="Tạo sản phẩm mới"
+      title="Cập nhật sản phẩm"
       open={visible}
       onOk={handleSubmit(onSubmit)}
       onCancel={handleCancel}
-      okText="Tạo"
+      okText="Cập nhật"
       cancelText="Hủy"
     >
       <FormProvider {...methods}>
+        {contextHolder}
         <Tabs defaultActiveKey="1" items={tabItems} />
+        <DevTool control={control} />
       </FormProvider>
     </Modal>
   );
 };
 
-export default CreateProductModal;
+export default UpdateProductModal;

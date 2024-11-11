@@ -1,5 +1,6 @@
 package com.anhduc.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +28,7 @@ public class Store extends AuditAble{
     String district;
     String ward;
     @OneToOne(mappedBy = "store")
+    @JsonManagedReference
     User user;
 
 

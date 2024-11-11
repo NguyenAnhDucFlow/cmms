@@ -4,20 +4,7 @@ import DropdownToggle from "./DropdownToggle";
 
 const DropdownSelectSearch = ({
   title = "Dropdown",
-  options = [
-    {
-      value: "1",
-      label: "Jack",
-    },
-    {
-      value: "2",
-      label: "Lucy",
-    },
-    {
-      value: "3",
-      label: "Tom",
-    },
-  ],
+  options,
   placeholder = "",
   onOptionSelect = () => {},
   defaultOpen = true,
