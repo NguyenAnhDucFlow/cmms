@@ -3,7 +3,6 @@ import { lazy, Suspense } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import AuthGuard from "../guards/AuthGuard";
 import GuestGuard from "../guards/GuestGuard";
-import { element } from "prop-types";
 
 const Loadable = (Component) => (props) => {
   return (

@@ -1,14 +1,17 @@
 package com.anhduc.backend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MaterialDetailDTO {
     UUID id;
     String materialCode;

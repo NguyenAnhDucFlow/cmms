@@ -1,5 +1,6 @@
 package com.anhduc.backend.service;
 
+import com.anhduc.backend.dto.ListMaterialImportDTO;
 import com.anhduc.backend.dto.MaterialDetailDTO;
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +41,7 @@ public class MaterialService {
     UnitRepository unitRepository;
     StoreRepository storeRepository;
     StoreMaterialRepository storeMaterialRepository;
+    CentralWarehouseRepository centralWarehouseRepository;
 
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -77,7 +80,7 @@ public class MaterialService {
                                 .variantCode(variantCode)
                                 .material(material)
                                 .conversionRate(materialUnitDto.getConversionRate())
-                                .price(materialUnitDto.getPrice())
+                                .price(BigDecimal.valueOf(materialUnitDto.getPrice()))
                                 .build();
                     }
             ).toList();
@@ -166,6 +169,11 @@ public class MaterialService {
         return materialRepository.listMaterialsByCompanyWithFilters(filter, pageRequest);
     }
 
+    public Page<ListStoreMaterialResponse> listMaterialsByStoreWithFilters(MaterialFilterDTO filter) {
+        PageRequest pageRequest = PageRequest.of(filter.getCurrentPage(), filter.getSize(), Sort.by("materialCode").descending());
+        return materialRepository.listMaterialsByStoreWithFilters(filter, pageRequest);
+    }
+
     public MaterialDetailDTO findMaterialDetailByStore(UUID materialId, UUID storeId) {
         Optional<StoreMaterial> storeMaterialOpt = storeMaterialRepository.findByMaterialIdAndStoreId(materialId, storeId);
 
@@ -217,6 +225,52 @@ public class MaterialService {
             );
         }
     }
+
+
+    public List<ListMaterialImportDTO> getAllMaterialsForImport() {
+        List<Material> materials = materialRepository.findAll();
+        List<ListMaterialImportDTO> materialDTOs = new ArrayList<>();
+
+        for (Material material : materials) {
+            // Lấy tổng tồn kho từ CentralWarehouse
+            double totalQuantity = centralWarehouseRepository
+                    .findByMaterialId(material.getId())
+                    .stream()
+                    .mapToDouble(CentralWarehouse::getQuantity)
+                    .sum();
+
+            if (material.getBasicUnit() != null) {
+                ListMaterialImportDTO baseUnitDto = new ListMaterialImportDTO(
+                        material.getId(),
+                        material.getMaterialCode(),
+                        material.getName(),
+                        material.getCoverImageUrl(),
+                        material.getCostPrice(),
+                        totalQuantity,
+                        material.getBasicUnit().getName()
+                );
+                materialDTOs.add(baseUnitDto);
+            }
+
+            if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
+                for (MaterialUnit variant : material.getMaterialUnits()) {
+                    ListMaterialImportDTO variantDto = new ListMaterialImportDTO(
+                            material.getId(),
+                            variant.getVariantCode(),
+                            material.getName(),
+                            material.getCoverImageUrl(),
+                            variant.getPrice(),
+                            totalQuantity,
+                            variant.getUnit().getName()
+                    );
+                    materialDTOs.add(variantDto);
+                }
+            }
+        }
+
+        return materialDTOs;
+    }
+
 
 
     //-------------------- PRIVATE METHOD ---------------------------------

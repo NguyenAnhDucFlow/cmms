@@ -1,5 +1,6 @@
 package com.anhduc.backend.controller;
 
+import com.anhduc.backend.dto.ListMaterialImportDTO;
 import com.anhduc.backend.dto.MaterialDetailDTO;
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
@@ -48,7 +49,7 @@ public class MaterialController {
     }
 
     @GetMapping("/central-materials")
-    public ApiResponse<List<ListStoreMaterialResponse>> listMaterialsByStoreWithFilters(
+    public ApiResponse<List<ListStoreMaterialResponse>> listMaterialsByCompanyWithFilters(
             @ModelAttribute MaterialFilterDTO filter
     ) {
         Page<ListStoreMaterialResponse> storeMaterialResponses = materialService.listMaterialsByCompanyWithFilters(filter);
@@ -57,6 +58,27 @@ public class MaterialController {
                 .data(storeMaterialResponseList)
                 .totalElements(storeMaterialResponses.getTotalElements())
                 .totalPages(storeMaterialResponses.getTotalPages())
+                .build();
+    }
+
+    @GetMapping("/store-materials")
+    public ApiResponse<List<ListStoreMaterialResponse>> listMaterialsByStoreWithFilters(
+            @ModelAttribute MaterialFilterDTO filter
+    ) {
+        Page<ListStoreMaterialResponse> storeMaterialResponses = materialService.listMaterialsByStoreWithFilters(filter);
+        List<ListStoreMaterialResponse> storeMaterialResponseList = storeMaterialResponses.getContent();
+        return ApiResponse.<List<ListStoreMaterialResponse>>builder()
+                .data(storeMaterialResponseList)
+                .totalElements(storeMaterialResponses.getTotalElements())
+                .totalPages(storeMaterialResponses.getTotalPages())
+                .build();
+    }
+
+    @GetMapping("/import-list")
+    public ApiResponse<List<ListMaterialImportDTO>> getAllMaterialsForImport(
+    ) {
+        return ApiResponse.<List<ListMaterialImportDTO>>builder()
+                .data(materialService.getAllMaterialsForImport())
                 .build();
     }
 

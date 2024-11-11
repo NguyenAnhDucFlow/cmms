@@ -8,7 +8,7 @@ const ManLayout = () => {
     <>
       <ManHeader />
       <ManNavbar />
-      <main className=" bg-background h-full">
+      <main className=" bg-background min-h-screen h-full">
         <div className="container py-4 ">
           <Outlet />
         </div>

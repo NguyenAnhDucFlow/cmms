@@ -11,7 +11,7 @@ const inventoryOption = [
   "Hết hàng trong kho",
 ];
 
-const ProductFilterSidebar = ({ filters, setFilters }) => {
+const ProductFilterSidebar = ({ setFilters }) => {
   const { brands, categories } = useData();
 
   const handleCategoryChange = (categoryId) => {

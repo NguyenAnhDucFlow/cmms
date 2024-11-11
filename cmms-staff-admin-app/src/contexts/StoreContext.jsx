@@ -7,8 +7,9 @@ export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [stores, setStores] = useState([]);
-  const { user, roles } = useAuth();
-  const [storeId, setStoreId] = useState(null);
+  const { roles, user } = useAuth();
+  const initialStoreId = localStorage.getItem("storeId");
+  const [storeId, setStoreId] = useState(initialStoreId || null);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -30,20 +31,24 @@ export const StoreProvider = ({ children }) => {
     [roles]
   );
 
-  useEffect(() => {
-    const storeCentral = stores.find(
-      (store) => store.name === "Cửa hàng trung tâm"
-    );
+  const storeCentral = stores.find(
+    (store) => store.name === "Cửa hàng trung tâm"
+  );
 
-    if (hasRoleAdmin && storeCentral) {
-      setStoreId(storeCentral.id);
-    } else {
-      setStoreId(user?.store?.id);
+  useEffect(() => {
+    if (!initialStoreId) {
+      if (hasRoleAdmin) {
+        setStoreId(storeCentral.id);
+      } else if (user?.store?.id) {
+        setStoreId(user.store.id);
+      }
     }
-  }, [hasRoleAdmin, stores, user]);
+  }, [hasRoleAdmin, user, initialStoreId]);
 
   const changeStore = (newStoreId, storeName) => {
     setStoreId(newStoreId);
+    localStorage.setItem("storeId", newStoreId);
+    window.location.reload();
     toast.success(`Đã chuyển sang cửa hàng ${storeName}`);
   };
 

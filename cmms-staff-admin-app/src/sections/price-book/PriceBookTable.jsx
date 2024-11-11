@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pagination } from "antd";
+import { Empty } from "antd";
 
 const PriceBookTable = ({ products }) => {
   return (
     <div>
-      <table className="min-w-full bg-white border border-gray-300">
+      <table className="min-w-full bg-white border border-gray-300 ">
         <thead>
           <tr className="bg-[#BBDEFB]">
             <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
@@ -25,24 +26,31 @@ const PriceBookTable = ({ products }) => {
           </tr>
         </thead>
         <tbody>
-          {products.map((row, index) => (
-            <React.Fragment key={index}>
-              <tr
-                className={`cursor-pointer hover:bg-[#BBDEFB] ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                }`}
-              >
-                <td className="p-4">{row.materialCode}</td>
-                <td className="p-4">{row.name}</td>
-                <td className="p-4">{row.salePrice}</td>
-                <td className="p-4">{row.costPrice}</td>
-                <td className="p-4">{row.quantity}</td>
-              </tr>
-            </React.Fragment>
-          ))}
+          {products && products.lenght > 0 ? (
+            products.map((row, index) => (
+              <React.Fragment key={index}>
+                <tr
+                  className={`cursor-pointer hover:bg-[#BBDEFB] ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                  }`}
+                >
+                  <td className="p-4">{row.materialCode}</td>
+                  <td className="p-4">{row.name}</td>
+                  <td className="p-4">{row.salePrice}</td>
+                  <td className="p-4">{row.costPrice}</td>
+                  <td className="p-4">{row.quantity}</td>
+                </tr>
+              </React.Fragment>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5">
+                <Empty className="py-8" description="No data available" />
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
-      <Pagination size="small" total={50} showSizeChanger />
     </div>
   );
 };

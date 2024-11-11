@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +25,6 @@ public class MaterialUnit {
     Material material;
     String variantCode;
     double conversionRate;
-    double price;
+    BigDecimal price;
 
 }

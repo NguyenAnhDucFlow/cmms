@@ -11,7 +11,7 @@ import axios from "../utils/axios";
 import { Pagination } from "antd";
 
 const Products = () => {
-  const { storeId } = useStore();
+  const { storeId, stores } = useStore();
   const [products, setProducts] = useState([]);
   const [totalElement, setTotalElement] = useState(0);
   const [reloadTrigger, setReloadTrigger] = useState(false);
@@ -32,9 +32,18 @@ const Products = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
 
+  const storeCentral = stores.find(
+    (store) => store.name === "Cửa hàng trung tâm"
+  );
+
   const loadProducts = async () => {
     try {
-      const response = await axios.get("/materials/central-materials", {
+      const endpoint =
+        storeCentral && storeId === storeCentral.id
+          ? "/materials/central-materials"
+          : "/materials/store-materials";
+      console.log("endpoint", endpoint);
+      const response = await axios.get(endpoint, {
         params: {
           storeId,
           name: filters.name,

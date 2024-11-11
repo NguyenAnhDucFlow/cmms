@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Select } from "antd";
 import { IoStorefront } from "react-icons/io5";
 import { useStore } from "../../../hooks/useStore";
@@ -6,8 +6,7 @@ import useAuth from "../../../hooks/useAuth";
 
 const SelectedStore = () => {
   const { user } = useAuth();
-  const { stores, changeStore, hasRoleAdmin } = useStore();
-  const [defaultStore, setDefaultStore] = useState(null);
+  const { stores, storeId, changeStore, hasRoleAdmin } = useStore();
 
   const handleStoreChange = (value) => {
     const selectedStore = stores.find((store) => store.id === value);
@@ -17,20 +16,6 @@ const SelectedStore = () => {
     }
   };
 
-  // Determine which store should be the default based on the role
-  useEffect(() => {
-    const storeCentral = stores.find(
-      (store) => store.name === "Cửa hàng trung tâm"
-    );
-
-    if (hasRoleAdmin && storeCentral) {
-      setDefaultStore(storeCentral.id); // Default to the central store if user is admin
-    } else {
-      setDefaultStore(user?.store?.id); // Default to user's assigned store otherwise
-    }
-  }, [hasRoleAdmin, stores, user]);
-
-  // Filter available stores based on role (Admins see all stores)
   const filteredStores = useMemo(() => {
     return hasRoleAdmin
       ? stores
@@ -41,7 +26,7 @@ const SelectedStore = () => {
     <Select
       className="w-full"
       showSearch
-      value={defaultStore}
+      value={storeId}
       placeholder="Chọn cửa hàng"
       variant="borderless"
       optionFilterProp="label"
