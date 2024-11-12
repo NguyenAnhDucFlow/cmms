@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class ApplicationInitConfig {
     UnitRepository unitRepository;
     CategoryRepository categoryRepository;
     BrandRepository brandRepository;
+    SupplierRepository supplierRepository;
 
     @Bean
     ApplicationRunner applicationRunner() {
@@ -41,6 +43,7 @@ public class ApplicationInitConfig {
             initializeRolesAndPermissions();
             initializeUsersAndStores();
             initializeMaterials();
+            initializeSuppliers();
         };
     }
 
@@ -466,4 +469,71 @@ public class ApplicationInitConfig {
             materials.forEach(materialRepository::save);
         }
     }
+
+    private void initializeSuppliers() {
+        if (supplierRepository.count() == 0) {
+            List<Supplier> suppliers = List.of(
+                    Supplier.builder()
+                            .id(UUID.randomUUID())
+                            .name("Công ty Cung Cấp Bê Tông")
+                            .address("123 Đường Bê Tông")
+                            .phone("0123-456-789")
+                            .email("contact@betongcungcap.vn")
+                            .province("Hà Nội")
+                            .district("Ba Đình")
+                            .ward("Quán Thánh")
+                            .note("Nhà cung cấp bê tông chất lượng cao")
+                            .build(),
+                    Supplier.builder()
+                            .id(UUID.randomUUID())
+                            .name("Thép Việt")
+                            .address("456 Đại lộ Thép")
+                            .phone("0234-567-890")
+                            .email("sales@thepviet.vn")
+                            .province("TP Hồ Chí Minh")
+                            .district("Quận 1")
+                            .ward("Bến Thành")
+                            .note("Nhà cung cấp thép chất lượng cao")
+                            .build(),
+                    Supplier.builder()
+                            .id(UUID.randomUUID())
+                            .name("Công ty Gạch Xây Dựng")
+                            .address("789 Đường Gạch")
+                            .phone("0345-678-901")
+                            .email("info@gachxaydung.vn")
+                            .province("Đà Nẵng")
+                            .district("Liên Chiểu")
+                            .ward("Hòa Khánh")
+                            .note("Cung cấp đa dạng các loại gạch xây dựng")
+                            .build(),
+                    Supplier.builder()
+                            .id(UUID.randomUUID())
+                            .name("Xi Măng Miền Bắc")
+                            .address("101 Đường Công Nghiệp")
+                            .phone("0456-789-012")
+                            .email("support@ximangmienbac.vn")
+                            .province("Hải Phòng")
+                            .district("Hồng Bàng")
+                            .ward("Thượng Lý")
+                            .note("Nhà cung cấp xi măng uy tín tại miền Bắc")
+                            .build(),
+                    Supplier.builder()
+                            .id(UUID.randomUUID())
+                            .name("Công ty Vật Liệu Xây Dựng An Phát")
+                            .address("202 Đường Xây Dựng")
+                            .phone("0567-890-123")
+                            .email("contact@anphatxaydung.vn")
+                            .province("Cần Thơ")
+                            .district("Ninh Kiều")
+                            .ward("An Bình")
+                            .note("Chuyên cung cấp vật liệu xây dựng đa dạng")
+                            .build()
+            );
+
+            supplierRepository.saveAll(suppliers);
+            log.info("Đã khởi tạo dữ liệu mẫu cho nhà cung cấp");
+        }
+    }
+
+
 }

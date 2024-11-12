@@ -16,6 +16,9 @@ const ManLayout = Loadable(lazy(() => import("../layouts/man/index")));
 const Dashboard = Loadable(lazy(() => import("../pages/Dashboard")));
 const Products = Loadable(lazy(() => import("../pages/Products")));
 const ErrorPage = Loadable(lazy(() => import("../pages/ErrorPage")));
+const PurchaseOrderNew = Loadable(
+  lazy(() => import("../sections/purchase-order/PurchaseOrderNew"))
+);
 const PurchaseOrder = Loadable(lazy(() => import("../pages/PurchaseOrder")));
 const Stores = Loadable(lazy(() => import("../pages/Stores")));
 const Users = Loadable(lazy(() => import("../pages/Users")));
@@ -38,7 +41,11 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       { path: "products", element: <Products /> },
-      { path: "purchase-order", element: <PurchaseOrder /> },
+      {
+        path: "purchase-order",
+        element: <PurchaseOrder />,
+      },
+      { path: "purchase-order/new", element: <PurchaseOrderNew /> },
       { path: "stores", element: <Stores /> },
       { path: "users", element: <Users /> },
       { path: "price-book", element: <PriceBook /> },

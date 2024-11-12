@@ -1,112 +1,135 @@
-import React, { useState } from "react";
-import SearchBar from "../sections/purchase-order/SearchBar";
-import InfoPurchaseOrder from "../sections/purchase-order/InfoPurchaseOrder";
-import { Input, Empty, Button, Popconfirm } from "antd";
-import { FaRegTrashCan } from "react-icons/fa6";
+import React, { useEffect, useMemo, useState } from "react";
+import Page from "../components/Page";
+import PurchaseOrderFilterSidebar from "../sections/purchase-order/PurchaseOrderFilterSidebar";
+import PurchaseOrderTable from "../sections/purchase-order/PurchaseOrderTable";
+import PurchaseOrderSearch from "../sections/purchase-order/PurchaseOrderSearch";
+import PurchaseOrderButtonGroup from "../sections/purchase-order/PurchaseOrderButtonGroup";
+import { useStore } from "../hooks/useStore";
+import axios from "../utils/axios";
+import { Pagination } from "antd";
+import { Outlet } from "react-router-dom";
 
 const PurchaseOrder = () => {
-  const [selectedItems, setSelectedItems] = useState([]);
+  const { storeId, stores } = useStore();
+  const [products, setProducts] = useState([]);
+  const [totalElement, setTotalElement] = useState(0);
+  const [reloadTrigger, setReloadTrigger] = useState(false);
 
-  const handleSelectItem = (item) => {
-    const existingItemIndex = selectedItems.findIndex(
-      (selectedItem) => selectedItem.materialCode === item.materialCode
-    );
+  // State cho phân trang và tìm kiếm
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const [filters, setFilters] = useState({
+    name: "",
+    category: null,
+    brand: null,
+    isActive: null,
+    hasStock: null,
+    belowMinStock: null,
+    aboveMaxStock: null,
+    outOfStock: null,
+  });
 
-    if (existingItemIndex >= 0) {
-      const updatedItems = [...selectedItems];
-      updatedItems[existingItemIndex].quantity += 1;
-      setSelectedItems(updatedItems);
-    } else {
-      setSelectedItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const storeCentral = stores.find(
+    (store) => store.name === "Cửa hàng trung tâm"
+  );
+
+  const loadProducts = async () => {
+    try {
+      const endpoint =
+        storeCentral && storeId === storeCentral.id
+          ? "/materials/central-materials"
+          : "/materials/store-materials";
+      console.log("endpoint", endpoint);
+      const response = await axios.get(endpoint, {
+        params: {
+          storeId,
+          name: filters.name,
+          category: filters.category,
+          brand: filters.brand,
+          isActive: filters.isActive,
+          hasStock: filters.hasStock,
+          belowMinStock: filters.belowMinStock,
+          aboveMaxStock: filters.aboveMaxStock,
+          outOfStock: filters.outOfStock,
+          currentPage: currentPage - 1, // API có thể sử dụng chỉ số trang bắt đầu từ 0
+          size: pageSize,
+        },
+      });
+      setProducts(response.data.data);
+      setTotalElement(response.data.totalElements);
+      console.log("materials", response.data.data);
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
-  const handleQuantityChange = (index, quantity) => {
-    const updatedItems = [...selectedItems];
-    updatedItems[index].quantity = quantity;
-    setSelectedItems(updatedItems);
+  useEffect(() => {
+    loadProducts();
+  }, [currentPage, pageSize, filters, reloadTrigger]);
+
+  const showModal = () => {
+    setModalVisible(true);
   };
 
-  const handleDeleteItem = (index) => {
-    const updatedItems = [...selectedItems];
-    updatedItems.splice(index, 1);
-    setSelectedItems(updatedItems);
+  const hideModal = () => {
+    setModalVisible(false);
   };
 
-  const calculateTotal = (item) => {
-    const { quantity, costPrice } = item;
-    return quantity * costPrice;
+  const handleProductCreated = () => {
+    setCurrentPage(1);
+    setReloadTrigger((prev) => !prev);
+  };
+
+  // Handler cho tìm kiếm sản phẩm
+  const handleSearch = (searchText) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      name: searchText,
+    }));
+    setCurrentPage(1); // Reset về trang đầu tiên khi tìm kiếm mới
+  };
+
+  // Handler cho thay đổi phân trang
+  const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
   };
 
   return (
-    <div className="flex gap-4 h-[600px]">
-      <div className="w-[76%] space-y-4">
-        <SearchBar onItemSelect={handleSelectItem} />
-        <div className="bg-white border border-gray-300 h-[88%] flex flex-col">
-          <div className="flex bg-[#BBDEFB] font-semibold text-sm border-b border-gray-300">
-            <div className="p-2 w-[8%]"></div>
-            <div className="p-2 w-[5%]">STT</div>
-            <div className="p-2 w-[10%]">Mã hàng</div>
-            <div className="p-2 flex-1">Tên hàng</div>
-            <div className="p-2 w-[10%]">Đơn vị tính</div>
-            <div className="p-2 w-[10%]">Số lượng</div>
-            <div className="p-2 w-[10%]">Đơn giá</div>
-            <div className="p-2 w-[10%]">Thành tiền</div>
+    <Page title="Giao dịch - Nhập hàng">
+      <div className="flex gap-6">
+        <div className="w-[16%]">
+          <PurchaseOrderFilterSidebar
+            filters={filters}
+            setFilters={setFilters}
+          />
+        </div>
+        <div className="w-[84%] space-y-3">
+          <div className="flex items-center justify-between gap-4 pb-1">
+            <PurchaseOrderSearch onSearch={handleSearch} />
+            <PurchaseOrderButtonGroup />
           </div>
-          <div className="flex-1 overflow-auto">
-            {selectedItems.length > 0 ? (
-              selectedItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="flex items-center border-b border-gray-300 text-sm"
-                >
-                  <div className="p-2 w-[8%]">
-                    <Popconfirm
-                      title="Bạn có chắc chắn muốn xóa?"
-                      onConfirm={() => handleDeleteItem(index)}
-                      okText="Có"
-                      cancelText="Không"
-                    >
-                      <Button
-                        type="danger"
-                        icon={<FaRegTrashCan />}
-                        size="small"
-                      />
-                    </Popconfirm>
-                  </div>
-                  <div className="p-2 w-[5%]">{index + 1}</div>
-                  <div className="p-2 w-[10%]">{item.materialCode}</div>
-                  <div className="p-2 flex-1">{item.name}</div>
-                  <div className="p-2 w-[10%]">{item.unitName}</div>
-                  <div className="p-2 w-[10%]">
-                    <Input
-                      type="number"
-                      min="1"
-                      variant="borderless"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleQuantityChange(index, parseInt(e.target.value))
-                      }
-                    />
-                  </div>
-                  <div className="p-2 w-[10%]">{item.costPrice}</div>
-                  <div className="p-2 w-[10%]">
-                    {calculateTotal(item).toFixed(2)}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="flex justify-center items-center h-full">
-                <Empty description="No data available" />
-              </div>
-            )}
+          <PurchaseOrderTable
+            products={products}
+            handleProductCreated={PurchaseOrderSearch}
+          />
+          <div className="flex items-center justify-start">
+            <Pagination
+              size="small"
+              total={totalElement}
+              current={currentPage}
+              pageSize={pageSize}
+              showSizeChanger
+              onChange={handlePageChange}
+              pageSizeOptions={["8", "10", "20", "50"]}
+            />
+            <div className="text-sm ml-2">Tổng số {totalElement} hàng hóa</div>
           </div>
         </div>
       </div>
-      <div className="w-[24%]">
-        <InfoPurchaseOrder />
-      </div>
-    </div>
+    </Page>
   );
 };
 
