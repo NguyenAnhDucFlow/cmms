@@ -24,7 +24,8 @@ public enum ErrorCode {
     UNIT_NOT_EXISTED(1014, "Unit not existed", HttpStatus.NOT_FOUND),
     STORE_MATERIAL_NOT_FOUND(1015, "Store Material not found", HttpStatus.NOT_FOUND),
     PERMISSION_NOT_EXISTED(1016, "Permission not existed", HttpStatus.NOT_FOUND),
-    MATERIAL_NOT_FOUND(1017, "Material not existed", HttpStatus.NOT_FOUND)
+    MATERIAL_NOT_FOUND(1017, "Material not existed", HttpStatus.NOT_FOUND),
+    SUPPLIER_NOT_EXISTED(1017, "Supplier not existed", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

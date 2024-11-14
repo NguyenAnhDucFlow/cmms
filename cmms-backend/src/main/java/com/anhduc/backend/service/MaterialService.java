@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class MaterialService {
     StoreMaterialRepository storeMaterialRepository;
     CentralWarehouseRepository centralWarehouseRepository;
 
+    @Transactional
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
@@ -106,6 +108,7 @@ public class MaterialService {
         return materialResponse;
     }
 
+    @Transactional
     public MaterialResponse update(MaterialUpdateRequest request) throws IOException {
         Material material = materialRepository.findById(request.getMaterialId()).orElseThrow(
                 () -> new AppException(ErrorCode.MATERIAL_NOT_FOUND)
@@ -255,7 +258,7 @@ public class MaterialService {
             if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
                 for (MaterialUnit variant : material.getMaterialUnits()) {
                     ListMaterialImportDTO variantDto = new ListMaterialImportDTO(
-                            material.getId(),
+                            variant.getId(),
                             variant.getVariantCode(),
                             material.getName(),
                             material.getCoverImageUrl(),

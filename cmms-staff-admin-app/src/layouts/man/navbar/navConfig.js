@@ -8,6 +8,7 @@ import {
   FaShoppingCart,
   FaRegListAlt,
 } from "react-icons/fa";
+import { FaTruckFront } from "react-icons/fa6";
 import { BsBoxes } from "react-icons/bs";
 import { LuTags } from "react-icons/lu";
 import { MdOutlineInventory } from "react-icons/md";
@@ -37,6 +38,11 @@ const navConfig = [
     icon: FaExchangeAlt,
     items: [
       { label: "Nhập hàng", path: "/purchase-order", icon: FaTruckLoading },
+      {
+        label: "Đặt hàng nhập",
+        path: "/order-supplier",
+        icon: FaTruckFront,
+      },
       { label: "Tạo giao dịch mới", path: "/giao-dich/tao-moi" },
     ],
   },

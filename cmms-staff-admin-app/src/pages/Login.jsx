@@ -4,6 +4,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import backgroundImage from "../assets/background-login.jpg";
+import logo from "../assets/logo.json";
+import Lottie from "lottie-react";
 
 const schema = yup.object().shape({
   email: yup.string().email("Email không hợp lệ").required("Email là bắt buộc"),
@@ -35,10 +38,23 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gray-100"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+      }}
+    >
       <div className="bg-white rounded-lg shadow w-96">
         <div className="flex flex-col items-center justify-center mt-6">
-          <h2 className="text-2xl font-bold">Logo</h2>
+          <div className="flex items-center">
+            <Lottie
+              animationData={logo}
+              className="mx-auto"
+              style={{ height: 30, width: 30 }}
+            />
+            <div className="text-2xl font-sans text-primary">Cmms</div>
+          </div>
           <h1 className="text-2xl font-bold">Đăng nhập</h1>
           {!!errors.afterSubmit && (
             <p className="text-sm mt-2 bg-[#FEF4F5] flex justify-center py-2 w-full text-red-500">

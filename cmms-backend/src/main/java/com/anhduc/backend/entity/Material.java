@@ -22,6 +22,7 @@ public class Material extends AuditAble{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    @Column(nullable = false, unique = true)
     String materialCode;
     String barcode;
     String name;

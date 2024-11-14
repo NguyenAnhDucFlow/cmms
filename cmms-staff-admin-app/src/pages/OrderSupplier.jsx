@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Page from "../components/Page";
-import PurchaseOrderFilterSidebar from "../sections/purchase-order/PurchaseOrderFilterSidebar";
-import PurchaseOrderTable from "../sections/purchase-order/PurchaseOrderTable";
-import PurchaseOrderSearch from "../sections/purchase-order/PurchaseOrderSearch";
-import PurchaseOrderButtonGroup from "../sections/purchase-order/PurchaseOrderButtonGroup";
+import OrderSupplierFilterSidebar from "../sections/order-supplier/OrderSupplierFilterSidebar";
+import OrderSupplierTable from "../sections/order-supplier/OrderSupplierTable";
+import OrderSupplierSearch from "../sections/order-supplier/OrderSupplierSearch";
+import OrderSupplierButtonGroup from "../sections/order-supplier/OrderSupplierButtonGroup";
 import { useStore } from "../hooks/useStore";
 import axios from "../utils/axios";
 import { Pagination } from "antd";
 
-const PurchaseOrder = () => {
+const OrderSupplier = () => {
   const { storeId, stores } = useStore();
   const [products, setProducts] = useState([]);
   const [totalElement, setTotalElement] = useState(0);
@@ -97,22 +97,22 @@ const PurchaseOrder = () => {
   };
 
   return (
-    <Page title="Giao dịch - Nhập hàng">
+    <Page title="Giao dịch - Đặt hàng nhập">
       <div className="flex gap-6">
         <div className="w-[16%]">
-          <PurchaseOrderFilterSidebar
+          <OrderSupplierFilterSidebar
             filters={filters}
             setFilters={setFilters}
           />
         </div>
         <div className="w-[84%] space-y-3">
           <div className="flex items-center justify-between gap-4 pb-1">
-            <PurchaseOrderSearch onSearch={handleSearch} />
-            <PurchaseOrderButtonGroup />
+            <OrderSupplierSearch onSearch={handleSearch} />
+            <OrderSupplierButtonGroup />
           </div>
-          <PurchaseOrderTable
+          <OrderSupplierTable
             products={products}
-            handleProductCreated={PurchaseOrderSearch}
+            handleProductCreated={OrderSupplierSearch}
           />
           <div className="flex items-center justify-start">
             <Pagination
@@ -132,4 +132,4 @@ const PurchaseOrder = () => {
   );
 };
 
-export default PurchaseOrder;
+export default OrderSupplier;

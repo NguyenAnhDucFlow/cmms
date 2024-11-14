@@ -70,4 +70,6 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
             "WHERE m.materialCode LIKE :prefix%")
     String findMaxMaterialCodeWithPrefix(@Param("prefix") String prefix);
 
+    Material findByMaterialCode(String materialCode);
+
 }

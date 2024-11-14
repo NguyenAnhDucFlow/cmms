@@ -20,6 +20,10 @@ const PurchaseOrderNew = Loadable(
   lazy(() => import("../sections/purchase-order/PurchaseOrderNew"))
 );
 const PurchaseOrder = Loadable(lazy(() => import("../pages/PurchaseOrder")));
+const OrderSupplierNew = Loadable(
+  lazy(() => import("../sections/order-supplier/OrderSupplierNew"))
+);
+const OrderSupplier = Loadable(lazy(() => import("../pages/OrderSupplier")));
 const Stores = Loadable(lazy(() => import("../pages/Stores")));
 const Users = Loadable(lazy(() => import("../pages/Users")));
 const Login = Loadable(lazy(() => import("../pages/Login")));
@@ -46,6 +50,11 @@ const router = createBrowserRouter([
         element: <PurchaseOrder />,
       },
       { path: "purchase-order/new", element: <PurchaseOrderNew /> },
+      {
+        path: "order-supplier",
+        element: <OrderSupplier />,
+      },
+      { path: "order-supplier/new", element: <OrderSupplierNew /> },
       { path: "stores", element: <Stores /> },
       { path: "users", element: <Users /> },
       { path: "price-book", element: <PriceBook /> },

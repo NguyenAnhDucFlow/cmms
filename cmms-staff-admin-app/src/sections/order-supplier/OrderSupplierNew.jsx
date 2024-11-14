@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
 import SearchBar from "./SearchBar";
 import { useNavigate } from "react-router-dom";
-import { Input, Empty, Button, Popconfirm, Select } from "antd";
+import { Input, DatePicker, Empty, Button, Popconfirm, Select } from "antd";
+import { CiInboxOut } from "react-icons/ci";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { FaRegTrashCan } from "react-icons/fa6";
 import styled from "styled-components";
@@ -10,7 +11,7 @@ import { CgProfile } from "react-icons/cg";
 import useAuth from "../../hooks/useAuth";
 import { useData } from "../../hooks/useData";
 import { formatCurrency } from "../../utils/formatCurrency";
-import { MdPayments } from "react-icons/md";
+import { useStore } from "../../hooks/useStore";
 
 const CustomSelect = styled(Select)`
   && .ant-input-affix-wrapper {
@@ -30,10 +31,11 @@ const CustomSelect = styled(Select)`
   }
 `;
 
-const PurchaseOrderNew = () => {
+const OrderSupplierNew = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const { suppliers } = useData();
+  const { stores } = useStore();
   const { user } = useAuth();
   const [amountPaid, setAmountPaid] = useState(0);
 
@@ -102,7 +104,7 @@ const PurchaseOrderNew = () => {
                 onClick={() => navigate(-1)}
                 className="cursor-pointer"
               />
-              <div>Nhập hàng</div>
+              <div>Đặt hàng nhập</div>
             </div>
           </div>
           <SearchBar onItemSelect={handleSelectItem} />
@@ -204,9 +206,26 @@ const PurchaseOrderNew = () => {
               variant="borderless"
               placeholder="Tìm nhà cung cấp"
             />
+            <CustomSelect
+              className="w-full border-b"
+              style={{
+                borderColor: isFocused ? "#1E88E5" : undefined,
+                padding: 0,
+              }}
+              showSearch
+              options={stores.map((supplier) => ({
+                value: supplier.id,
+                label: supplier.name,
+              }))}
+              optionFilterProp="label"
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              variant="borderless"
+              placeholder="Tìm cửa hàng đặt hàng"
+            />
 
             <div className="flex items-center justify-between">
-              <div className="text-sm  w-2/3">Mã phiếu nhập</div>
+              <div className="text-sm  w-2/3">Mã đặt hàng nhập</div>
               <div className="w-1/3">
                 <Input
                   placeholder="Phiếu nhập tự động"
@@ -236,7 +255,25 @@ const PurchaseOrderNew = () => {
             </div>
             <div className="flex items-center">
               <div className="text-sm w-2/3">Trạng thái</div>
-              <div className="text-sm w-1/3 font-sans">Phiếu tạm</div>
+              <div className="text-sm w-1/3 font-sans">
+                <CustomSelect
+                  className="w-full border-b"
+                  style={{
+                    borderColor: isFocused ? "#1E88E5" : undefined,
+                    padding: 0,
+                  }}
+                  showSearch
+                  options={[
+                    { value: "TEMPORARY", label: "Phiếu tạm" },
+                    { value: "CONFIRMED", label: "Đã xác nhận NCC" },
+                  ]}
+                  optionFilterProp="label"
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  variant="borderless"
+                  suffixIcon
+                />
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="text-sm w-2/3">
@@ -255,38 +292,16 @@ const PurchaseOrderNew = () => {
                 {formatCurrency(totalAmount)}
               </div>
             </div>
-
-            {selectedItems.length > 0 && (
-              <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm w-2/3">Tiền trả nhà cung cấp</div>
-                  <div className="w-1/3 text-right text-sm">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <MdPayments size={20} />
-                      </div>
-                      <div className="ml-1">
-                        <Input
-                          className="ml-2"
-                          style={{ direction: "rtl" }}
-                          value={amountPaid}
-                          variant="borderless"
-                          type="number"
-                          min="0"
-                          onChange={(e) =>
-                            setAmountPaid(parseFloat(e.target.value))
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm w-2/3">Tính vào công nợ</div>
-                  <div className="text-sm ">{formatCurrency(debtAmount)}</div>
-                </div>
-              </>
-            )}
+            <div className="flex items-center">
+              <div className="text-sm w-2/3">Dự kiến ngày nhập hàng</div>
+              <div className="w-1/3 border-b">
+                <DatePicker
+                  variant="borderless"
+                  placeholder=""
+                  style={{ paddingRight: 0 }}
+                />
+              </div>
+            </div>
             <Input
               placeholder="Ghi chú"
               variant="borderless"
@@ -312,20 +327,13 @@ const PurchaseOrderNew = () => {
             />
           </div>
           <div>
-            <div className="flex gap-2 px-4 py-6 mt-12">
+            <div className="px-4 py-6 mt-4">
               <Button
                 type="primary"
-                className="border-md w-1/2 h-20 flex flex-col bg-green-500"
+                className="border-md w-full h-20 flex flex-col"
               >
-                <FaSave />
-                <h1> Lưu tạm</h1>
-              </Button>
-              <Button
-                type="primary"
-                className="border-md w-1/2 h-20 flex flex-col"
-              >
-                <FaCheck />
-                <h1> Hoàn thành</h1>
+                <CiInboxOut size={25} />
+                <h1> Đặt hàng nhập</h1>
               </Button>
             </div>
           </div>
@@ -335,4 +343,4 @@ const PurchaseOrderNew = () => {
   );
 };
 
-export default PurchaseOrderNew;
+export default OrderSupplierNew;
