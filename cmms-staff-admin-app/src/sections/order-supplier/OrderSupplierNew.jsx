@@ -1,17 +1,33 @@
 import React, { useMemo, useState } from "react";
 import SearchBar from "./SearchBar";
+import { useForm, Controller } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { Input, DatePicker, Empty, Button, Popconfirm, Select } from "antd";
+import {
+  Input,
+  DatePicker,
+  Empty,
+  Button,
+  Popconfirm,
+  Select,
+  message,
+} from "antd";
 import { CiInboxOut } from "react-icons/ci";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { FaRegTrashCan } from "react-icons/fa6";
 import styled from "styled-components";
-import { FaCheck, FaSave } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import useAuth from "../../hooks/useAuth";
 import { useData } from "../../hooks/useData";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useStore } from "../../hooks/useStore";
+import axios from "../../utils/axios";
+
+const schema = Yup.object().shape({
+  supplierId: Yup.string().required("Supplier ID is required"),
+  storeId: Yup.string().required("Store ID is required"),
+});
 
 const CustomSelect = styled(Select)`
   && .ant-input-affix-wrapper {
@@ -37,7 +53,23 @@ const OrderSupplierNew = () => {
   const { suppliers } = useData();
   const { stores } = useStore();
   const { user } = useAuth();
-  const [amountPaid, setAmountPaid] = useState(0);
+
+  const {
+    handleSubmit,
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      supplierId: null,
+      storeId: null,
+      note: null,
+      estimatedDeliveryDate: null,
+      status: "TEMPORARY",
+      details: [],
+    },
+  });
 
   const navigate = useNavigate();
 
@@ -92,10 +124,41 @@ const OrderSupplierNew = () => {
     [selectedItems]
   );
 
-  const debtAmount = totalAmount - amountPaid;
+  const onSubmit = async (data) => {
+    try {
+      const payload = {
+        ...data,
+        details: selectedItems.map((item) => ({
+          materialCode: item.materialCode,
+          quantity: item.quantity,
+          unitPrice: item.costPrice,
+        })),
+      };
+      await axios.post("/purchase-order", payload);
+      message.success("Đơn đặt hàng đã được tạo thành công!");
+    } catch (error) {
+      message.error("Đã có lỗi xảy ra khi tạo đơn hàng.");
+    }
+  };
+
+  const onValidate = async () => {
+    if (selectedItems.length === 0) {
+      message.error("Phiếu hàng đang trống.");
+      return;
+    }
+    const isValid = await trigger(["supplierId", "storeId"]);
+    if (!isValid) {
+      if (errors.supplierId) {
+        message.error("Bạn chưa chọn nhà cung cấp.");
+        return;
+      }
+      if (errors.storeId)
+        message.error("Bạn chưa chọn cửa hàng đặt hàng nhập.");
+    }
+  };
 
   return (
-    <div className="flex gap-4 h-[600px]">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 h-[600px]">
       <div className="w-[76%] space-y-4">
         <div className="flex items-center gap-8">
           <div>
@@ -189,39 +252,54 @@ const OrderSupplierNew = () => {
               </div>
               <div>{user?.username || "no name"}</div>
             </div>
-            <CustomSelect
-              className="w-full border-b"
-              style={{
-                borderColor: isFocused ? "#1E88E5" : undefined,
-                padding: 0,
-              }}
-              showSearch
-              options={suppliers.map((supplier) => ({
-                value: supplier.id,
-                label: supplier.name,
-              }))}
-              optionFilterProp="label"
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              variant="borderless"
-              placeholder="Tìm nhà cung cấp"
+
+            <Controller
+              name="supplierId"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  {...field}
+                  className="w-full border-b"
+                  style={{
+                    borderColor: isFocused ? "#1E88E5" : undefined,
+                    padding: 0,
+                  }}
+                  showSearch
+                  options={suppliers.map((supplier) => ({
+                    value: supplier.id,
+                    label: supplier.name,
+                  }))}
+                  optionFilterProp="label"
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  variant="borderless"
+                  placeholder="Tìm nhà cung cấp"
+                />
+              )}
             />
-            <CustomSelect
-              className="w-full border-b"
-              style={{
-                borderColor: isFocused ? "#1E88E5" : undefined,
-                padding: 0,
-              }}
-              showSearch
-              options={stores.map((supplier) => ({
-                value: supplier.id,
-                label: supplier.name,
-              }))}
-              optionFilterProp="label"
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              variant="borderless"
-              placeholder="Tìm cửa hàng đặt hàng"
+            <Controller
+              name="storeId"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  {...field}
+                  className="w-full border-b"
+                  style={{
+                    borderColor: isFocused ? "#1E88E5" : undefined,
+                    padding: 0,
+                  }}
+                  showSearch
+                  options={stores.map((supplier) => ({
+                    value: supplier.id,
+                    label: supplier.name,
+                  }))}
+                  optionFilterProp="label"
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  variant="borderless"
+                  placeholder="Tìm cửa hàng đặt hàng"
+                />
+              )}
             />
 
             <div className="flex items-center justify-between">
@@ -256,22 +334,29 @@ const OrderSupplierNew = () => {
             <div className="flex items-center">
               <div className="text-sm w-2/3">Trạng thái</div>
               <div className="text-sm w-1/3 font-sans">
-                <CustomSelect
-                  className="w-full border-b"
-                  style={{
-                    borderColor: isFocused ? "#1E88E5" : undefined,
-                    padding: 0,
-                  }}
-                  showSearch
-                  options={[
-                    { value: "TEMPORARY", label: "Phiếu tạm" },
-                    { value: "CONFIRMED", label: "Đã xác nhận NCC" },
-                  ]}
-                  optionFilterProp="label"
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  variant="borderless"
-                  suffixIcon
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      {...field}
+                      className="w-full border-b"
+                      style={{
+                        borderColor: isFocused ? "#1E88E5" : undefined,
+                        padding: 0,
+                      }}
+                      showSearch
+                      options={[
+                        { value: "TEMPORARY", label: "Phiếu tạm" },
+                        { value: "CONFIRMED", label: "Đã xác nhận NCC" },
+                      ]}
+                      optionFilterProp="label"
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      variant="borderless"
+                      suffixIcon
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -295,35 +380,49 @@ const OrderSupplierNew = () => {
             <div className="flex items-center">
               <div className="text-sm w-2/3">Dự kiến ngày nhập hàng</div>
               <div className="w-1/3 border-b">
-                <DatePicker
-                  variant="borderless"
-                  placeholder=""
-                  style={{ paddingRight: 0 }}
+                <Controller
+                  name="estimatedDeliveryDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      {...field}
+                      variant="borderless"
+                      placeholder=""
+                      style={{ paddingRight: 0 }}
+                    />
+                  )}
                 />
               </div>
             </div>
-            <Input
-              placeholder="Ghi chú"
-              variant="borderless"
-              className="px-0"
-              style={{
-                border: "none",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "0",
-                transition: "border-color 0.3s ease",
-              }}
-              onFocus={(e) =>
-                (e.target.style.borderBottom = "1px solid #1E88E5")
-              }
-              onBlur={(e) =>
-                (e.target.style.borderBottom = "1px solid #d9d9d9")
-              }
-              onMouseOver={(e) =>
-                (e.target.style.borderBottom = "1px solid #1E88E5")
-              }
-              onMouseOut={(e) =>
-                (e.target.style.borderBottom = "1px solid #d9d9d9")
-              }
+            <Controller
+              name="note"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Ghi chú"
+                  variant="borderless"
+                  className="px-0"
+                  style={{
+                    border: "none",
+                    borderBottom: "1px solid #d9d9d9",
+                    borderRadius: "0",
+                    transition: "border-color 0.3s ease",
+                  }}
+                  onFocus={(e) =>
+                    (e.target.style.borderBottom = "1px solid #1E88E5")
+                  }
+                  onBlur={(e) =>
+                    (e.target.style.borderBottom = "1px solid #d9d9d9")
+                  }
+                  onMouseOver={(e) =>
+                    (e.target.style.borderBottom = "1px solid #1E88E5")
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.borderBottom = "1px solid #d9d9d9")
+                  }
+                />
+              )}
             />
           </div>
           <div>
@@ -331,6 +430,8 @@ const OrderSupplierNew = () => {
               <Button
                 type="primary"
                 className="border-md w-full h-20 flex flex-col"
+                onClick={onValidate}
+                htmlType="submit"
               >
                 <CiInboxOut size={25} />
                 <h1> Đặt hàng nhập</h1>
@@ -339,7 +440,7 @@ const OrderSupplierNew = () => {
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 

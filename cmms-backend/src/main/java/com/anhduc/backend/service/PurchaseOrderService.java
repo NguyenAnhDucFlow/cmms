@@ -50,6 +50,7 @@ public class PurchaseOrderService {
                 .createdBy(userUtils.getCurrentUser())
                 .status(request.getStatus() != null ? request.getStatus() : PurchaseOrderStatus.TEMPORARY)
                 .note(request.getNote())
+                .purchaseOrderCode(generatePurchaseOrderCode())
                 .build();
 
         if (purchaseOrder.getDetails() == null) {
@@ -84,14 +85,18 @@ public class PurchaseOrderService {
         purchaseOrderRepository.save(purchaseOrder);
     }
 
-//    public List<CategoryCreationResponse> findAll() {
-//        return categoryRepository.findAll().stream()
-//                .map(this::convertToResponse)
-//                .toList();
-//    }
-//
-//    private CategoryCreationResponse convertToResponse(Category category) {
-//        return modelMapper.map(category, CategoryCreationResponse.class);
-//    }
+
+    //-------------------- PRIVATE METHOD ---------------------------------
+
+    private String generatePurchaseOrderCode() {
+        String prefix = "PDN";
+        String lastCode = purchaseOrderRepository.findMaxPurchaseOrderCodeWithPrefix(prefix);
+        int nextNumber = 1;
+        if (lastCode != null) {
+            String lastNumberStr = lastCode.replace(prefix, "");
+            nextNumber = Integer.parseInt(lastNumberStr) + 1;
+        }
+        return  prefix + String.format("%04d", nextNumber);
+    }
 
 }

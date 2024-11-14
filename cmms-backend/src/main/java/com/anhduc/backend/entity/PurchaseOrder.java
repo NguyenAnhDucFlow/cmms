@@ -23,6 +23,8 @@ public class PurchaseOrder extends AuditAble{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    @Column(nullable = false, unique = true)
+    String purchaseOrderCode;
     @ManyToOne
     Supplier supplier;
     @ManyToOne
