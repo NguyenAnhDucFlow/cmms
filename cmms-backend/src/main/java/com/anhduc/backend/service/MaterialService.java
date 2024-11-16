@@ -113,30 +113,37 @@ public class MaterialService {
         Material material = materialRepository.findById(request.getMaterialId()).orElseThrow(
                 () -> new AppException(ErrorCode.MATERIAL_NOT_FOUND)
         );
+        Store store = storeRepository.findById(request.getStoreId()).orElseThrow(
+                () -> new AppException(ErrorCode.STORE_NOT_EXISTED)
+        );
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         Brand brand = brandRepository.findById(request.getBrandId())
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
-        Store store = storeRepository.findById(request.getStoreId()).orElseThrow(
-                () -> new AppException(ErrorCode.STORE_NOT_EXISTED)
-        );
 
         material.setName(request.getName());
         material.setBarcode(request.getBarcode());
         material.setPoint(request.getIsPoint());
         material.setDescription(request.getDescription());
-        material.setCostPrice(request.getCostPrice());
         material.setSalePrice(request.getSalePrice());
         material.setWeightUnit(request.getWeightUnit());
         material.setWeightValue(request.getWeightValue());
         material.setCategory(category);
         material.setBrand(brand);
 
-        StoreMaterial storeMaterial = new StoreMaterial();
-        storeMaterial.setMaterial(material);
-        storeMaterial.setStore(store);
-        storeMaterial.setMinStock(request.getMinStock());
+        StoreMaterial storeMaterial = storeMaterialRepository
+                .findByMaterialIdAndStoreId(request.getMaterialId(), request.getStoreId())
+                        .orElseGet(
+                                () -> {
+                                    StoreMaterial newStoreMaterial = new StoreMaterial();
+                                    newStoreMaterial.setMaterial(material);
+                                    newStoreMaterial.setStore(store);
+                                    return  storeMaterialRepository.save(newStoreMaterial);
+                                }
+                        );
+
         storeMaterial.setMaxStock(request.getMaxStock());
+        storeMaterial.setMinStock(request.getMinStock());
         storeMaterialRepository.save(storeMaterial);
 
         List<String> images = new ArrayList<>();
@@ -151,7 +158,11 @@ public class MaterialService {
                     material.setCoverImageUrl(fileUrl);
             }
             material.setImages(images);
+        } else {
+            material.setCoverImageUrl(request.getCoverImageUrl());
+            material.setImages(request.getImages());
         }
+
         materialRepository.save(material);
         MaterialResponse materialResponse = modelMapper.map(material, MaterialResponse.class);
         materialResponse.setBrandName(material.getBrand().getName());
@@ -188,6 +199,7 @@ public class MaterialService {
                     material.getId(),
                     material.getMaterialCode(),
                     material.getName(),
+                    material.getBarcode(),
                     material.getCostPrice(),
                     material.getSalePrice(),
                     material.getImages(),
@@ -211,6 +223,7 @@ public class MaterialService {
                     material.getId(),
                     material.getMaterialCode(),
                     material.getName(),
+                    material.getBarcode(),
                     material.getCostPrice(),
                     material.getSalePrice(),
                     material.getImages(),

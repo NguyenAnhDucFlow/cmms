@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SearchBar from "./SearchBar";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import dayjs from "dayjs";
 import {
   Input,
   DatePicker,
@@ -31,47 +32,73 @@ const schema = Yup.object().shape({
 
 const CustomSelect = styled(Select)`
   && .ant-input-affix-wrapper {
-    position: relative;
-    display: inline-flex;
-    width: 100%;
-    min-width: 0;
-    padding: 0px 0px !important;
-    color: rgba(0, 0, 0, 0.88);
-    font-size: 14px;
-    line-height: 1.5714285714285714;
-    border-radius: 0px !important;
-    transition: all 0.2s;
+    padding: 0 !important;
+    border-radius: 0 !important;
   }
   .ant-select-selector {
-    padding: 0 0px !important;
+    padding: 0 !important;
   }
 `;
 
-const OrderSupplierNew = () => {
+const OrderSupplierEdit = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const { suppliers } = useData();
   const { stores } = useStore();
   const { user } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
     control,
     trigger,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       supplierId: null,
       storeId: null,
-      note: null,
+      note: "",
       estimatedDeliveryDate: null,
       status: "TEMPORARY",
       details: [],
     },
   });
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await axios.get(`/purchase-order/${id}`);
+        const {
+          supplierId,
+          storeId,
+          note,
+          estimatedDeliveryDate,
+          details,
+          status,
+        } = response.data.data;
+        setSelectedItems(details);
+        reset({
+          supplierId,
+          storeId,
+          note,
+          estimatedDeliveryDate: estimatedDeliveryDate
+            ? dayjs(estimatedDeliveryDate) // Chuyển thành dayjs object
+            : null,
+          status,
+        });
+      } catch (error) {
+        message.error("Không thể tải dữ liệu đơn hàng.");
+      }
+    };
+
+    if (id) {
+      fetchOrderDetails();
+    }
+  }, [id, reset]);
 
   const handleSelectItem = (item) => {
     const existingItemIndex = selectedItems.findIndex(
@@ -136,11 +163,11 @@ const OrderSupplierNew = () => {
           unitName: item.unitName,
         })),
       };
-      await axios.post("/purchase-order", payload);
-      message.success("Đơn đặt hàng đã được tạo thành công!");
+      await axios.put(`/purchase-order/${id}`, payload);
+      message.success("Đơn đặt hàng đã được cập nhật thành công!");
+      navigate("/orders");
     } catch (error) {
-      message.error("Đã có lỗi xảy ra khi tạo đơn hàng.");
-      console.error(error);
+      message.error("Đã có lỗi xảy ra khi cập nhật đơn hàng.");
     }
   };
 
@@ -209,7 +236,7 @@ const OrderSupplierNew = () => {
                   </div>
                   <div className="p-2 w-[5%]">{index + 1}</div>
                   <div className="p-2 w-[15%]">{item.materialCode}</div>
-                  <div className="p-2 flex-1">{item.name}</div>
+                  <div className="p-2 flex-1">{item.materialName}</div>
                   <div className="p-2 w-[10%]">{item.unitName}</div>
                   <div className="p-2 w-[10%]">
                     <Input
@@ -226,7 +253,7 @@ const OrderSupplierNew = () => {
                     <Input
                       type="number"
                       min="0"
-                      value={item.costPrice}
+                      value={item.unitPrice}
                       variant="borderless"
                       onChange={(e) =>
                         handleCostPriceChange(index, parseFloat(e.target.value))
@@ -447,4 +474,4 @@ const OrderSupplierNew = () => {
   );
 };
 
-export default OrderSupplierNew;
+export default OrderSupplierEdit;

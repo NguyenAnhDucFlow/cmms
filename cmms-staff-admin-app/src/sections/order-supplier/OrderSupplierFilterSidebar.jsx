@@ -3,13 +3,22 @@ import DropdownSelectSearch from "../../components/dropdown/DropdownSelectSearch
 import DropdownCheckbox from "../../components/dropdown/DropdownCheckbox";
 import { useStore } from "../../hooks/useStore";
 
-const statusOption = ["Phiếu tạm", "Đã xác nhận NCC", "Hoàn thành", "Đã hủy"];
+const statusOption = [
+  { label: "Phiếu tạm", value: "TEMPORARY" },
+  { label: "Đã xác nhận NCC", value: "CONFIRMED" },
+  { label: "Hoàn thành", value: "RECEIVED" },
+  { label: "Đã hủy", value: "CANCELLED" },
+];
 
 const OrderSupplierFilterSidebar = ({ setFilters }) => {
   const { stores } = useStore();
 
-  const handleBrandChange = (brandId) => {
-    setFilters((prevFilters) => ({ ...prevFilters, brand: brandId }));
+  const handleStoreChange = (storeId) => {
+    setFilters({ storeId });
+  };
+
+  const handleStatusChange = (selectedStatuses) => {
+    setFilters({ status: selectedStatuses }); // Gửi danh sách trạng thái
   };
 
   return (
@@ -19,10 +28,20 @@ const OrderSupplierFilterSidebar = ({ setFilters }) => {
       </h1>
       <DropdownSelectSearch
         title="Cửa hàng"
-        options={stores}
-        onOptionSelect={handleBrandChange}
+        options={stores.map((store) => ({
+          value: store.id,
+          label: store.name,
+        }))}
+        onOptionSelect={handleStoreChange}
       />
-      <DropdownCheckbox title="Trạng thái" options={statusOption} />
+      <DropdownCheckbox
+        title="Trạng thái"
+        options={statusOption}
+        onSelectionChange={
+          (selectedOptions) =>
+            handleStatusChange(selectedOptions.map((opt) => opt.value)) // Chỉ lấy `value`
+        }
+      />
     </div>
   );
 };

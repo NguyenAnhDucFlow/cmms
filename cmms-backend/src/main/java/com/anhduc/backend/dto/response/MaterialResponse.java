@@ -27,7 +27,7 @@ public class MaterialResponse {
     int minStock;
     int maxStock;
     String coverImageUrl;
-    boolean isPoint;
+    Boolean isPoint;
     Boolean isActive;
     String categoryName;
     String brandName;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DevTool } from "@hookform/devtools";
 import { Modal, Tabs, Button, Input, Select, Checkbox, message } from "antd";
 import {
@@ -15,11 +15,14 @@ import RHFSelect from "../hook-form/RHFSelect";
 import RHFUpload from "../hook-form/RHFUpload";
 import RHFInputNumber from "../hook-form/RHFInputNumber";
 import RHFInputNumberInLine from "../hook-form/RHFInputNumberInLine";
+import RHFSelectLabelCol from "../hook-form/RHFSelectLabelCol";
+
 import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 import { FaRegTrashCan } from "react-icons/fa6";
-import RHFSelectLabelCol from "../hook-form/RHFSelectLabelCol";
+
 import axios from "../../utils/axios";
 import { useStore } from "../../hooks/useStore";
+import { useData } from "../../hooks/useData";
 
 const { TextArea } = Input;
 
@@ -27,33 +30,72 @@ const schema = yup.object().shape({
   name: yup.string().required("Tên sản phẩm là bắt buộc"),
   categoryId: yup.string().required("Nhóm hàng là bắt buộc"),
   brandId: yup.string().required("Thương hiệu là bắt buộc"),
+  minStock: yup
+    .number()
+    .typeError("Giá trị phải là một số")
+    .required("Định mức tồn ít nhất là bắt buộc"),
+  maxStock: yup
+    .number()
+    .typeError("Giá trị phải là một số")
+    .required("Định mức tồn nhiều nhất là bắt buộc")
+    .test(
+      "maxStock-greater-than-minStock",
+      "Định mức tồn nhiều nhất phải lớn hơn hoặc bằng định mức tồn ít nhất",
+      function (value) {
+        const { minStock } = this.parent;
+        return value >= minStock;
+      }
+    ),
 });
 
 const UpdateProductModal = ({ visible, onClose, productId }) => {
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      name: "",
-      categoryId: "",
-      brandId: "",
-      basicUnit: "",
-      weightUnit: "g",
-      costPrice: 0,
-      salePrice: 0,
-      minStock: 0,
-      maxStock: 0,
-      materialUnitDtoList: [],
-    },
+    defaultValues: useMemo(
+      () => ({
+        materialCode: "",
+        barcode: "",
+        name: "",
+        categoryId: "",
+        brandId: "",
+        costPrice: 0,
+        salePrice: 0,
+        weightValue: 0,
+        weightUnit: "g",
+        minStock: 0,
+        maxStock: 0,
+        description: "",
+        isPoint: false,
+        materialUnitDtoList: [],
+        imagesFile: [],
+      }),
+      []
+    ),
   });
-  const { control, watch, reset } = methods;
 
-  const [isOpenUnit, setIsOpenUnit] = useState(true);
-  const basicUnit = watch("basicUnit");
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [units, setUnits] = useState([]);
+  const { categories, brands, units, setCategories, setBrands, setUnits } =
+    useData();
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = methods;
+
   const { storeId } = useStore();
+  const [isOpenUnit, setIsOpenUnit] = useState(true);
+  const [coverImageUrl, setCoverImageUrl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const {
+    fields: unitFields,
+    append: appendUnit,
+    remove: removeUnit,
+  } = useFieldArray({
+    control,
+    name: "materialUnitDtoList",
+  });
 
   const success = () => {
     messageApi.open({
@@ -70,115 +112,89 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
 
   const toggleDropdownUnit = () => setIsOpenUnit(!isOpenUnit);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const loadProductDetails = useCallback(async () => {
+    if (productId) {
       try {
-        const [categoriesRes, brandsRes, unitsRes] = await Promise.all([
-          axios.get("/categories"),
-          axios.get("/brands"),
-          axios.get("/units"),
-        ]);
-        setCategories(categoriesRes.data.data);
-        setBrands(brandsRes.data.data);
-        setUnits(unitsRes.data.data);
+        const response = await axios.get(
+          `/materials/${productId}/stores/${storeId}`
+        );
+        const productData = response.data.data;
+        setCoverImageUrl(productData.coverImageUrl);
 
-        if (productId) {
-          const productRes = await axios.get(
-            `/materials/${productId}/stores/${storeId}`
-          );
-          const productData = productRes.data.data;
-
-          const matchingBrand = brandsRes.data.data.find(
-            (brand) => brand.name === productData.brand
-          );
-          const brandId = matchingBrand ? matchingBrand.id : "";
-
-          const matchingCategory = categoriesRes.data.data.find(
-            (category) => category.name === productData.category
-          );
-
-          const categoryId = matchingCategory ? matchingCategory.id : "";
-
-          const imagesFile = productData.images.map((url, index) => ({
+        const transformedData = {
+          ...productData,
+          categoryId:
+            categories.find((c) => c.name === productData.category)?.id || "",
+          brandId: brands.find((b) => b.name === productData.brand)?.id || "",
+          imagesFile: productData.images.map((url, index) => ({
             uid: `-${index}`,
             name: `image-${index}.png`,
             status: "done",
-            url: url,
-          }));
+            url,
+          })),
+        };
 
-          reset({
-            ...productData,
-            categoryId,
-            brandId,
-            imagesFile,
-          });
-        }
-      } catch (error) {
-        console.error(error);
+        reset(transformedData);
+      } catch (err) {
+        console.error("Failed to fetch product details:", err);
       }
-    };
-    if (visible) {
-      fetchData();
     }
-  }, [visible, productId, reset]);
+  }, [productId, storeId, categories, brands, reset]);
 
-  const {
-    fields: unitFields,
-    append: appendUnit,
-    remove: removeUnit,
-  } = useFieldArray({
-    control,
-    name: "materialUnitDtoList",
-  });
-
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = methods;
-
-  const handleAddUnit = () => {
-    if (!basicUnit) {
-      // message.error("Chưa nhập đơn vị cơ bản");
-    } else {
-      appendUnit({ unitId: "", conversionRate: 0, price: 0 });
-    }
-  };
+  useEffect(() => {
+    if (visible) loadProductDetails();
+  }, [visible, loadProductDetails]);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const formData = new FormData();
       if (Array.isArray(data.imagesFile)) {
-        for (const file of data.imagesFile) {
+        data.imagesFile.forEach((file) => {
           if (file.originFileObj) {
             formData.append("imagesFile", file.originFileObj);
+          } else {
+            formData.append("images", file.url);
           }
-        }
+        });
       }
-      formData.append("barcode", data.barcode || "");
-      formData.append("name", data.name || "");
-      formData.append("categoryId", data.categoryId);
-      formData.append("brandId", data.brandId);
-      formData.append("costPrice", data.costPrice || 0);
-      formData.append("salePrice", data.salePrice || 0);
-      formData.append("weightValue", data.weightValue || 0);
-      formData.append("weightUnit", data.weightUnit);
-      formData.append("minStock", data.minStock || 0);
-      formData.append("maxStock", data.maxStock || 0);
-      formData.append("description", data.description || "");
-      formData.append("isPoint", data.isPoint || false);
+      [
+        "barcode",
+        "name",
+        "categoryId",
+        "brandId",
+        "costPrice",
+        "salePrice",
+        "weightValue",
+        "weightUnit",
+        "minStock",
+        "maxStock",
+        "description",
+        "isPoint",
+      ].forEach((field) => {
+        formData.append(field, data[field]);
+      });
       formData.append("materialId", productId);
       formData.append("storeId", storeId);
+      formData.append(
+        "coverImageUrl",
+        coverImageUrl ||
+          "https://tse2.mm.bing.net/th?id=OIP.b8bpZyFwupiioDofQPXo_gAAAA&pid=Api&P=0&h=220"
+      );
 
       await axios.put(`/materials`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      success();
+      message.success("Cập nhật hàng hóa thành công");
       onClose();
       reset();
-    } catch (e) {
-      error();
+    } catch (err) {
+      console.error("Error updating product details:", err);
+      messageApi.error("Cập nhật hàng hóa thất bại");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -199,6 +215,7 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
                 name="materialCode"
                 label="Mã Hàng"
                 tooltip="Mã hàng tự động tăng"
+                disabled
               />
               <RHFTextField
                 name="barcode"
@@ -234,6 +251,7 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
               <RHFInputNumber
                 name="costPrice"
                 label="Giá vốn"
+                disabled
                 tooltip="Giá vốn dùng để tính lợi nhuận cho sản phẩm(sẽ tự động thay đổi khi thay đổi phương pháp tính giá vốn"
               />
               <RHFInputNumber name="salePrice" label="Giá bán" />
@@ -308,6 +326,7 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
                       apiUrl="/units"
                       disabled
                       options={units}
+                      showAddButton={false}
                       setOptions={setUnits}
                     />
                     {unitFields.map((field, index) => (
@@ -344,11 +363,7 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
                         </div>
                       </div>
                     ))}
-                    <Button
-                      className="mt-4"
-                      icon={<PlusOutlined />}
-                      onClick={handleAddUnit}
-                    >
+                    <Button className="mt-4" icon={<PlusOutlined />} disabled>
                       Thêm đơn vị
                     </Button>
                   </div>
@@ -414,6 +429,7 @@ const UpdateProductModal = ({ visible, onClose, productId }) => {
       title="Cập nhật sản phẩm"
       open={visible}
       onOk={handleSubmit(onSubmit)}
+      confirmLoading={isLoading}
       onCancel={handleCancel}
       okText="Cập nhật"
       cancelText="Hủy"

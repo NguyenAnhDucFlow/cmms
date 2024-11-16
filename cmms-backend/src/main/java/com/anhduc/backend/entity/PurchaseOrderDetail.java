@@ -26,6 +26,8 @@ public class PurchaseOrderDetail extends AuditAble{
     int quantity;
     BigDecimal unitPrice;
     BigDecimal totalPrice;
+    String materialName;
+    String unitName;
 
 }
 

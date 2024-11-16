@@ -4,6 +4,9 @@ import com.anhduc.backend.enums.PurchaseOrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,6 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "purchase_orders")
+@EntityListeners(AuditingEntityListener.class)
 public class PurchaseOrder extends AuditAble{
 
     @Id
@@ -30,6 +34,12 @@ public class PurchaseOrder extends AuditAble{
     @ManyToOne
     Store store;
     String createdBy;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Instant updatedAt;
     Instant estimatedDeliveryDate;
     int totalQuantity;
     int totalItems;

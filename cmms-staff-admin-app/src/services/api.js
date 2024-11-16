@@ -1,12 +1,7 @@
-import axios from "axios";
+import axios from "../utils/axios";
 
-const api = axios.create({
-  baseURL: "https://api.example.com", // Replace with your API base URL
-});
-
-export const fetchData = async () => {
-  const response = await api.get("/data");
-  return response.data;
+export const fetchProductDetails = async ({ queryKey }) => {
+  const [, productId, storeId] = queryKey;
+  const response = await axios.get(`/materials/${productId}/stores/${storeId}`);
+  return response.data.data;
 };
-
-export default api;

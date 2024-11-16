@@ -3,7 +3,7 @@ import DropdownToggle from "./DropdownToggle";
 import { Checkbox } from "antd";
 
 const DropdownCheckbox = ({
-  options,
+  options, // [{ label: "Phiếu tạm", value: "TEMPORARY" }, ...]
   title = "Hàng hóa",
   defaultOptions = [],
   onOptionChange = () => {},
@@ -14,18 +14,13 @@ const DropdownCheckbox = ({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionChange = (value) => {
-    // Toggle giá trị checkbox
     setSelectedOptions((prevSelected) => {
-      if (prevSelected.includes(value)) {
-        // Nếu giá trị đã được chọn thì bỏ ra khỏi mảng
-        return prevSelected.filter((option) => option !== value);
-      } else {
-        // Nếu giá trị chưa được chọn thì thêm vào mảng
-        return [...prevSelected, value];
-      }
+      const newSelected = prevSelected.includes(value)
+        ? prevSelected.filter((option) => option !== value) // Bỏ chọn
+        : [...prevSelected, value]; // Chọn thêm
+      onOptionChange(newSelected); // Gọi callback với danh sách mới
+      return newSelected;
     });
-    // Gọi callback với danh sách các giá trị đã chọn
-    onOptionChange(selectedOptions);
   };
 
   return (
@@ -39,12 +34,12 @@ const DropdownCheckbox = ({
           <Checkbox.Group value={selectedOptions}>
             {options.map((option) => (
               <Checkbox
-                key={option}
-                value={option}
-                checked={selectedOptions.includes(option)}
-                onChange={() => handleOptionChange(option)}
+                key={option.value}
+                value={option.value}
+                checked={selectedOptions.includes(option.value)}
+                onChange={() => handleOptionChange(option.value)}
               >
-                {option}
+                {option.label}
               </Checkbox>
             ))}
           </Checkbox.Group>

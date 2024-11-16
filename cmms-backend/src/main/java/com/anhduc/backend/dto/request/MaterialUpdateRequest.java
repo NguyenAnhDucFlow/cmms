@@ -28,6 +28,7 @@ public class MaterialUpdateRequest {
     String description;
     int minStock;
     int maxStock;
+    List<String> images;
     String coverImageUrl;
     Boolean isPoint;
     UUID categoryId;

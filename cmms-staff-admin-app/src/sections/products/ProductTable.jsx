@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Image,
-  Divider,
-  Button,
-  Pagination,
-  Modal,
-  message,
-  Empty,
-} from "antd";
+import { Image, Divider, Button, Modal, message, Empty } from "antd";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { FaCheckSquare, FaLock } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -15,7 +7,7 @@ import axios from "../../utils/axios";
 import { useStore } from "../../hooks/useStore";
 import UpdateProductModal from "../../components/modal/UpdateProductModal";
 
-const ProductTable = ({ products, handleProductCreated }) => {
+const ProductTable = ({ products }) => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [productDetails, setProductDetails] = useState({});
@@ -65,10 +57,9 @@ const ProductTable = ({ products, handleProductCreated }) => {
           `/materials/${selectedProduct}/status?status=${confirmAction}`
         );
         setConfirmModalVisible(false);
-        message.success("Cập nhât trạng thái hàng hóa thành công");
-        handleProductCreated();
+        window.location.reload();
       } catch (error) {
-        console.error("Error updating status:", error);
+        message.error("Cập nhât trạng thái hàng hóa thất bại");
       }
     }
   };
@@ -244,7 +235,7 @@ const ProductTable = ({ products, handleProductCreated }) => {
                                     <Divider />
                                     <DetailRow
                                       label="Mã vạch:"
-                                      data={productDetails[row.id]?.barCode}
+                                      data={productDetails[row.id]?.barcode}
                                     />
                                     <Divider />
                                     <DetailRow

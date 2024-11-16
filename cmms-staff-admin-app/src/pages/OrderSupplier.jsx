@@ -10,7 +10,7 @@ import { Pagination } from "antd";
 
 const OrderSupplier = () => {
   const { storeId, stores } = useStore();
-  const [products, setProducts] = useState([]);
+  const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [totalElement, setTotalElement] = useState(0);
   const [reloadTrigger, setReloadTrigger] = useState(false);
 
@@ -18,79 +18,46 @@ const OrderSupplier = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [filters, setFilters] = useState({
-    name: "",
-    category: null,
-    brand: null,
-    isActive: null,
-    hasStock: null,
-    belowMinStock: null,
-    aboveMaxStock: null,
-    outOfStock: null,
+    purchaseOrderCode: "",
+    status: [],
   });
 
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  const storeCentral = stores.find(
-    (store) => store.name === "Cửa hàng trung tâm"
-  );
-
-  const loadProducts = async () => {
+  const loadPurchaseOrders = async () => {
     try {
-      const endpoint =
-        storeCentral && storeId === storeCentral.id
-          ? "/materials/central-materials"
-          : "/materials/store-materials";
-      console.log("endpoint", endpoint);
-      const response = await axios.get(endpoint, {
+      const response = await axios.get("/purchase-order/search", {
         params: {
-          storeId,
-          name: filters.name,
-          category: filters.category,
-          brand: filters.brand,
-          isActive: filters.isActive,
-          hasStock: filters.hasStock,
-          belowMinStock: filters.belowMinStock,
-          aboveMaxStock: filters.aboveMaxStock,
-          outOfStock: filters.outOfStock,
-          currentPage: currentPage - 1, // API có thể sử dụng chỉ số trang bắt đầu từ 0
+          ...filters, // Gửi toàn bộ filters
+          currentPage: currentPage - 1, // API sử dụng index từ 0
           size: pageSize,
         },
       });
-      setProducts(response.data.data);
+      setPurchaseOrders(response.data.data);
       setTotalElement(response.data.totalElements);
-      console.log("materials", response.data.data);
     } catch (error) {
-      console.error(error.message);
+      console.error("Lỗi khi tải dữ liệu:", error.message);
     }
   };
 
   useEffect(() => {
-    loadProducts();
+    loadPurchaseOrders();
   }, [currentPage, pageSize, filters, reloadTrigger]);
 
-  const showModal = () => {
-    setModalVisible(true);
-  };
-
-  const hideModal = () => {
-    setModalVisible(false);
-  };
-
-  const handleProductCreated = () => {
-    setCurrentPage(1);
-    setReloadTrigger((prev) => !prev);
-  };
-
-  // Handler cho tìm kiếm sản phẩm
   const handleSearch = (searchText) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      name: searchText,
+      purchaseOrderCode: searchText, // Cập nhật mã đặt hàng
     }));
-    setCurrentPage(1); // Reset về trang đầu tiên khi tìm kiếm mới
+    setCurrentPage(1); // Reset về trang đầu
   };
 
-  // Handler cho thay đổi phân trang
+  const handleFilterChange = (newFilters) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      ...newFilters, // Kết hợp filter mới
+    }));
+    setCurrentPage(1); // Reset về trang đầu
+  };
+
   const handlePageChange = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
@@ -102,7 +69,7 @@ const OrderSupplier = () => {
         <div className="w-[16%]">
           <OrderSupplierFilterSidebar
             filters={filters}
-            setFilters={setFilters}
+            setFilters={handleFilterChange}
           />
         </div>
         <div className="w-[84%] space-y-3">
@@ -111,8 +78,8 @@ const OrderSupplier = () => {
             <OrderSupplierButtonGroup />
           </div>
           <OrderSupplierTable
-            products={products}
-            handleProductCreated={OrderSupplierSearch}
+            products={purchaseOrders}
+            handleProductCreated={handleSearch}
           />
           <div className="flex items-center justify-start">
             <Pagination

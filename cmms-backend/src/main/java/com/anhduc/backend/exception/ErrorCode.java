@@ -26,6 +26,7 @@ public enum ErrorCode {
     PERMISSION_NOT_EXISTED(1016, "Permission not existed", HttpStatus.NOT_FOUND),
     MATERIAL_NOT_FOUND(1017, "Material not existed", HttpStatus.NOT_FOUND),
     SUPPLIER_NOT_EXISTED(1017, "Supplier not existed", HttpStatus.NOT_FOUND),
+    PURCHASE_ORDER_NOT_FOUND(1018, "Purchase order not existed", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

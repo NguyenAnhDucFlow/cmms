@@ -1,5 +1,6 @@
 package com.anhduc.backend.service;
 
+import com.anhduc.backend.dto.PurchaseOrderDTO;
 import com.anhduc.backend.dto.request.PurchaseOrderCreationRequest;
 import com.anhduc.backend.dto.request.PurchaseOrderDetailCreationRequest;
 import com.anhduc.backend.entity.PurchaseOrder;
@@ -9,19 +10,25 @@ import com.anhduc.backend.entity.Supplier;
 import com.anhduc.backend.enums.PurchaseOrderStatus;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
+import com.anhduc.backend.repository.PurchaseOrderDetailRepository;
 import com.anhduc.backend.repository.PurchaseOrderRepository;
 import com.anhduc.backend.repository.StoreRepository;
 import com.anhduc.backend.repository.SupplierRepository;
+import com.anhduc.backend.specification.PurchaseOrderSpecification;
 import com.anhduc.backend.utils.UserUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,6 +37,7 @@ public class PurchaseOrderService {
 
     ModelMapper modelMapper;
     PurchaseOrderRepository purchaseOrderRepository;
+    PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     SupplierRepository supplierRepository;
     StoreRepository storeRepository;
     UserUtils userUtils;
@@ -67,6 +75,8 @@ public class PurchaseOrderService {
             orderDetail.setMaterialCode(item.getMaterialCode());
             orderDetail.setQuantity(item.getQuantity());
             orderDetail.setUnitPrice(item.getUnitPrice());
+            orderDetail.setMaterialName(item.getMaterialName());
+            orderDetail.setUnitName(item.getUnitName());
 
             BigDecimal detailTotalPrice = item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
             orderDetail.setTotalPrice(detailTotalPrice);
@@ -85,6 +95,30 @@ public class PurchaseOrderService {
         purchaseOrderRepository.save(purchaseOrder);
     }
 
+    public Page<PurchaseOrder> getPurchaseOrders(
+            PurchaseOrderStatus status,
+            UUID storeId,
+            String purchaseOrderCode,
+            Pageable pageable) {
+
+        Specification<PurchaseOrder> spec = Specification
+                .where(PurchaseOrderSpecification.hasStatus(status))
+                .and(PurchaseOrderSpecification.hasStore(storeId))
+                .and(PurchaseOrderSpecification.hasPurchaseOrderCodeLike(purchaseOrderCode));
+
+        return purchaseOrderRepository.findAll(spec, pageable);
+    }
+
+    public PurchaseOrderDTO getById(UUID purchaseOrderId) {
+        PurchaseOrder purchaseOrder =  purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(
+                () -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_FOUND)
+        );
+        return mapToDTO(purchaseOrder);
+    }
+
+    public PurchaseOrderDTO mapToDTO(PurchaseOrder purchaseOrder) {
+        return modelMapper.map(purchaseOrder, PurchaseOrderDTO.class);
+    }
 
     //-------------------- PRIVATE METHOD ---------------------------------
 

@@ -117,10 +117,7 @@ const Products = () => {
             <ProductSearch onSearch={handleSearch} />
             <ProductButtonGroup onAddNewClick={showModal} />
           </div>
-          <ProductTable
-            products={products}
-            handleProductCreated={handleProductCreated}
-          />
+          <ProductTable products={products} />
           <div className="flex items-center justify-start">
             <Pagination
               size="small"

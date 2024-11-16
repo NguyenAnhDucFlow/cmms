@@ -70,7 +70,6 @@ public class MaterialController {
         return ApiResponse.<List<ListStoreMaterialResponse>>builder()
                 .data(storeMaterialResponseList)
                 .totalElements(storeMaterialResponses.getTotalElements())
-                .totalPages(storeMaterialResponses.getTotalPages())
                 .build();
     }
 

@@ -1,20 +1,25 @@
-package com.anhduc.backend.dto.request;
+package com.anhduc.backend.dto;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PurchaseOrderDetailCreationRequest {
-
+public class PurchaseOrderDetailDTO {
+    UUID id;
     String materialCode;
     int quantity;
     BigDecimal unitPrice;
+    BigDecimal totalPrice;
     String materialName;
     String unitName;
 }
+

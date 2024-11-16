@@ -16,6 +16,7 @@ public class MaterialDetailDTO {
     UUID id;
     String materialCode;
     String name;
+    String barcode;
     BigDecimal costPrice;
     BigDecimal salePrice;
     List<String> images;
@@ -23,7 +24,7 @@ public class MaterialDetailDTO {
     String weightUnit;
     String description;
     String coverImageUrl;
-    boolean isPoint;
+    Boolean isPoint;
     Boolean isActive;
     String basicUnit;
     String category;
