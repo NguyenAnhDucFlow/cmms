@@ -234,236 +234,236 @@ public class ApplicationInitConfig {
                             .basicUnit(unitRepository.findByName("Bao").orElse(null))
                             .category(categoryRepository.findByName("Xi măng").orElse(null))
                             .brand(brandRepository.findByName("SCG").orElse(null))
-                            .build()
+                            .build(),
 
-//                    Material.builder()
-//                            .materialCode("SP0003")
-//                            .barcode("123456789003")
-//                            .name("Gạch đỏ xây dựng")
-//                            .costPrice(new BigDecimal("3"))
-//                            .salePrice(new BigDecimal("5"))
-//                            .images(List.of(
-//                                    "https://xaydungso.vn/webroot/img/images/2(65).jpg",
-//                                    "https://tse1.mm.bing.net/th?id=OIP.T0khP45LrU-4UzCDqiTKhQHaFj&pid=Api"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Viên")
-//                            .description("Gạch đỏ dùng cho xây dựng, độ bền cao")
-//                            .minStock(500)
-//                            .maxStock(5000)
-//                            .coverImageUrl("https://xaydungso.vn/webroot/img/images/gach-xay-dung.jpg")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Viên").orElse(null))
-//                            .category(categoryRepository.findByName("Gạch").orElse(null))
-//                            .brand(brandRepository.findByName("Thạch Bàn").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0004")
-//                            .barcode("123456789004")
-//                            .name("Thép cây phi 16")
-//                            .costPrice(new BigDecimal("120"))
-//                            .salePrice(new BigDecimal("150"))
-//                            .images(List.of(
-//                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-2.jpg",
-//                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-3.jpg"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Cây")
-//                            .description("Thép cây phi 16 chịu lực tốt, độ bền cao")
-//                            .minStock(50)
-//                            .maxStock(500)
-//                            .coverImageUrl("https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-1.jpg")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Cây").orElse(null))
-//                            .category(categoryRepository.findByName("Thép").orElse(null))
-//                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0005")
-//                            .barcode("123456789005")
-//                            .name("Cát san lấp")
-//                            .costPrice(new BigDecimal("30"))
-//                            .salePrice(new BigDecimal("50"))
-//                            .images(List.of(
-//                                    "https://dungphatdat.vn/wp-content/uploads/2022/01/cat2.jpg",
-//                                    "https://static1.cafeland.vn/cafelandnew/hinh-anh/2020/09/09/95/image-20200909141842-1.png"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("M3")
-//                            .description("Cát san lấp dùng cho các công trình nền móng")
-//                            .minStock(20)
-//                            .maxStock(200)
-//                            .coverImageUrl("https://muabanvatlieuxaydung.com/upload/post/16/22/59/tim-hieu-ve-cat-san-lap-20210602092949-179022.jpg")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("M3").orElse(null))
-//                            .category(categoryRepository.findByName("Cát").orElse(null))
-//                            .brand(brandRepository.findByName("Fico").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0006")
-//                            .barcode("123456789006")
-//                            .name("Ống nước nhựa PVC D25")
-//                            .costPrice(new BigDecimal("10"))
-//                            .salePrice(new BigDecimal("15"))
-//                            .images(List.of(
-//                                    "https://reemart.vn/upload/sanpham/ong-dien-1529391799.png",
-//                                    "https://thietbidienlegrand.com/wp-content/uploads/2017/12/ong-dien-PVC-legrand.jpg"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Mét")
-//                            .description("Ống nước nhựa PVC D25 chịu lực tốt")
-//                            .minStock(100)
-//                            .maxStock(1000)
-//                            .coverImageUrl("https://vattudiennuoc247.com/wp-content/uploads/2022/07/Ong-nhua-pvc-d25-SP-luon-day-dien-chong-chay.png")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
-//                            .category(categoryRepository.findByName("Ống nước").orElse(null))
-//                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0007")
-//                            .barcode("123456789007")
-//                            .name("Kính cường lực 8mm")
-//                            .costPrice(new BigDecimal("150"))
-//                            .salePrice(new BigDecimal("200"))
-//                            .images(List.of(
-//                                    "https://havaco.vn/wp-content/uploads/mai-kinh-cap-treo-chan-nhen-spider.jpg",
-//                                    "https://havaco.vn/wp-content/uploads/lan-can-ban-cong.jpg"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Mét")
-//                            .description("Kính cường lực dày 8mm an toàn, chịu lực tốt")
-//                            .minStock(10)
-//                            .maxStock(100)
-//                            .coverImageUrl("https://tapdoankinhvietlong.vn/wp-content/uploads/2022/06/kinh-cuong-luc-3.jpg")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
-//                            .category(categoryRepository.findByName("Kính").orElse(null))
-//                            .brand(brandRepository.findByName("Thạch Bàn").orElse(null))
-//                            .build(),
-//                    Material.builder()
-//                            .materialCode("SP0008")
-//                            .barcode("123456789008")
-//                            .name("Xi măng trắng")
-//                            .costPrice(new BigDecimal("80"))
-//                            .salePrice(new BigDecimal("100"))
-//                            .images(List.of(
-//                                    "https://tse3.mm.bing.net/th?id=OIP.CkaWQqSUZDH-yvAbebXEnwHaC8&pid=Api&P=0&h=220",
-//                                    "https://tse3.mm.bing.net/th?id=OIP.0bJDzCN4wTxqSwuEnLSHSgHaD9&pid=Api&P=0&h=220"
-//                            ))
-//                            .weightValue(40.0f)
-//                            .weightUnit("Bao")
-//                            .description("Xi măng trắng, chất lượng cao cho các công trình thẩm mỹ")
-//                            .minStock(40)
-//                            .maxStock(400)
-//                            .coverImageUrl("https://product.hstatic.net/1000238808/product/ximang-insee_grande.png")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Bao").orElse(null))
-//                            .category(categoryRepository.findByName("Xi măng").orElse(null))
-//                            .brand(brandRepository.findByName("Holcim").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0009")
-//                            .barcode("123456789009")
-//                            .name("Vữa xây dựng")
-//                            .costPrice(new BigDecimal("40"))
-//                            .salePrice(new BigDecimal("55"))
-//                            .images(List.of(
-//                                    "https://tse4.mm.bing.net/th?id=OIP.wir26qm-YxXPrLoPeONsWgHaFD&pid=Api&P=0&h=220",
-//                                    "https://tse1.mm.bing.net/th?id=OIP.L_qFbOrH4PGLrbVB1bjzhQHaEj&pid=Api&P=0&h=220"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Bao")
-//                            .description("Vữa xây dựng, kết dính cao cho các công trình xây dựng")
-//                            .minStock(50)
-//                            .maxStock(500)
-//                            .coverImageUrl("https://tse4.mm.bing.net/th?id=OIP.7ltt5xKPL5xBs49O2rOD6QHaK8&pid=Api&P=0&h=220")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Bao").orElse(null))
-//                            .category(categoryRepository.findByName("Vữa").orElse(null))
-//                            .brand(brandRepository.findByName("Fico").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0010")
-//                            .barcode("123456789010")
-//                            .name("Thép hộp vuông 30x30")
-//                            .costPrice(new BigDecimal("90"))
-//                            .salePrice(new BigDecimal("120"))
-//                            .images(List.of(
-//                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs2-400x400.jpg",
-//                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs5.jpg"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Kg")
-//                            .description("Thép hộp vuông 30x30, độ bền cao, sử dụng trong công trình xây dựng")
-//                            .minStock(60)
-//                            .maxStock(600)
-//                            .coverImageUrl("https://vinhtansteel.vn/wp-content/uploads/2022/11/hs6-e1669783476378.jpg")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Kg").orElse(null))
-//                            .category(categoryRepository.findByName("Thép").orElse(null))
-//                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0011")
-//                            .barcode("123456789011")
-//                            .name("Cát đen san lấp")
-//                            .costPrice(new BigDecimal("25"))
-//                            .salePrice(new BigDecimal("35"))
-//                            .images(List.of(
-//                                    "https://up.yimg.com/ib/th?id=OIP.qjsxagelonUE5nIXhtm-awHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107",
-//                                    "https://tse1.mm.bing.net/th?id=OIP.oQMber3ajjuLEKgl-8gb0gHaFj&pid=Api&P=0&h=220"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("M3")
-//                            .description("Cát đen dùng cho san lấp, thích hợp cho nền móng")
-//                            .minStock(25)
-//                            .maxStock(250)
-//                            .coverImageUrl("https://up.yimg.com/ib/th?id=OIP.lZXtnbRjuFXnZTzgL_CzfwHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("M3").orElse(null))
-//                            .category(categoryRepository.findByName("Cát").orElse(null))
-//                            .brand(brandRepository.findByName("Insee").orElse(null))
-//                            .build(),
-//
-//                    Material.builder()
-//                            .materialCode("SP0012")
-//                            .barcode("123456789012")
-//                            .name("Ống nhựa PVC D32")
-//                            .costPrice(new BigDecimal("12"))
-//                            .salePrice(new BigDecimal("18"))
-//                            .images(List.of(
-//                                    "https://tse4.mm.bing.net/th?id=OIP.8rfycKeEHpk9UYkQScx3rwHaHa&pid=Api&P=0&h=220",
-//                                    "https://tse3.mm.bing.net/th?id=OIP.OAlMgrceaB3aubP_71sRMwAAAA&pid=Api&P=0&h=220"
-//                            ))
-//                            .weightValue(1.0f)
-//                            .weightUnit("Mét")
-//                            .description("Ống nhựa PVC D32, chịu lực tốt, bền vững cho hệ thống cấp nước")
-//                            .minStock(80)
-//                            .maxStock(800)
-//                            .coverImageUrl("https://tse1.mm.bing.net/th?id=OIP.9cUgjhfEGdzGmNaJ71aP3wHaFC&pid=Api&P=0&h=220")
-//                            .isPoint(false)
-//                            .isActive(true)
-//                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
-//                            .category(categoryRepository.findByName("Ống nước").orElse(null))
-//                            .brand(brandRepository.findByName("SCG").orElse(null))
-//                            .build()
+                    Material.builder()
+                            .materialCode("SP0003")
+                            .barcode("123456789003")
+                            .name("Gạch đỏ xây dựng")
+                            .costPrice(new BigDecimal("3"))
+                            .salePrice(new BigDecimal("5"))
+                            .images(List.of(
+                                    "https://xaydungso.vn/webroot/img/images/2(65).jpg",
+                                    "https://tse1.mm.bing.net/th?id=OIP.T0khP45LrU-4UzCDqiTKhQHaFj&pid=Api"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Viên")
+                            .description("Gạch đỏ dùng cho xây dựng, độ bền cao")
+                            .minStock(500)
+                            .maxStock(5000)
+                            .coverImageUrl("https://xaydungso.vn/webroot/img/images/gach-xay-dung.jpg")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Viên").orElse(null))
+                            .category(categoryRepository.findByName("Gạch").orElse(null))
+                            .brand(brandRepository.findByName("Thạch Bàn").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0004")
+                            .barcode("123456789004")
+                            .name("Thép cây phi 16")
+                            .costPrice(new BigDecimal("120"))
+                            .salePrice(new BigDecimal("150"))
+                            .images(List.of(
+                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-2.jpg",
+                                    "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-3.jpg"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Cây")
+                            .description("Thép cây phi 16 chịu lực tốt, độ bền cao")
+                            .minStock(50)
+                            .maxStock(500)
+                            .coverImageUrl("https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-1.jpg")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Cây").orElse(null))
+                            .category(categoryRepository.findByName("Thép").orElse(null))
+                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0005")
+                            .barcode("123456789005")
+                            .name("Cát san lấp")
+                            .costPrice(new BigDecimal("30"))
+                            .salePrice(new BigDecimal("50"))
+                            .images(List.of(
+                                    "https://dungphatdat.vn/wp-content/uploads/2022/01/cat2.jpg",
+                                    "https://static1.cafeland.vn/cafelandnew/hinh-anh/2020/09/09/95/image-20200909141842-1.png"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("M3")
+                            .description("Cát san lấp dùng cho các công trình nền móng")
+                            .minStock(20)
+                            .maxStock(200)
+                            .coverImageUrl("https://muabanvatlieuxaydung.com/upload/post/16/22/59/tim-hieu-ve-cat-san-lap-20210602092949-179022.jpg")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("M3").orElse(null))
+                            .category(categoryRepository.findByName("Cát").orElse(null))
+                            .brand(brandRepository.findByName("Fico").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0006")
+                            .barcode("123456789006")
+                            .name("Ống nước nhựa PVC D25")
+                            .costPrice(new BigDecimal("10"))
+                            .salePrice(new BigDecimal("15"))
+                            .images(List.of(
+                                    "https://reemart.vn/upload/sanpham/ong-dien-1529391799.png",
+                                    "https://thietbidienlegrand.com/wp-content/uploads/2017/12/ong-dien-PVC-legrand.jpg"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Mét")
+                            .description("Ống nước nhựa PVC D25 chịu lực tốt")
+                            .minStock(100)
+                            .maxStock(1000)
+                            .coverImageUrl("https://vattudiennuoc247.com/wp-content/uploads/2022/07/Ong-nhua-pvc-d25-SP-luon-day-dien-chong-chay.png")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
+                            .category(categoryRepository.findByName("Ống nước").orElse(null))
+                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0007")
+                            .barcode("123456789007")
+                            .name("Kính cường lực 8mm")
+                            .costPrice(new BigDecimal("150"))
+                            .salePrice(new BigDecimal("200"))
+                            .images(List.of(
+                                    "https://havaco.vn/wp-content/uploads/mai-kinh-cap-treo-chan-nhen-spider.jpg",
+                                    "https://havaco.vn/wp-content/uploads/lan-can-ban-cong.jpg"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Mét")
+                            .description("Kính cường lực dày 8mm an toàn, chịu lực tốt")
+                            .minStock(10)
+                            .maxStock(100)
+                            .coverImageUrl("https://tapdoankinhvietlong.vn/wp-content/uploads/2022/06/kinh-cuong-luc-3.jpg")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
+                            .category(categoryRepository.findByName("Kính").orElse(null))
+                            .brand(brandRepository.findByName("Thạch Bàn").orElse(null))
+                            .build(),
+                    Material.builder()
+                            .materialCode("SP0008")
+                            .barcode("123456789008")
+                            .name("Xi măng trắng")
+                            .costPrice(new BigDecimal("80"))
+                            .salePrice(new BigDecimal("100"))
+                            .images(List.of(
+                                    "https://tse3.mm.bing.net/th?id=OIP.CkaWQqSUZDH-yvAbebXEnwHaC8&pid=Api&P=0&h=220",
+                                    "https://tse3.mm.bing.net/th?id=OIP.0bJDzCN4wTxqSwuEnLSHSgHaD9&pid=Api&P=0&h=220"
+                            ))
+                            .weightValue(40.0f)
+                            .weightUnit("Bao")
+                            .description("Xi măng trắng, chất lượng cao cho các công trình thẩm mỹ")
+                            .minStock(40)
+                            .maxStock(400)
+                            .coverImageUrl("https://product.hstatic.net/1000238808/product/ximang-insee_grande.png")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Bao").orElse(null))
+                            .category(categoryRepository.findByName("Xi măng").orElse(null))
+                            .brand(brandRepository.findByName("Holcim").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0009")
+                            .barcode("123456789009")
+                            .name("Vữa xây dựng")
+                            .costPrice(new BigDecimal("40"))
+                            .salePrice(new BigDecimal("55"))
+                            .images(List.of(
+                                    "https://tse4.mm.bing.net/th?id=OIP.wir26qm-YxXPrLoPeONsWgHaFD&pid=Api&P=0&h=220",
+                                    "https://tse1.mm.bing.net/th?id=OIP.L_qFbOrH4PGLrbVB1bjzhQHaEj&pid=Api&P=0&h=220"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Bao")
+                            .description("Vữa xây dựng, kết dính cao cho các công trình xây dựng")
+                            .minStock(50)
+                            .maxStock(500)
+                            .coverImageUrl("https://tse4.mm.bing.net/th?id=OIP.7ltt5xKPL5xBs49O2rOD6QHaK8&pid=Api&P=0&h=220")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Bao").orElse(null))
+                            .category(categoryRepository.findByName("Vữa").orElse(null))
+                            .brand(brandRepository.findByName("Fico").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0010")
+                            .barcode("123456789010")
+                            .name("Thép hộp vuông 30x30")
+                            .costPrice(new BigDecimal("90"))
+                            .salePrice(new BigDecimal("120"))
+                            .images(List.of(
+                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs2-400x400.jpg",
+                                    "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs5.jpg"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Kg")
+                            .description("Thép hộp vuông 30x30, độ bền cao, sử dụng trong công trình xây dựng")
+                            .minStock(60)
+                            .maxStock(600)
+                            .coverImageUrl("https://vinhtansteel.vn/wp-content/uploads/2022/11/hs6-e1669783476378.jpg")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Kg").orElse(null))
+                            .category(categoryRepository.findByName("Thép").orElse(null))
+                            .brand(brandRepository.findByName("Hoa Sen").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0011")
+                            .barcode("123456789011")
+                            .name("Cát đen san lấp")
+                            .costPrice(new BigDecimal("25"))
+                            .salePrice(new BigDecimal("35"))
+                            .images(List.of(
+                                    "https://up.yimg.com/ib/th?id=OIP.qjsxagelonUE5nIXhtm-awHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107",
+                                    "https://tse1.mm.bing.net/th?id=OIP.oQMber3ajjuLEKgl-8gb0gHaFj&pid=Api&P=0&h=220"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("M3")
+                            .description("Cát đen dùng cho san lấp, thích hợp cho nền móng")
+                            .minStock(25)
+                            .maxStock(250)
+                            .coverImageUrl("https://up.yimg.com/ib/th?id=OIP.lZXtnbRjuFXnZTzgL_CzfwHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("M3").orElse(null))
+                            .category(categoryRepository.findByName("Cát").orElse(null))
+                            .brand(brandRepository.findByName("Insee").orElse(null))
+                            .build(),
+
+                    Material.builder()
+                            .materialCode("SP0012")
+                            .barcode("123456789012")
+                            .name("Ống nhựa PVC D32")
+                            .costPrice(new BigDecimal("12"))
+                            .salePrice(new BigDecimal("18"))
+                            .images(List.of(
+                                    "https://tse4.mm.bing.net/th?id=OIP.8rfycKeEHpk9UYkQScx3rwHaHa&pid=Api&P=0&h=220",
+                                    "https://tse3.mm.bing.net/th?id=OIP.OAlMgrceaB3aubP_71sRMwAAAA&pid=Api&P=0&h=220"
+                            ))
+                            .weightValue(1.0f)
+                            .weightUnit("Mét")
+                            .description("Ống nhựa PVC D32, chịu lực tốt, bền vững cho hệ thống cấp nước")
+                            .minStock(80)
+                            .maxStock(800)
+                            .coverImageUrl("https://tse1.mm.bing.net/th?id=OIP.9cUgjhfEGdzGmNaJ71aP3wHaFC&pid=Api&P=0&h=220")
+                            .isPoint(false)
+                            .isActive(true)
+                            .basicUnit(unitRepository.findByName("Mét").orElse(null))
+                            .category(categoryRepository.findByName("Ống nước").orElse(null))
+                            .brand(brandRepository.findByName("SCG").orElse(null))
+                            .build()
             );
 
             materials.forEach(materialRepository::save);
