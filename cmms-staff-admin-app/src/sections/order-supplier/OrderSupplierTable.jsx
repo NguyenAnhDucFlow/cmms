@@ -14,8 +14,6 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
   const navigate = useNavigate();
 
   const hideModal = () => {
@@ -23,31 +21,9 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
     setSelectedProduct(null);
   };
 
-  const showModal = (productId) => {
-    setModalVisible(true);
-    setSelectedProduct(productId);
-  };
-
   const handleRowClick = (index) => {
     setExpandedRow((prevRow) => (prevRow === index ? null : index));
     setActiveTab(0); // Reset về tab đầu tiên khi mở một hàng mới
-  };
-
-  const handleConfirmAction = async () => {
-    if (confirmAction && selectedProduct) {
-      try {
-        message.success("Cập nhật trạng thái hàng hóa thành công");
-        handleProductCreated();
-      } catch (error) {
-        console.error("Error updating status:", error);
-      }
-    }
-  };
-
-  const showConfirmModal = (productId, action) => {
-    setSelectedProduct(productId);
-    setConfirmAction(action);
-    setConfirmModalVisible(true);
   };
 
   const tabs = [{ label: "Thông tin", key: "info" }];
@@ -60,22 +36,6 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
           onClose={hideModal}
           productId={selectedProduct}
         />
-      )}
-      {isConfirmModalVisible && (
-        <Modal
-          title="Xác nhận"
-          open={isConfirmModalVisible}
-          onOk={handleConfirmAction}
-          onCancel={() => setConfirmModalVisible(false)}
-          okText="Xác nhận"
-          cancelText="Hủy"
-        >
-          <p>
-            Bạn có chắc chắn muốn
-            {confirmAction === "active" ? " cho phép" : " ngừng"} kinh doanh sản
-            phẩm này không?
-          </p>
-        </Modal>
       )}
       <div className="space-y-4">
         <table className="min-w-full bg-white border border-gray-300">
@@ -253,17 +213,17 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
                                             {item.materialCode}
                                           </div>
                                           <div className="p-2 w-[40%]">
-                                            {`${item.materialName} (${item.unitName})`}
+                                            {`${item.name} (${item.unitName})`}
                                           </div>
                                           <div className="p-2 w-[10%]">
                                             {item.quantity}
                                           </div>
                                           <div className="p-2 w-[10%]">
-                                            {item.unitPrice}
+                                            {item.costPrice}
                                           </div>
                                           <div className="p-2 w-[10%]"></div>
                                           <div className="p-2 w-[10%]">
-                                            {item.unitPrice}
+                                            {item.costPrice}
                                           </div>
                                           <div className="p-2 w-[10%] font-bold">
                                             {item.totalPrice}

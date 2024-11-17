@@ -5,40 +5,22 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import {
-  Input,
-  DatePicker,
-  Empty,
-  Button,
-  Popconfirm,
-  Select,
-  message,
-} from "antd";
+import { Input, DatePicker, Empty, Button, Popconfirm, message } from "antd";
 import { CiInboxOut } from "react-icons/ci";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { FaRegTrashCan } from "react-icons/fa6";
-import styled from "styled-components";
 import { CgProfile } from "react-icons/cg";
 import useAuth from "../../hooks/useAuth";
 import { useData } from "../../hooks/useData";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useStore } from "../../hooks/useStore";
 import axios from "../../utils/axios";
+import { CustomSelect } from "../../utils/Css-in-js";
 
 const schema = Yup.object().shape({
   supplierId: Yup.string().required("Supplier ID is required"),
   storeId: Yup.string().required("Store ID is required"),
 });
-
-const CustomSelect = styled(Select)`
-  && .ant-input-affix-wrapper {
-    padding: 0 !important;
-    border-radius: 0 !important;
-  }
-  .ant-select-selector {
-    padding: 0 !important;
-  }
-`;
 
 const OrderSupplierEdit = () => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -53,19 +35,10 @@ const OrderSupplierEdit = () => {
     handleSubmit,
     control,
     trigger,
-    setValue,
     reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      supplierId: null,
-      storeId: null,
-      note: "",
-      estimatedDeliveryDate: null,
-      status: "TEMPORARY",
-      details: [],
-    },
   });
 
   useEffect(() => {
@@ -73,22 +46,26 @@ const OrderSupplierEdit = () => {
       try {
         const response = await axios.get(`/purchase-order/${id}`);
         const {
-          supplierId,
-          storeId,
+          supplierName,
+          storeName,
+          purchaseOrderCode,
           note,
           estimatedDeliveryDate,
           details,
           status,
         } = response.data.data;
+        const supplier = suppliers.find((s) => s.name === supplierName);
+        const store = stores.find((s) => s.name === storeName);
         setSelectedItems(details);
         reset({
-          supplierId,
-          storeId,
+          supplierId: supplier?.id || "",
+          storeId: store?.id || "",
           note,
           estimatedDeliveryDate: estimatedDeliveryDate
             ? dayjs(estimatedDeliveryDate) // Chuyển thành dayjs object
             : null,
           status,
+          purchaseOrderCode,
         });
       } catch (error) {
         message.error("Không thể tải dữ liệu đơn hàng.");
@@ -154,18 +131,19 @@ const OrderSupplierEdit = () => {
   const onSubmit = async (data) => {
     try {
       const payload = {
+        purchaseOrderId: id,
         ...data,
         details: selectedItems.map((item) => ({
           materialCode: item.materialCode,
           quantity: item.quantity,
-          unitPrice: item.costPrice,
-          materialName: item.name,
+          costPrice: item.costPrice,
+          name: item.name,
           unitName: item.unitName,
         })),
       };
-      await axios.put(`/purchase-order/${id}`, payload);
+      await axios.put(`/purchase-order`, payload);
       message.success("Đơn đặt hàng đã được cập nhật thành công!");
-      navigate("/orders");
+      navigate(-1);
     } catch (error) {
       message.error("Đã có lỗi xảy ra khi cập nhật đơn hàng.");
     }
@@ -236,7 +214,7 @@ const OrderSupplierEdit = () => {
                   </div>
                   <div className="p-2 w-[5%]">{index + 1}</div>
                   <div className="p-2 w-[15%]">{item.materialCode}</div>
-                  <div className="p-2 flex-1">{item.materialName}</div>
+                  <div className="p-2 flex-1">{item.name}</div>
                   <div className="p-2 w-[10%]">{item.unitName}</div>
                   <div className="p-2 w-[10%]">
                     <Input
@@ -253,7 +231,7 @@ const OrderSupplierEdit = () => {
                     <Input
                       type="number"
                       min="0"
-                      value={item.unitPrice}
+                      value={item.costPrice}
                       variant="borderless"
                       onChange={(e) =>
                         handleCostPriceChange(index, parseFloat(e.target.value))
@@ -335,29 +313,36 @@ const OrderSupplierEdit = () => {
             <div className="flex items-center justify-between">
               <div className="text-sm  w-2/3">Mã đặt hàng nhập</div>
               <div className="w-1/3">
-                <Input
-                  placeholder="Phiếu nhập tự động"
-                  variant="borderless"
-                  disabled
-                  className="px-0"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #d9d9d9",
-                    borderRadius: "0",
-                    transition: "border-color 0.3s ease",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.borderBottom = "1px solid #1E88E5")
-                  }
-                  onBlur={(e) =>
-                    (e.target.style.borderBottom = "1px solid #d9d9d9")
-                  }
-                  onMouseOver={(e) =>
-                    (e.target.style.borderBottom = "1px solid #1E88E5")
-                  }
-                  onMouseOut={(e) =>
-                    (e.target.style.borderBottom = "1px solid #d9d9d9")
-                  }
+                <Controller
+                  name="purchaseOrderCode"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      placeholder="Phiếu nhập tự động"
+                      variant="borderless"
+                      {...field}
+                      disabled
+                      className="px-0"
+                      style={{
+                        border: "none",
+                        borderBottom: "1px solid #d9d9d9",
+                        borderRadius: "0",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) =>
+                        (e.target.style.borderBottom = "1px solid #1E88E5")
+                      }
+                      onBlur={(e) =>
+                        (e.target.style.borderBottom = "1px solid #d9d9d9")
+                      }
+                      onMouseOver={(e) =>
+                        (e.target.style.borderBottom = "1px solid #1E88E5")
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.borderBottom = "1px solid #d9d9d9")
+                      }
+                    />
+                  )}
                 />
               </div>
             </div>

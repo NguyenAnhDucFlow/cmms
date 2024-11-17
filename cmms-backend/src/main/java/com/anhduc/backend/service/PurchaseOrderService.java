@@ -3,6 +3,7 @@ package com.anhduc.backend.service;
 import com.anhduc.backend.dto.PurchaseOrderDTO;
 import com.anhduc.backend.dto.request.PurchaseOrderCreationRequest;
 import com.anhduc.backend.dto.request.PurchaseOrderDetailCreationRequest;
+import com.anhduc.backend.dto.request.PurchaseOrderUpdateRequest;
 import com.anhduc.backend.entity.PurchaseOrder;
 import com.anhduc.backend.entity.PurchaseOrderDetail;
 import com.anhduc.backend.entity.Store;
@@ -28,7 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -74,11 +79,11 @@ public class PurchaseOrderService {
 
             orderDetail.setMaterialCode(item.getMaterialCode());
             orderDetail.setQuantity(item.getQuantity());
-            orderDetail.setUnitPrice(item.getUnitPrice());
-            orderDetail.setMaterialName(item.getMaterialName());
+            orderDetail.setCostPrice(item.getCostPrice());
+            orderDetail.setName(item.getName());
             orderDetail.setUnitName(item.getUnitName());
 
-            BigDecimal detailTotalPrice = item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
+            BigDecimal detailTotalPrice = item.getCostPrice().multiply(new BigDecimal(item.getQuantity()));
             orderDetail.setTotalPrice(detailTotalPrice);
             // cộng dồn vào tổng đơn hàng
             totalQuantity += item.getQuantity();
@@ -94,6 +99,75 @@ public class PurchaseOrderService {
 
         purchaseOrderRepository.save(purchaseOrder);
     }
+
+    @Transactional
+    public void update(PurchaseOrderUpdateRequest request) {
+
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(request.getPurchaseOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_FOUND));
+
+        if (request.getSupplierId() != null) {
+            Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                    .orElseThrow(() -> new AppException(ErrorCode.SUPPLIER_NOT_EXISTED));
+            purchaseOrder.setSupplier(supplier);
+        }
+
+        if (request.getStoreId() != null) {
+            Store store = storeRepository.findById(request.getStoreId())
+                    .orElseThrow(() -> new AppException(ErrorCode.STORE_NOT_EXISTED));
+            purchaseOrder.setStore(store);
+        }
+
+        purchaseOrder.setEstimatedDeliveryDate(request.getEstimatedDeliveryDate());
+        purchaseOrder.setStatus(request.getStatus() != null ? request.getStatus() : purchaseOrder.getStatus());
+        purchaseOrder.setNote(request.getNote());
+
+        // Cập nhật danh sách chi tiết đơn hàng
+        Map<String, PurchaseOrderDetail> existingDetailsMap = purchaseOrder.getDetails().stream()
+                .collect(Collectors.toMap(PurchaseOrderDetail::getMaterialCode, Function.identity()));
+
+        int totalQuantity = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        // Cập nhật hoặc thêm chi tiết mới
+        for (PurchaseOrderDetailCreationRequest item : request.getDetails()) {
+            PurchaseOrderDetail orderDetail = existingDetailsMap.getOrDefault(item.getMaterialCode(), new PurchaseOrderDetail());
+            orderDetail.setMaterialCode(item.getMaterialCode());
+            orderDetail.setQuantity(item.getQuantity());
+            orderDetail.setCostPrice(item.getCostPrice());
+            orderDetail.setName(item.getName());
+            orderDetail.setUnitName(item.getUnitName());
+
+            BigDecimal detailTotalPrice = item.getCostPrice().multiply(new BigDecimal(item.getQuantity()));
+            orderDetail.setTotalPrice(detailTotalPrice);
+
+            // Cộng dồn tổng số lượng và tổng giá trị
+            totalQuantity += item.getQuantity();
+            totalAmount = totalAmount.add(detailTotalPrice);
+
+            // Nếu là chi tiết mới, thêm vào danh sách đơn hàng
+            if (orderDetail.getPurchaseOrder() == null) {
+                orderDetail.setPurchaseOrder(purchaseOrder);
+                purchaseOrder.getDetails().add(orderDetail);
+            }
+        }
+
+        // Xóa các chi tiết không còn trong request
+        List<PurchaseOrderDetail> detailsToRemove = purchaseOrder.getDetails().stream()
+                .filter(detail -> request.getDetails().stream()
+                        .noneMatch(item -> item.getMaterialCode().equals(detail.getMaterialCode())))
+                .toList();
+        purchaseOrder.getDetails().removeAll(detailsToRemove);
+
+        // Cập nhật tổng số lượng, giá trị, và số lượng mục
+        purchaseOrder.setTotalQuantity(totalQuantity);
+        purchaseOrder.setTotalAmount(totalAmount);
+        purchaseOrder.setTotalItems(request.getDetails().size());
+
+        // Lưu cập nhật vào cơ sở dữ liệu
+        purchaseOrderRepository.save(purchaseOrder);
+    }
+
 
     public Page<PurchaseOrder> getPurchaseOrders(
             PurchaseOrderStatus status,

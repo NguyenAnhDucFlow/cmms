@@ -3,6 +3,7 @@ package com.anhduc.backend.controller;
 import com.anhduc.backend.dto.PurchaseOrderDTO;
 import com.anhduc.backend.dto.PurchaseOrderDetailDTO;
 import com.anhduc.backend.dto.request.PurchaseOrderCreationRequest;
+import com.anhduc.backend.dto.request.PurchaseOrderUpdateRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
 import com.anhduc.backend.entity.PurchaseOrder;
 import com.anhduc.backend.enums.PurchaseOrderStatus;
@@ -35,6 +36,14 @@ public class PurchaseOrderController {
         purchaseOrderService.create(request);
         return ApiResponse.<Void>builder()
                 .message("Tạo đơn đặt hàng thành công !!")
+                .build();
+    }
+
+    @PutMapping
+    ApiResponse<Void> create(@RequestBody PurchaseOrderUpdateRequest request) {
+        purchaseOrderService.update(request);
+        return ApiResponse.<Void>builder()
+                .message("Cập nhật đơn đặt hàng thành công !!")
                 .build();
     }
 

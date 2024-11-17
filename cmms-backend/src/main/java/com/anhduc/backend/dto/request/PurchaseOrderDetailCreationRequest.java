@@ -14,7 +14,7 @@ public class PurchaseOrderDetailCreationRequest {
 
     String materialCode;
     int quantity;
-    BigDecimal unitPrice;
-    String materialName;
+    BigDecimal costPrice;
+    String name;
     String unitName;
 }

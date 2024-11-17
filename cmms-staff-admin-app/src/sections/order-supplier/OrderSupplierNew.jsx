@@ -131,12 +131,13 @@ const OrderSupplierNew = () => {
         details: selectedItems.map((item) => ({
           materialCode: item.materialCode,
           quantity: item.quantity,
-          unitPrice: item.costPrice,
-          materialName: item.name,
+          costPrice: item.costPrice,
+          name: item.name,
           unitName: item.unitName,
         })),
       };
       await axios.post("/purchase-order", payload);
+      navigate(-1);
       message.success("Đơn đặt hàng đã được tạo thành công!");
     } catch (error) {
       message.error("Đã có lỗi xảy ra khi tạo đơn hàng.");

@@ -14,8 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PurchaseOrderCreationRequest {
+public class PurchaseOrderUpdateRequest {
 
+    UUID purchaseOrderId;
     UUID supplierId;
     UUID storeId;
     Instant estimatedDeliveryDate;

@@ -82,7 +82,7 @@ public class MaterialService {
                                 .variantCode(variantCode)
                                 .material(material)
                                 .conversionRate(materialUnitDto.getConversionRate())
-                                .price(BigDecimal.valueOf(materialUnitDto.getPrice()))
+                                .salePrice(BigDecimal.valueOf(materialUnitDto.getPrice()))
                                 .build();
                     }
             ).toList();
@@ -257,7 +257,6 @@ public class MaterialService {
 
             if (material.getBasicUnit() != null) {
                 ListMaterialImportDTO baseUnitDto = new ListMaterialImportDTO(
-                        material.getId(),
                         material.getMaterialCode(),
                         material.getName(),
                         material.getCoverImageUrl(),
@@ -271,11 +270,10 @@ public class MaterialService {
             if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
                 for (MaterialUnit variant : material.getMaterialUnits()) {
                     ListMaterialImportDTO variantDto = new ListMaterialImportDTO(
-                            variant.getId(),
                             variant.getVariantCode(),
                             material.getName(),
                             material.getCoverImageUrl(),
-                            variant.getPrice(),
+                            variant.getCostPrice(),
                             totalQuantity,
                             variant.getUnit().getName()
                     );
