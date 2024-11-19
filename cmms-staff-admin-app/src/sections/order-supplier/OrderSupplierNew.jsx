@@ -16,36 +16,18 @@ import {
 import { CiInboxOut } from "react-icons/ci";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { FaRegTrashCan } from "react-icons/fa6";
-import styled from "styled-components";
 import { CgProfile } from "react-icons/cg";
 import useAuth from "../../hooks/useAuth";
 import { useData } from "../../hooks/useData";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useStore } from "../../hooks/useStore";
 import axios from "../../utils/axios";
+import { CustomSelect } from "../../utils/Css-in-js";
 
 const schema = Yup.object().shape({
   supplierId: Yup.string().required("Supplier ID is required"),
   storeId: Yup.string().required("Store ID is required"),
 });
-
-const CustomSelect = styled(Select)`
-  && .ant-input-affix-wrapper {
-    position: relative;
-    display: inline-flex;
-    width: 100%;
-    min-width: 0;
-    padding: 0px 0px !important;
-    color: rgba(0, 0, 0, 0.88);
-    font-size: 14px;
-    line-height: 1.5714285714285714;
-    border-radius: 0px !important;
-    transition: all 0.2s;
-  }
-  .ant-select-selector {
-    padding: 0 0px !important;
-  }
-`;
 
 const OrderSupplierNew = () => {
   const [selectedItems, setSelectedItems] = useState([]);

@@ -1,10 +1,10 @@
 package com.anhduc.backend.dto.request;
 
-import com.anhduc.backend.enums.PurchaseOrderStatus;
+import com.anhduc.backend.enums.GoodsReceiptStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.Instant;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,12 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PurchaseOrderCreationRequest {
+public class GoodsReceiptCreationRequest {
 
+    String purchaseOrderCode;
     UUID supplierId;
     UUID storeId;
-    Instant estimatedDeliveryDate;
-    PurchaseOrderStatus status;
+    String createdBy;
+    BigDecimal paidAmount;
+    GoodsReceiptStatus status;
     String note;
-    List<PurchaseOrderDetailCreationRequest> details = new ArrayList<>();
+    List<GoodsReceiptDetailCreationRequest> details = new ArrayList<>();
 }

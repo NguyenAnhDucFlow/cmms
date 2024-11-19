@@ -27,6 +27,7 @@ public class Store extends AuditAble{
     String province;
     String district;
     String ward;
+    boolean isCentralWarehouse = false;
     @OneToOne(mappedBy = "store")
     @JsonManagedReference
     User user;

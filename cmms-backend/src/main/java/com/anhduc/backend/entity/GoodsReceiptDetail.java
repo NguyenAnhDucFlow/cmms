@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -13,20 +14,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CentralWarehouse {
+@Table(name = "good_receipt_details")
+public class GoodsReceiptDetail extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    double quantity;
     @ManyToOne
-    Material material;
-    @ManyToOne
-    Store company;
+    GoodsReceipt goodsReceipt;
+    String materialCode;
+    int quantity;
+    BigDecimal costPrice;
+    BigDecimal totalPrice;
+    String name;
+    String unitName;
 
-    public CentralWarehouse(Store company, Material material, double quantity) {
-        this.company = company;
-        this.material = material;
-        this.quantity = quantity;
-    }
 }
+
+

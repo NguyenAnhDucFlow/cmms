@@ -1,11 +1,11 @@
 package com.anhduc.backend.entity;
 
-import com.anhduc.backend.enums.PurchaseOrderStatus;
+import com.anhduc.backend.enums.GoodsReceiptStatus;
+import com.anhduc.backend.enums.ReceiptType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -20,14 +20,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "purchase_orders")
+@Table(name = "goods_receipts")
 @EntityListeners(AuditingEntityListener.class)
-public class PurchaseOrder extends AuditAble{
+public class GoodsReceipt{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    @Column(nullable = false, unique = true)
+    String goodsReceiptCode;
     String purchaseOrderCode;
     @ManyToOne
     Supplier supplier;
@@ -36,22 +36,20 @@ public class PurchaseOrder extends AuditAble{
     String createdBy;
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
-    @LastModifiedDate
-    @Column(nullable = false)
-    private Instant updatedAt;
-    Instant estimatedDeliveryDate;
+    private Instant receiptDate;
     int totalQuantity;
     int totalItems;
     BigDecimal totalAmount;
-    PurchaseOrderStatus status;
+    BigDecimal paidAmount;
+    GoodsReceiptStatus status;
+    ReceiptType receiptType;
     String note;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<PurchaseOrderDetail> details;
+    @OneToMany(mappedBy = "goodsReceipt", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<GoodsReceiptDetail> details;
 
-    @OneToOne(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private GoodsReceipt goodsReceipt;
+    @OneToOne
+    private PurchaseOrder purchaseOrder;
 
 }
 

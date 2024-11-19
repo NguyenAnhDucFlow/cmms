@@ -90,6 +90,7 @@ public class ApplicationInitConfig {
         if (storeRepository.findByName("Cửa hàng trung tâm").isEmpty()) {
             Store store = new Store();
             store.setName("Cửa hàng trung tâm");
+            store.setCentralWarehouse(true);
             storeRepository.save(store);
         }
         if (storeRepository.findByName("Cửa hàng quận 1").isEmpty()) {

@@ -24,4 +24,10 @@ public class StoreWarehouse {
     Material material;
     @ManyToOne
     Store store;
+
+    public StoreWarehouse(Store store, Material material, double quantity) {
+        this.store = store;
+        this.material = material;
+        this.quantity = quantity;
+    }
 }

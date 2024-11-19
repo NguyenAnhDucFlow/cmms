@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MaterialRepository extends JpaRepository<Material, UUID> {
@@ -70,6 +71,6 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
             "WHERE m.materialCode LIKE :prefix%")
     String findMaxMaterialCodeWithPrefix(@Param("prefix") String prefix);
 
-    Material findByMaterialCode(String materialCode);
+    Optional<Material> findByMaterialCode(String materialCode);
 
 }

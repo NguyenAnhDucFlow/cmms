@@ -2,6 +2,8 @@ package com.anhduc.backend.repository;
 
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
+import com.anhduc.backend.entity.Material;
+import com.anhduc.backend.entity.Store;
 import com.anhduc.backend.entity.StoreWarehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +12,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface StoreWarehouseRepository extends JpaRepository<StoreWarehouse, UUID> {
+
+    Optional<StoreWarehouse> findByStoreAndMaterial(Store store, Material material);
 
     @Query(value = """
                 SELECT m.id,
