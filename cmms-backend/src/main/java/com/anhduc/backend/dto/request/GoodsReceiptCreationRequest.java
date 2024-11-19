@@ -19,7 +19,6 @@ public class GoodsReceiptCreationRequest {
     String purchaseOrderCode;
     UUID supplierId;
     UUID storeId;
-    String createdBy;
     BigDecimal paidAmount;
     GoodsReceiptStatus status;
     String note;

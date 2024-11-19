@@ -1,89 +1,32 @@
 import React, { useState } from "react";
-import {
-  Image,
-  Divider,
-  Button,
-  Pagination,
-  Modal,
-  message,
-  Empty,
-} from "antd";
-import { IoMdCheckmark, IoMdClose } from "react-icons/io";
-import { FaCheckSquare, FaLock } from "react-icons/fa";
-import { FaRegTrashCan } from "react-icons/fa6";
-import axios from "../../utils/axios";
-import { useStore } from "../../hooks/useStore";
+import { Divider, Button, Modal, message, Empty } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import UpdateProductModal from "../../components/modal/UpdateProductModal";
+import { formatDate, formatDateVN } from "../../utils/formatDate";
+import { getOrderSupplierStatus } from "../../utils/getStatusLabel";
+import { useNavigate } from "react-router-dom";
+import TextArea from "antd/es/input/TextArea";
+import { IoArrowRedo } from "react-icons/io5";
+import { MdOutlineClear } from "react-icons/md";
 
 const PurchaseOrderTable = ({ products, handleProductCreated }) => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [productDetails, setProductDetails] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
-  const { storeId } = useStore();
+  const navigate = useNavigate();
 
   const hideModal = () => {
     setModalVisible(false);
     setSelectedProduct(null);
   };
 
-  const showModal = (productId) => {
-    setModalVisible(true);
-    setSelectedProduct(productId);
+  const handleRowClick = (index) => {
+    setExpandedRow((prevRow) => (prevRow === index ? null : index));
+    setActiveTab(0); // Reset về tab đầu tiên khi mở một hàng mới
   };
 
-  const fetchProductDetail = async (productId) => {
-    try {
-      const response = await axios.get(
-        `/materials/${productId}/stores/${storeId}`
-      );
-      setProductDetails((prevDetails) => ({
-        ...prevDetails,
-        [productId]: response.data.data,
-      }));
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-    }
-  };
-
-  const handleRowClick = (index, productId) => {
-    const isNewRowExpanding = expandedRow === null || expandedRow !== index;
-    setExpandedRow(isNewRowExpanding ? index : null);
-    setActiveTab(0);
-    if (isNewRowExpanding && !productDetails[productId]) {
-      fetchProductDetail(productId);
-    }
-  };
-
-  const handleConfirmAction = async () => {
-    if (confirmAction && selectedProduct) {
-      try {
-        await axios.patch(
-          `/materials/${selectedProduct}/status?status=${confirmAction}`
-        );
-        setConfirmModalVisible(false);
-        message.success("Cập nhât trạng thái hàng hóa thành công");
-        handleProductCreated();
-      } catch (error) {
-        console.error("Error updating status:", error);
-      }
-    }
-  };
-
-  const showConfirmModal = (productId, action) => {
-    setSelectedProduct(productId);
-    setConfirmAction(action);
-    setConfirmModalVisible(true);
-  };
-
-  const tabs = [
-    { label: "Thông tin", content: "Content of tab 1" },
-    { label: "Tab 2", content: "Content of tab 2" },
-    { label: "Tab 3", content: "Content of tab 3" },
-  ];
+  const tabs = [{ label: "Thông tin", key: "info" }];
 
   return (
     <>
@@ -94,41 +37,24 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
           productId={selectedProduct}
         />
       )}
-      {isConfirmModalVisible && (
-        <Modal
-          title="Xác nhận"
-          open={isConfirmModalVisible}
-          onOk={handleConfirmAction}
-          onCancel={() => setConfirmModalVisible(false)}
-          okText="Xác nhận"
-          cancelText="Hủy"
-        >
-          <p>
-            Bạn có chắc chắn muốn
-            {confirmAction === "active" ? " cho phép" : " ngừng"} kinh doanh sản
-            phẩm này không?
-          </p>
-        </Modal>
-      )}
-      <div className=" space-y-4">
+      <div className="space-y-4">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-[#BBDEFB]">
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-1/12"></th>
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-1/12">
-                Mã hàng
+              <th className="px-4 py-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
+                Mã Nhập hàng
               </th>
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-2/6">
-                Tên hàng
+              <th className="px-4 py-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
+                Thời gian
               </th>
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-1/6">
-                Giá bán
+              <th className="px-4 py-2 text-left border-b border-gray-300 text-sm font-semibold w-[30%]">
+                Nhà cung cấp
               </th>
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-1/6">
-                Giá vốn
+              <th className="px-4 py-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
+                Cần trả NCC
               </th>
-              <th className="p-2 text-left border-b border-gray-300 text-sm font-semibold w-1/6">
-                Tồn kho
+              <th className="px-4 py-2 text-left border-b border-gray-300 text-sm font-semibold w-[10%]">
+                Tiền đã trả NCC
               </th>
             </tr>
           </thead>
@@ -144,37 +70,28 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
                         : "border-b border-gray-300"
                     } `}
                   >
-                    <td className="p-2">
-                      <div className="ml-6">
-                        <Image
-                          width={40}
-                          height={40}
-                          src={
-                            row?.coverImageUrl ||
-                            "https://cdn-app.kiotviet.vn/retailler/Content/img/default-product-img.jpg"
-                          }
-                        />
-                      </div>
+                    <td className="p-4">{row.goodsReceiptCode}</td>
+                    <td className="p-4">{formatDateVN(row.createdAt)}</td>
+                    <td className="p-4">{row.supplierName}</td>
+                    <td className="p-4">
+                      {formatDate(row.estimatedDeliveryDate)}
                     </td>
-                    <td className="p-2">{row.materialCode}</td>
-                    <td className="p-2">{row.name}</td>
-                    <td className="p-2">{row.salePrice}</td>
-                    <td className="p-2">{row.costPrice}</td>
-                    <td className="p-2">{row.quantity}</td>
+                    <td className="p-4">{row.totalAmount}</td>
                   </tr>
                   {expandedRow === index && (
                     <tr>
                       <td
-                        colSpan="6"
+                        colSpan="5"
                         className="border-x-2 border-blue-600 border-b-2 p-0"
                       >
-                        <div className="flex bg-[#BBDEFB]">
-                          <div className="ml-6">
+                        <div>
+                          {/* Tabs Header */}
+                          <div className="flex bg-[#BBDEFB]">
                             {tabs.map((tab, tabIndex) => (
                               <button
                                 key={tabIndex}
                                 onClick={() => setActiveTab(tabIndex)}
-                                className={`px-4 py-2 font-medium border-x border-t ${
+                                className={`px-4 ml-6 py-2 font-medium border-x border-t ${
                                   activeTab === tabIndex
                                     ? "border-gray-300 text-blue-500 bg-white"
                                     : "border-transparent text-gray-500"
@@ -184,186 +101,213 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
                               </button>
                             ))}
                           </div>
-                        </div>
-                        <div className="p-6">
-                          {activeTab === 0 && productDetails[row.id] ? (
-                            <div className="space-y-6">
-                              <div className="space-y-2">
-                                <div className="text-xl text-blue-600">
-                                  {productDetails[row.id]?.name || "No Name"}
-                                </div>
-                                <div>
-                                  {productDetails[row.id]?.point ? (
-                                    <div className="flex items-center gap-1">
-                                      <IoMdCheckmark className="text-green-500" />
-                                      <div className="text-sm font-semibold gap-1">
-                                        Tích điểm
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center gap-1">
-                                      <IoMdClose className="text-red-700" />
-                                      <div className="text-sm font-semibold">
-                                        Không tích điểm
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
 
-                              <div className="space-y-8">
-                                <div className="flex gap-8">
-                                  <div className="flex gap-3 ">
-                                    <Image
-                                      width={296}
-                                      src={
-                                        productDetails[row.id]?.coverImageUrl
-                                      }
-                                    />
-                                    <div>
-                                      {productDetails[row.id]?.images.map(
-                                        (image, index) => (
-                                          <div key={index}>
-                                            <Image
-                                              width={60}
-                                              height={60}
-                                              src={image}
-                                            />
-                                          </div>
-                                        )
-                                      )}
+                          {/* Tabs Content */}
+                          <div className=" bg-white">
+                            {activeTab === 0 && (
+                              <>
+                                <div className="flex gap-2 p-6">
+                                  <div className="w-1/3 space-y-4">
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3 ">
+                                        Mã đặt hàng nhập:
+                                      </div>
+                                      <div className="text-sm w-2/3 font-bold">
+                                        {row.goodsReceiptCode}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3">
+                                        Thời gian:
+                                      </div>
+                                      <div className="text-sm w-2/3">
+                                        {formatDate(row.createdAt)}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3">
+                                        Nhà cung cấp:
+                                      </div>
+                                      <div className="text-sm w-2/3">
+                                        {row.supplierName}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3">
+                                        Người tạo:
+                                      </div>
+                                      <div className="text-sm w-2/3">
+                                        {row.createdBy}
+                                      </div>
                                     </div>
                                   </div>
                                   <div className="w-1/3 space-y-4">
-                                    <DetailRow
-                                      label="Mã hàng:"
-                                      data={
-                                        productDetails[row.id]?.materialCode
-                                      }
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Mã vạch:"
-                                      data={productDetails[row.id]?.barCode}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Nhóm hàng:"
-                                      data={productDetails[row.id]?.category}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Thương hiệu:"
-                                      data={productDetails[row.id]?.brand}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Định mức tồn:"
-                                      data={`${
-                                        productDetails[row.id]?.minStock
-                                      } ➤ ${productDetails[row.id]?.maxStock}`}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Giá bán:"
-                                      data={productDetails[row.id]?.salePrice}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Giá vốn:"
-                                      data={productDetails[row.id]?.costPrice}
-                                    />
-                                    <Divider />
-                                    <DetailRow
-                                      label="Trọng lượng:"
-                                      data={`${
-                                        productDetails[row.id]?.weightValue
-                                      } ${productDetails[row.id]?.weightUnit}`}
-                                    />
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3 ">
+                                        Trạng thái:
+                                      </div>
+                                      <div className="text-sm w-2/3 ">
+                                        {getOrderSupplierStatus(row.status)}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <div className="text-sm font-sans w-1/3">
+                                        Cửa hàng:
+                                      </div>
+                                      <div className="text-sm w-2/3">
+                                        {row.storeName}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="w-1/3 flex flex-col justify-between">
-                                    <div>
-                                      <div className="text-sm">Mô tả:</div>
-                                      <Divider className="my-4" />
-                                      <div className="text-sm">
-                                        {productDetails[row.id]?.description ||
-                                          "N/A"}
+                                  <Divider
+                                    type="vertical"
+                                    style={{
+                                      alignSelf: "stretch",
+                                      height: "auto",
+                                    }}
+                                  />
+                                  <div className="w-1/3 flex items-center">
+                                    <div className="space-y-1 w-full">
+                                      <div className="text-sm font-sans">
+                                        Ghi chú:
                                       </div>
-                                    </div>
-                                    <div>
-                                      <div className="text-sm">
-                                        Ghi chú đặt hàng:
-                                      </div>
-                                      <Divider className="my-4" />
-                                      <div className="text-sm">
-                                        {productDetails[row.id]?.orderNotes ||
-                                          ""}
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <div className="text-sm">
-                                        Nhà cung cấp:
-                                      </div>
-                                      <Divider className="my-4" />
-                                      <div className="text-sm">
-                                        {productDetails[row.id]?.supplier || ""}
-                                      </div>
+                                      <TextArea
+                                        variant="borderless"
+                                        rows={6}
+                                        placeholder={row.note}
+                                        maxLength={6}
+                                      />
                                     </div>
                                   </div>
                                 </div>
-                                <div className="flex items-center justify-end gap-2 ">
-                                  <Button
-                                    type="primary"
-                                    icon={<FaCheckSquare />}
-                                    onClick={() =>
-                                      showModal(productDetails[row.id]?.id)
-                                    }
-                                  >
-                                    Cập nhật
-                                  </Button>
-                                  {productDetails[row.id]?.isActive ? (
+                                <div className="bg-white border border-gray-300 h-[88%] flex flex-col">
+                                  <div className="flex bg-[#E6F1FE] font-semibold text-sm border-b border-gray-300">
+                                    <div className="p-2 w-[10%] ml-4">
+                                      Mã hàng
+                                    </div>
+                                    <div className="p-2 w-[40%]">Tên hàng</div>
+                                    <div className="p-2 w-[10%]">Số lượng</div>
+                                    <div className="p-2 w-[10%]">Đơn giá</div>
+                                    <div className="p-2 w-[10%]">Giảm giá</div>
+                                    <div className="p-2 w-[10%]">Giá nhập</div>
+                                    <div className="p-2 w-[10%]">
+                                      Thành tiền
+                                    </div>
+                                  </div>
+                                  <div className="flex-1 overflow-auto">
+                                    {row.details.length > 0 ? (
+                                      row.details.map((item, index) => (
+                                        <div
+                                          key={item.id}
+                                          className="flex items-center border-b border-gray-300 text-sm"
+                                        >
+                                          <div className="p-2 w-[10%] ml-4">
+                                            {item.materialCode}
+                                          </div>
+                                          <div className="p-2 w-[40%]">
+                                            {`${item.name} (${item.unitName})`}
+                                          </div>
+                                          <div className="p-2 w-[10%]">
+                                            {item.quantity}
+                                          </div>
+                                          <div className="p-2 w-[10%]">
+                                            {item.costPrice}
+                                          </div>
+                                          <div className="p-2 w-[10%]"></div>
+                                          <div className="p-2 w-[10%]">
+                                            {item.costPrice}
+                                          </div>
+                                          <div className="p-2 w-[10%] font-bold">
+                                            {item.totalPrice}
+                                          </div>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="flex justify-center items-center h-full">
+                                        <Empty description="No data available" />
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="p-6 mr-8 space-y-3">
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Tổng số lượng:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      {row.totalQuantity}
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Tổng số mặt hàng:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      {row.totalItems}
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Tổng tiền hàng:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      {row.totalAmount}
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Giảm giá:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      0
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Tổng cộng:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      {row.totalAmount}
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end items-center">
+                                    <div className="text-sm font-sans w-32 text-right">
+                                      Tiền đã trả NCC:
+                                    </div>
+                                    <div className="font-bold text-sm w-20 text-right">
+                                      {row.paidAmount}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex justify-end gap-3 p-6">
+                                  {row.status == "CONFIRMED" && (
                                     <Button
                                       type="primary"
-                                      icon={<FaLock />}
-                                      danger
-                                      onClick={() =>
-                                        showConfirmModal(
-                                          productDetails[row.id]?.id,
-                                          "false"
-                                        )
-                                      }
+                                      icon={<PlusOutlined />}
                                     >
-                                      Ngừng kinh doanh
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      type="primary"
-                                      icon={<IoMdCheckmark />}
-                                      onClick={() =>
-                                        showConfirmModal(
-                                          productDetails[row.id]?.id,
-                                          "true"
-                                        )
-                                      }
-                                    >
-                                      Cho phép kinh doanh
+                                      Tạo phiếu nhâp
                                     </Button>
                                   )}
                                   <Button
                                     type="primary"
-                                    icon={<FaRegTrashCan />}
-                                    danger
+                                    icon={<IoArrowRedo />}
+                                    onClick={() =>
+                                      navigate(`/order-supplier/${row.id}/edit`)
+                                    }
                                   >
-                                    xóa
+                                    Mở phiếu
+                                  </Button>
+                                  <Button
+                                    type="primary"
+                                    icon={<MdOutlineClear />}
+                                    className="bg-red-500"
+                                  >
+                                    Hủy bỏ
                                   </Button>
                                 </div>
-                              </div>
-                            </div>
-                          ) : activeTab === 0 ? (
-                            <p>Loading product details...</p>
-                          ) : (
-                            <div>{tabs[activeTab].content}</div>
-                          )}
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -372,7 +316,7 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="6">
+                <td colSpan="5">
                   <Empty className="py-8" description="No data available" />
                 </td>
               </tr>
@@ -383,12 +327,5 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
     </>
   );
 };
-
-const DetailRow = ({ label, data }) => (
-  <div className="flex items-center">
-    <div className="w-1/3 text-sm">{label}</div>
-    <div className="w-2/3 text-sm">{data || "N/A"}</div>
-  </div>
-);
 
 export default PurchaseOrderTable;

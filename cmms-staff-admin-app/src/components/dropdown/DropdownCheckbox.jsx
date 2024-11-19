@@ -6,7 +6,7 @@ const DropdownCheckbox = ({
   options, // [{ label: "Phiếu tạm", value: "TEMPORARY" }, ...]
   title = "Hàng hóa",
   defaultOptions = [],
-  onOptionChange = () => {},
+  onSelectionChange = () => {},
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState(defaultOptions);
@@ -18,7 +18,7 @@ const DropdownCheckbox = ({
       const newSelected = prevSelected.includes(value)
         ? prevSelected.filter((option) => option !== value) // Bỏ chọn
         : [...prevSelected, value]; // Chọn thêm
-      onOptionChange(newSelected); // Gọi callback với danh sách mới
+      onSelectionChange(newSelected); // Gọi callback với danh sách mới
       return newSelected;
     });
   };

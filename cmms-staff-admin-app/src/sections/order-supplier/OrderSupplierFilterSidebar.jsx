@@ -18,7 +18,7 @@ const OrderSupplierFilterSidebar = ({ setFilters }) => {
   };
 
   const handleStatusChange = (selectedStatuses) => {
-    setFilters({ status: selectedStatuses }); // Gửi danh sách trạng thái
+    setFilters({ status: selectedStatuses });
   };
 
   return (
@@ -28,19 +28,13 @@ const OrderSupplierFilterSidebar = ({ setFilters }) => {
       </h1>
       <DropdownSelectSearch
         title="Cửa hàng"
-        options={stores.map((store) => ({
-          value: store.id,
-          label: store.name,
-        }))}
+        options={stores}
         onOptionSelect={handleStoreChange}
       />
       <DropdownCheckbox
         title="Trạng thái"
         options={statusOption}
-        onSelectionChange={
-          (selectedOptions) =>
-            handleStatusChange(selectedOptions.map((opt) => opt.value)) // Chỉ lấy `value`
-        }
+        onSelectionChange={handleStatusChange}
       />
     </div>
   );

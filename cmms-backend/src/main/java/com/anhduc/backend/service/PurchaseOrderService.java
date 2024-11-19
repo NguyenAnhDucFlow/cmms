@@ -170,13 +170,13 @@ public class PurchaseOrderService {
 
 
     public Page<PurchaseOrder> getPurchaseOrders(
-            PurchaseOrderStatus status,
+            List<PurchaseOrderStatus> statuses,
             UUID storeId,
             String purchaseOrderCode,
             Pageable pageable) {
 
         Specification<PurchaseOrder> spec = Specification
-                .where(PurchaseOrderSpecification.hasStatus(status))
+                .where(PurchaseOrderSpecification.hasStatus(statuses))
                 .and(PurchaseOrderSpecification.hasStore(storeId))
                 .and(PurchaseOrderSpecification.hasPurchaseOrderCodeLike(purchaseOrderCode));
 

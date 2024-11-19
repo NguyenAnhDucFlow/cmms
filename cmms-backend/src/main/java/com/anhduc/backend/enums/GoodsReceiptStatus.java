@@ -1,5 +1,5 @@
 package com.anhduc.backend.enums;
 
 public enum GoodsReceiptStatus {
-    TEMPORARY, COMPLETED
+    TEMPORARY, COMPLETED, CANCELLED
 }

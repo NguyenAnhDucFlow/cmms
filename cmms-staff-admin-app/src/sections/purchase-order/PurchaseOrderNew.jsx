@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { Input, Empty, Button, Popconfirm } from "antd";
+import { Input, Empty, Button, Popconfirm, message } from "antd";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaCheck, FaSave } from "react-icons/fa";
@@ -19,7 +19,6 @@ import axios from "../../utils/axios";
 
 const schema = Yup.object().shape({
   supplierId: Yup.string().required("Supplier ID is required"),
-  storeId: Yup.string().required("Store ID is required"),
 });
 
 const PurchaseOrderNew = () => {
@@ -27,7 +26,6 @@ const PurchaseOrderNew = () => {
   const [isFocused, setIsFocused] = useState(false);
   const { suppliers } = useData();
   const { user } = useAuth();
-  const [amountPaid, setAmountPaid] = useState(0);
   const { storeId } = useStore();
 
   const navigate = useNavigate();
@@ -35,17 +33,16 @@ const PurchaseOrderNew = () => {
   const {
     handleSubmit,
     control,
-    trigger,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       supplierId: null,
-      storeId: null,
       note: null,
-      estimatedDeliveryDate: null,
       status: "TEMPORARY",
       details: [],
+      paidAmount: 0,
     },
   });
 
@@ -100,13 +97,15 @@ const PurchaseOrderNew = () => {
     [selectedItems]
   );
 
-  const debtAmount = totalAmount - amountPaid;
+  const paidAmount = watch("paidAmount", 0); // Giá trị mặc định là 0
+  const debtAmount = totalAmount - paidAmount;
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, status) => {
     try {
       const payload = {
         storeId,
         ...data,
+        status,
         details: selectedItems.map((item) => ({
           materialCode: item.materialCode,
           quantity: item.quantity,
@@ -117,29 +116,31 @@ const PurchaseOrderNew = () => {
       };
       await axios.post("/goods-receipts/direct", payload);
       navigate(-1);
-      message.success("Phiếu Nhập hàng tạo thành công!");
+      message.success(
+        `Phiếu Nhập hàng ${
+          status === "TEMPORARY" ? "lưu tạm" : "hoàn thành"
+        } thành công!`
+      );
     } catch (error) {
-      message.error("Đã có lỗi xảy ra khi tạo phiếu nhập hàng.");
+      message.error(
+        `Đã có lỗi xảy ra khi ${
+          status === "TEMPORARY" ? "lưu tạm" : "hoàn thành"
+        } phiếu nhập hàng.`
+      );
       console.error(error);
     }
   };
 
-  const onValidate = async () => {
+  const onSubmitWithValidation = async (data, status) => {
     if (selectedItems.length === 0) {
-      message.error("Phiếu hàng đang trống.");
+      message.error("Danh sách sản phẩm đang trống. Vui lòng thêm sản phẩm.");
       return;
     }
-    const isValid = await trigger(["supplierId"]);
-    if (!isValid) {
-      if (errors.supplierId) {
-        message.error("Bạn chưa chọn nhà cung cấp.");
-        return;
-      }
-    }
+    onSubmit(data, status);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 h-[600px]">
+    <div className="flex gap-4 h-[600px]">
       <div className="w-[76%] space-y-4">
         <div className="flex items-center gap-8">
           <div>
@@ -233,23 +234,35 @@ const PurchaseOrderNew = () => {
               </div>
               <div>{user?.username || "no name"}</div>
             </div>
-            <CustomSelect
-              className="w-full border-b"
-              style={{
-                borderColor: isFocused ? "#1E88E5" : undefined,
-                padding: 0,
-              }}
-              showSearch
-              options={suppliers.map((supplier) => ({
-                value: supplier.id,
-                label: supplier.name,
-              }))}
-              optionFilterProp="label"
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              variant="borderless"
-              placeholder="Tìm nhà cung cấp"
+            <Controller
+              name="supplierId"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  {...field}
+                  className="w-full border-b"
+                  style={{
+                    borderColor: isFocused ? "#1E88E5" : undefined,
+                    padding: 0,
+                  }}
+                  showSearch
+                  options={suppliers.map((supplier) => ({
+                    value: supplier.id,
+                    label: supplier.name,
+                  }))}
+                  optionFilterProp="label"
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  variant="borderless"
+                  placeholder="Tìm nhà cung cấp"
+                />
+              )}
             />
+            {errors.supplierId && (
+              <span style={{ color: "red" }}>
+                {message.error("Vui lòng chọn nhà cung cấp")}
+              </span>
+            )}
 
             <div className="flex items-center justify-between">
               <div className="text-sm  w-2/3">Mã phiếu nhập</div>
@@ -312,16 +325,36 @@ const PurchaseOrderNew = () => {
                         <MdPayments size={20} />
                       </div>
                       <div className="ml-1">
-                        <Input
-                          className="ml-2"
-                          style={{ direction: "rtl" }}
-                          value={amountPaid}
-                          variant="borderless"
-                          type="number"
-                          min="0"
-                          onChange={(e) =>
-                            setAmountPaid(parseFloat(e.target.value))
-                          }
+                        <Controller
+                          name="paidAmount"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              className="ml-2"
+                              style={{ direction: "rtl" }}
+                              variant="borderless"
+                              type="number"
+                              min="0"
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "") {
+                                  field.onChange(0);
+                                  return;
+                                }
+
+                                const numericValue = parseFloat(value);
+                                if (!isNaN(numericValue)) {
+                                  if (numericValue <= totalAmount) {
+                                    field.onChange(numericValue);
+                                  } else {
+                                    field.onChange(totalAmount);
+                                  }
+                                }
+                              }}
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -333,28 +366,35 @@ const PurchaseOrderNew = () => {
                 </div>
               </>
             )}
-            <Input
-              placeholder="Ghi chú"
-              variant="borderless"
-              className="px-0"
-              style={{
-                border: "none",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "0",
-                transition: "border-color 0.3s ease",
-              }}
-              onFocus={(e) =>
-                (e.target.style.borderBottom = "1px solid #1E88E5")
-              }
-              onBlur={(e) =>
-                (e.target.style.borderBottom = "1px solid #d9d9d9")
-              }
-              onMouseOver={(e) =>
-                (e.target.style.borderBottom = "1px solid #1E88E5")
-              }
-              onMouseOut={(e) =>
-                (e.target.style.borderBottom = "1px solid #d9d9d9")
-              }
+            <Controller
+              name="note"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Ghi chú"
+                  variant="borderless"
+                  className="px-0"
+                  style={{
+                    border: "none",
+                    borderBottom: "1px solid #d9d9d9",
+                    borderRadius: "0",
+                    transition: "border-color 0.3s ease",
+                  }}
+                  onFocus={(e) =>
+                    (e.target.style.borderBottom = "1px solid #1E88E5")
+                  }
+                  onBlur={(e) =>
+                    (e.target.style.borderBottom = "1px solid #d9d9d9")
+                  }
+                  onMouseOver={(e) =>
+                    (e.target.style.borderBottom = "1px solid #1E88E5")
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.borderBottom = "1px solid #d9d9d9")
+                  }
+                />
+              )}
             />
           </div>
           <div>
@@ -362,22 +402,29 @@ const PurchaseOrderNew = () => {
               <Button
                 type="primary"
                 className="border-md w-1/2 h-20 flex flex-col bg-green-500"
+                onClick={handleSubmit((data) =>
+                  onSubmitWithValidation(data, "TEMPORARY")
+                )}
               >
                 <FaSave />
-                <h1> Lưu tạm</h1>
+                <h1>Lưu tạm</h1>
               </Button>
+
               <Button
                 type="primary"
                 className="border-md w-1/2 h-20 flex flex-col"
+                onClick={handleSubmit((data) =>
+                  onSubmitWithValidation(data, "COMPLETED")
+                )}
               >
                 <FaCheck />
-                <h1> Hoàn thành</h1>
+                <h1>Hoàn thành</h1>
               </Button>
             </div>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

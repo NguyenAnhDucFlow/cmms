@@ -36,11 +36,12 @@ public class GoodsReceipt{
     String createdBy;
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant receiptDate;
+    Instant createdAt;
     int totalQuantity;
     int totalItems;
     BigDecimal totalAmount;
     BigDecimal paidAmount;
+    BigDecimal debtAmount;
     GoodsReceiptStatus status;
     ReceiptType receiptType;
     String note;

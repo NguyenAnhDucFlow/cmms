@@ -4,93 +4,56 @@ import PurchaseOrderFilterSidebar from "../sections/purchase-order/PurchaseOrder
 import PurchaseOrderTable from "../sections/purchase-order/PurchaseOrderTable";
 import PurchaseOrderSearch from "../sections/purchase-order/PurchaseOrderSearch";
 import PurchaseOrderButtonGroup from "../sections/purchase-order/PurchaseOrderButtonGroup";
-import { useStore } from "../hooks/useStore";
 import axios from "../utils/axios";
 import { Pagination } from "antd";
 
 const PurchaseOrder = () => {
-  const { storeId, stores } = useStore();
-  const [products, setProducts] = useState([]);
+  const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [totalElement, setTotalElement] = useState(0);
-  const [reloadTrigger, setReloadTrigger] = useState(false);
 
   // State cho phân trang và tìm kiếm
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [filters, setFilters] = useState({
-    name: "",
-    category: null,
-    brand: null,
-    isActive: null,
-    hasStock: null,
-    belowMinStock: null,
-    aboveMaxStock: null,
-    outOfStock: null,
+    purchaseOrderCode: "",
+    status: [],
   });
 
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  const storeCentral = stores.find(
-    (store) => store.name === "Cửa hàng trung tâm"
-  );
-
-  const loadProducts = async () => {
+  const loadPurchaseOrders = async () => {
     try {
-      const endpoint =
-        storeCentral && storeId === storeCentral.id
-          ? "/materials/central-materials"
-          : "/materials/store-materials";
-      console.log("endpoint", endpoint);
-      const response = await axios.get(endpoint, {
-        params: {
-          storeId,
-          name: filters.name,
-          category: filters.category,
-          brand: filters.brand,
-          isActive: filters.isActive,
-          hasStock: filters.hasStock,
-          belowMinStock: filters.belowMinStock,
-          aboveMaxStock: filters.aboveMaxStock,
-          outOfStock: filters.outOfStock,
-          currentPage: currentPage - 1, // API có thể sử dụng chỉ số trang bắt đầu từ 0
-          size: pageSize,
-        },
+      const response = await axios.post("/goods-receipts/search", {
+        ...filters,
+        status: filters.status,
+        currentPage: currentPage - 1, // API sử dụng index từ 0
+        size: pageSize, // Số lượng item trên mỗi trang
       });
-      setProducts(response.data.data);
+      setPurchaseOrders(response.data.data);
       setTotalElement(response.data.totalElements);
-      console.log("materials", response.data.data);
     } catch (error) {
-      console.error(error.message);
+      console.error("Lỗi khi tải dữ liệu:", error.message);
     }
   };
 
   useEffect(() => {
-    loadProducts();
-  }, [currentPage, pageSize, filters, reloadTrigger]);
+    loadPurchaseOrders();
+  }, [currentPage, pageSize, filters]);
 
-  const showModal = () => {
-    setModalVisible(true);
-  };
-
-  const hideModal = () => {
-    setModalVisible(false);
-  };
-
-  const handleProductCreated = () => {
-    setCurrentPage(1);
-    setReloadTrigger((prev) => !prev);
-  };
-
-  // Handler cho tìm kiếm sản phẩm
   const handleSearch = (searchText) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      name: searchText,
+      purchaseOrderCode: searchText, // Cập nhật mã đặt hàng
     }));
-    setCurrentPage(1); // Reset về trang đầu tiên khi tìm kiếm mới
+    setCurrentPage(1); // Reset về trang đầu
   };
 
-  // Handler cho thay đổi phân trang
+  const handleFilterChange = (newFilters) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      ...newFilters, // Kết hợp filter mới
+    }));
+    setCurrentPage(1); // Reset về trang đầu
+  };
+
   const handlePageChange = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
@@ -100,10 +63,7 @@ const PurchaseOrder = () => {
     <Page title="Giao dịch - Nhập hàng">
       <div className="flex gap-6">
         <div className="w-[16%]">
-          <PurchaseOrderFilterSidebar
-            filters={filters}
-            setFilters={setFilters}
-          />
+          <PurchaseOrderFilterSidebar setFilters={handleFilterChange} />
         </div>
         <div className="w-[84%] space-y-3">
           <div className="flex items-center justify-between gap-4 pb-1">
@@ -111,8 +71,8 @@ const PurchaseOrder = () => {
             <PurchaseOrderButtonGroup />
           </div>
           <PurchaseOrderTable
-            products={products}
-            handleProductCreated={PurchaseOrderSearch}
+            products={purchaseOrders}
+            handleProductCreated={handleSearch}
           />
           <div className="flex items-center justify-start">
             <Pagination

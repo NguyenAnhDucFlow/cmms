@@ -4,15 +4,12 @@ import OrderSupplierFilterSidebar from "../sections/order-supplier/OrderSupplier
 import OrderSupplierTable from "../sections/order-supplier/OrderSupplierTable";
 import OrderSupplierSearch from "../sections/order-supplier/OrderSupplierSearch";
 import OrderSupplierButtonGroup from "../sections/order-supplier/OrderSupplierButtonGroup";
-import { useStore } from "../hooks/useStore";
 import axios from "../utils/axios";
 import { Pagination } from "antd";
 
 const OrderSupplier = () => {
-  const { storeId, stores } = useStore();
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [totalElement, setTotalElement] = useState(0);
-  const [reloadTrigger, setReloadTrigger] = useState(false);
 
   // State cho phân trang và tìm kiếm
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,12 +21,11 @@ const OrderSupplier = () => {
 
   const loadPurchaseOrders = async () => {
     try {
-      const response = await axios.get("/purchase-order/search", {
-        params: {
-          ...filters, // Gửi toàn bộ filters
-          currentPage: currentPage - 1, // API sử dụng index từ 0
-          size: pageSize,
-        },
+      const response = await axios.post("/purchase-order/search", {
+        ...filters,
+        status: filters.status,
+        currentPage: currentPage - 1, // API sử dụng index từ 0
+        size: pageSize, // Số lượng item trên mỗi trang
       });
       setPurchaseOrders(response.data.data);
       setTotalElement(response.data.totalElements);
@@ -40,7 +36,7 @@ const OrderSupplier = () => {
 
   useEffect(() => {
     loadPurchaseOrders();
-  }, [currentPage, pageSize, filters, reloadTrigger]);
+  }, [currentPage, pageSize, filters]);
 
   const handleSearch = (searchText) => {
     setFilters((prevFilters) => ({
@@ -67,10 +63,7 @@ const OrderSupplier = () => {
     <Page title="Giao dịch - Đặt hàng nhập">
       <div className="flex gap-6">
         <div className="w-[16%]">
-          <OrderSupplierFilterSidebar
-            filters={filters}
-            setFilters={handleFilterChange}
-          />
+          <OrderSupplierFilterSidebar setFilters={handleFilterChange} />
         </div>
         <div className="w-[84%] space-y-3">
           <div className="flex items-center justify-between gap-4 pb-1">

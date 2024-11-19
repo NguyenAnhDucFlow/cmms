@@ -2,11 +2,11 @@ package com.anhduc.backend.controller;
 
 import com.anhduc.backend.dto.PurchaseOrderDTO;
 import com.anhduc.backend.dto.PurchaseOrderDetailDTO;
+import com.anhduc.backend.dto.SearchPurchaseOrderDTO;
 import com.anhduc.backend.dto.request.PurchaseOrderCreationRequest;
 import com.anhduc.backend.dto.request.PurchaseOrderUpdateRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
 import com.anhduc.backend.entity.PurchaseOrder;
-import com.anhduc.backend.enums.PurchaseOrderStatus;
 import com.anhduc.backend.service.PurchaseOrderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class PurchaseOrderController {
     }
 
     @PutMapping
-    ApiResponse<Void> create(@RequestBody PurchaseOrderUpdateRequest request) {
+    ApiResponse<Void> update(@RequestBody PurchaseOrderUpdateRequest request) {
         purchaseOrderService.update(request);
         return ApiResponse.<Void>builder()
                 .message("Cập nhật đơn đặt hàng thành công !!")
@@ -55,16 +55,17 @@ public class PurchaseOrderController {
     }
 
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ApiResponse<List<PurchaseOrderDTO>> listMaterialsByStoreWithFilters(
-            @RequestParam(required = false) PurchaseOrderStatus status,
-            @RequestParam(required = false) UUID storeId,
-            @RequestParam(required = false) String purchaseOrderCode,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size
+            @RequestBody SearchPurchaseOrderDTO request
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("purchaseOrderCode").descending());
-        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.getPurchaseOrders(status, storeId, purchaseOrderCode, pageable);
+        Pageable pageable = PageRequest.of(request.getCurrentPage(), request.getSize(), Sort.by("purchaseOrderCode").descending());
+        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.getPurchaseOrders(
+                request.getStatus(),
+                request.getStoreId(),
+                request.getPurchaseOrderCode(),
+                pageable
+        );
         List<PurchaseOrderDTO> purchaseOrderList = purchaseOrders.getContent().stream()
                 .map(purchaseOrder -> {
                     PurchaseOrderDTO dto = modelMapper.map(purchaseOrder, PurchaseOrderDTO.class);

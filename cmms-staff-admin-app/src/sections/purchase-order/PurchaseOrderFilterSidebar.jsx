@@ -1,15 +1,23 @@
 import React from "react";
 import DropdownSelectSearch from "../../components/dropdown/DropdownSelectSearch";
-import { useData } from "../../hooks/useData";
 import DropdownCheckbox from "../../components/dropdown/DropdownCheckbox";
+import { useStore } from "../../hooks/useStore";
 
-const statusOption = ["Phiếu tạm", "Đã nhập hàng"];
+const statusOption = [
+  { label: "Phiếu tạm", value: "TEMPORARY" },
+  { label: "Đã nhập hàng", value: "CONFIRMED" },
+  { label: "Đã hủy", value: "CANCELLED" },
+];
 
 const PurchaseOrderFilterSidebar = ({ setFilters }) => {
-  const { brands, categories } = useData();
+  const { stores } = useStore();
 
-  const handleBrandChange = (brandId) => {
-    setFilters((prevFilters) => ({ ...prevFilters, brand: brandId }));
+  const handleStoreChange = (storeId) => {
+    setFilters({ storeId });
+  };
+
+  const handleStatusChange = (selectedStatuses) => {
+    setFilters({ status: selectedStatuses });
   };
 
   return (
@@ -17,11 +25,15 @@ const PurchaseOrderFilterSidebar = ({ setFilters }) => {
       <h1 className="h-8 text-xl font-bold">
         <div className="mt-2">Phiếu nhập hàng</div>
       </h1>
-      <DropdownCheckbox title="Trạng thái" options={statusOption} />
       <DropdownSelectSearch
-        title="Người tạo"
-        options={brands}
-        onOptionSelect={handleBrandChange}
+        title="Cửa hàng"
+        options={stores}
+        onOptionSelect={handleStoreChange}
+      />
+      <DropdownCheckbox
+        title="Trạng thái"
+        options={statusOption}
+        onSelectionChange={handleStatusChange}
       />
     </div>
   );

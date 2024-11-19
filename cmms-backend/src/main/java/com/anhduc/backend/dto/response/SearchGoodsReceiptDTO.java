@@ -1,6 +1,6 @@
-package com.anhduc.backend.dto;
+package com.anhduc.backend.dto.response;
 
-import com.anhduc.backend.enums.PurchaseOrderStatus;
+import com.anhduc.backend.enums.GoodsReceiptStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,10 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SearchPurchaseOrderDTO {
+public class SearchGoodsReceiptDTO {
     UUID storeId;
-    List<PurchaseOrderStatus> status;
-    String purchaseOrderCode;
+    List<GoodsReceiptStatus> status;
+    String goodsReceiptCode;
     @Builder.Default
     Integer currentPage = 0;
     @Builder.Default

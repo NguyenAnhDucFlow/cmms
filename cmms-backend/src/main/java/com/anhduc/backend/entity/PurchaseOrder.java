@@ -36,10 +36,10 @@ public class PurchaseOrder extends AuditAble{
     String createdBy;
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    Instant createdAt;
     @LastModifiedDate
     @Column(nullable = false)
-    private Instant updatedAt;
+    Instant updatedAt;
     Instant estimatedDeliveryDate;
     int totalQuantity;
     int totalItems;

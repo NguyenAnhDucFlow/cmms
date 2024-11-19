@@ -8,16 +8,22 @@ import com.anhduc.backend.enums.ReceiptType;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
 import com.anhduc.backend.repository.*;
+import com.anhduc.backend.specification.GoodsReceiptSpecification;
 import com.anhduc.backend.utils.UserUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -38,6 +44,7 @@ public class GoodsReceiptService {
 
     @Transactional
     public void createGoodsReceipt(GoodsReceiptCreationRequest request) {
+
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
                 .orElseThrow(() -> new AppException(ErrorCode.SUPPLIER_NOT_EXISTED));
 
@@ -47,6 +54,7 @@ public class GoodsReceiptService {
         GoodsReceipt goodsReceipt = new GoodsReceipt();
         goodsReceipt.setSupplier(supplier);
         goodsReceipt.setStore(store);
+        goodsReceipt.setGoodsReceiptCode(generateGoodsReceiptCode());
         goodsReceipt.setCreatedBy(userUtils.getCurrentUser());
         goodsReceipt.setReceiptType(ReceiptType.DIRECT_PURCHASE);
         goodsReceipt.setNote(request.getNote());
@@ -64,6 +72,7 @@ public class GoodsReceiptService {
             GoodsReceiptDetail goodsReceiptDetail = new GoodsReceiptDetail();
 
             goodsReceiptDetail.setQuantity(item.getQuantity());
+            goodsReceiptDetail.setMaterialCode(item.getMaterialCode());
             goodsReceiptDetail.setCostPrice(item.getCostPrice());
             goodsReceiptDetail.setName(item.getName());
             goodsReceiptDetail.setUnitName(item.getUnitName());
@@ -82,24 +91,53 @@ public class GoodsReceiptService {
             }
         }
 
+        goodsReceipt.setDebtAmount(totalAmount.subtract(goodsReceipt.getPaidAmount()));
         goodsReceipt.setTotalQuantity(totalQuantity);
         goodsReceipt.setTotalAmount(totalAmount);
         goodsReceipt.setTotalItems(request.getDetails().size());
 
         goodsReceiptRepository.save(goodsReceipt);
 
-        BigDecimal remainingAmount = totalAmount.subtract(request.getPaidAmount());
-        if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-            paymentVoucherService.paymentVoucherForSupplier(supplier, goodsReceipt, request.getPaidAmount());
-        }
+        if (GoodsReceiptStatus.COMPLETED.equals(goodsReceipt.getStatus())) {
+            BigDecimal remainingAmount = totalAmount.subtract(request.getPaidAmount());
+            if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
+                paymentVoucherService.paymentVoucherForSupplier(supplier, goodsReceipt, request.getPaidAmount());
+            }
 
-        notificationService.createNotificationGoodsReceipt(goodsReceipt.getGoodsReceiptCode(),
-                goodsReceipt.getCreatedBy(), goodsReceipt.getTotalAmount().toString());
+            notificationService.createNotificationGoodsReceipt(goodsReceipt.getGoodsReceiptCode(),
+                    goodsReceipt.getCreatedBy(), goodsReceipt.getTotalAmount().toString());
+        }
+    }
+
+    public Page<GoodsReceipt> getGoodsReceipts(
+            List<GoodsReceiptStatus> statuses,
+            UUID storeId,
+            String purchaseOrderCode,
+            Pageable pageable) {
+
+        Specification<GoodsReceipt> spec = Specification
+                .where(GoodsReceiptSpecification.hasStatus(statuses))
+                .and(GoodsReceiptSpecification.hasStore(storeId))
+                .and(GoodsReceiptSpecification.hasGoodsReceiptCodeLike(purchaseOrderCode));
+
+        return goodsReceiptRepository.findAll(spec, pageable);
     }
 
 
 
-    //----------------------------------------------------
+    //------------------------PRIVATE METHOD----------------------------
+
+    private String generateGoodsReceiptCode() {
+        String prefix = "PN";
+        String lastCode = goodsReceiptRepository.findMaxGoodsReceiptCodeWithPrefix(prefix);
+        int nextNumber = 1;
+        if (lastCode != null) {
+            String lastNumberStr = lastCode.replace(prefix, "");
+            nextNumber = Integer.parseInt(lastNumberStr) + 1;
+        }
+        return  prefix + String.format("%04d", nextNumber);
+    }
+
     private double processMaterialCode(String materialCode, double quantity) {
         Optional<Material> materialOpt = materialRepository.findByMaterialCode(materialCode);
         if (materialOpt.isPresent()) {

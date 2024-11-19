@@ -1,7 +1,11 @@
 package com.anhduc.backend.configuration;
 
+import com.anhduc.backend.dto.GoodsReceiptDTO;
+import com.anhduc.backend.dto.GoodsReceiptDetailDTO;
 import com.anhduc.backend.dto.PurchaseOrderDTO;
 import com.anhduc.backend.dto.PurchaseOrderDetailDTO;
+import com.anhduc.backend.entity.GoodsReceipt;
+import com.anhduc.backend.entity.GoodsReceiptDetail;
 import com.anhduc.backend.entity.PurchaseOrder;
 import com.anhduc.backend.entity.PurchaseOrderDetail;
 import org.modelmapper.ModelMapper;
@@ -26,6 +30,15 @@ public class AppConfig {
 
         // Cấu hình map PurchaseOrderDetail -> PurchaseOrderDetailDTO
         modelMapper.typeMap(PurchaseOrderDetail.class, PurchaseOrderDetailDTO.class);
+
+        //------------------------------------
+
+        modelMapper.typeMap(GoodsReceipt.class, GoodsReceiptDTO.class)
+                .addMapping(src -> src.getSupplier().getName(), GoodsReceiptDTO::setSupplierName)
+                .addMapping(src -> src.getStore().getName(), GoodsReceiptDTO::setStoreName);
+
+        // Cấu hình map GoodsReceiptDetail -> GoodsReceiptDetailDTO
+        modelMapper.typeMap(GoodsReceiptDetail.class, GoodsReceiptDetailDTO.class);
 
         return new ModelMapper();
     }

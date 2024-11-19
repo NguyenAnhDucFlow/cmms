@@ -29,7 +29,6 @@ public class PaymentVoucherService {
         paymentVoucher.setGoodsReceipt(goodsReceipt);
         paymentVoucher.setAmount(amount);
         paymentVoucher.setCreatedBy(userUtils.getCurrentUser());
-        paymentVoucher.setTransactionDate(LocalDate.now());
         paymentVoucherRepository.save(paymentVoucher);
     }
 
