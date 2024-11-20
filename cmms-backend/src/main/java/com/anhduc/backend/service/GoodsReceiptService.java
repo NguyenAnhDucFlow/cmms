@@ -4,6 +4,7 @@ import com.anhduc.backend.dto.request.GoodsReceiptCreationRequest;
 import com.anhduc.backend.dto.request.GoodsReceiptDetailCreationRequest;
 import com.anhduc.backend.entity.*;
 import com.anhduc.backend.enums.GoodsReceiptStatus;
+import com.anhduc.backend.enums.PurchaseOrderStatus;
 import com.anhduc.backend.enums.ReceiptType;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
@@ -39,8 +40,9 @@ public class GoodsReceiptService {
     StoreWarehouseRepository storeWarehouseRepository;
     PaymentVoucherService paymentVoucherService;
     NotificationService notificationService;
+    PurchaseOrderRepository purchaseOrderRepository;
+    PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     UserUtils userUtils;
-    private final NotificationRepository notificationRepository;
 
     @Transactional
     public void createGoodsReceipt(GoodsReceiptCreationRequest request) {
@@ -108,6 +110,96 @@ public class GoodsReceiptService {
                     goodsReceipt.getCreatedBy(), goodsReceipt.getTotalAmount().toString());
         }
     }
+
+    @Transactional
+    public void createPurchaseOrderGoodsReceipt(GoodsReceiptCreationRequest request) {
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(request.getPurchaseOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.PURCHASE_ORDER_NOT_FOUND));
+
+        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.CONFIRMED)) {
+            throw new AppException(ErrorCode.INVALID_PURCHASE_ORDER_STATUS);
+        }
+
+        Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new AppException(ErrorCode.SUPPLIER_NOT_EXISTED));
+
+        Store store = storeRepository.findById(request.getStoreId())
+                .orElseThrow(() -> new AppException(ErrorCode.STORE_NOT_EXISTED));
+
+        GoodsReceipt goodsReceipt = new GoodsReceipt();
+        goodsReceipt.setSupplier(supplier);
+        goodsReceipt.setStore(store);
+        goodsReceipt.setGoodsReceiptCode(generateGoodsReceiptCode());
+        goodsReceipt.setCreatedBy(userUtils.getCurrentUser());
+        goodsReceipt.setReceiptType(ReceiptType.DIRECT_PURCHASE);
+        goodsReceipt.setNote(request.getNote());
+        goodsReceipt.setPaidAmount(request.getPaidAmount());
+        goodsReceipt.setStatus(request.getStatus() != null ? request.getStatus() : GoodsReceiptStatus.TEMPORARY);
+
+        int totalQuantity = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        if (goodsReceipt.getDetails() == null || goodsReceipt.getDetails().isEmpty()) {
+            goodsReceipt.setDetails(new ArrayList<>());
+        }
+
+        for (GoodsReceiptDetailCreationRequest item : request.getDetails()) {
+            GoodsReceiptDetail goodsReceiptDetail = new GoodsReceiptDetail();
+
+            goodsReceiptDetail.setQuantity(item.getQuantity());
+            goodsReceiptDetail.setMaterialCode(item.getMaterialCode());
+            goodsReceiptDetail.setCostPrice(item.getCostPrice());
+            goodsReceiptDetail.setName(item.getName());
+            goodsReceiptDetail.setUnitName(item.getUnitName());
+
+            BigDecimal detailTotalPrice = item.getCostPrice().multiply(new BigDecimal(item.getQuantity()));
+            goodsReceiptDetail.setTotalPrice(detailTotalPrice);
+
+            totalQuantity += item.getQuantity();
+            totalAmount = totalAmount.add(detailTotalPrice);
+
+            goodsReceiptDetail.setGoodsReceipt(goodsReceipt);
+            goodsReceipt.getDetails().add(goodsReceiptDetail);
+
+            // Cập nhật số lượng đã nhận trong PurchaseOrderDetail
+            PurchaseOrderDetail orderDetail = purchaseOrder.getDetails().stream()
+                    .filter(detail -> detail.getMaterialCode().equals(item.getMaterialCode()))
+                    .findFirst()
+                    .orElseThrow(() -> new AppException(ErrorCode.ORDER_DETAIL_NOT_FOUND));
+
+            if (orderDetail.getReceivedQuantity() + item.getQuantity() > orderDetail.getQuantity()) {
+                throw new AppException(ErrorCode.INVALID_QUANTITY);
+            }
+
+            orderDetail.setReceivedQuantity(orderDetail.getReceivedQuantity() + item.getQuantity());
+
+            if (GoodsReceiptStatus.COMPLETED.equals(goodsReceipt.getStatus())) {
+                purchaseOrderDetailRepository.save(orderDetail);
+                updateWarehouse(store, item.getMaterialCode(), item.getQuantity());
+            }
+        }
+
+        goodsReceipt.setDebtAmount(totalAmount.subtract(goodsReceipt.getPaidAmount()));
+        goodsReceipt.setTotalQuantity(totalQuantity);
+        goodsReceipt.setTotalAmount(totalAmount);
+        goodsReceipt.setTotalItems(request.getDetails().size());
+
+        goodsReceiptRepository.save(goodsReceipt);
+
+        if (GoodsReceiptStatus.COMPLETED.equals(goodsReceipt.getStatus())) {
+
+            purchaseOrder.setStatus(PurchaseOrderStatus.RECEIVED);
+
+            BigDecimal remainingAmount = totalAmount.subtract(request.getPaidAmount());
+            if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
+                paymentVoucherService.paymentVoucherForSupplier(supplier, goodsReceipt, request.getPaidAmount());
+            }
+
+            notificationService.createNotificationGoodsReceipt(goodsReceipt.getGoodsReceiptCode(),
+                    goodsReceipt.getCreatedBy(), goodsReceipt.getTotalAmount().toString());
+        }
+    }
+
 
     public Page<GoodsReceipt> getGoodsReceipts(
             List<GoodsReceiptStatus> statuses,

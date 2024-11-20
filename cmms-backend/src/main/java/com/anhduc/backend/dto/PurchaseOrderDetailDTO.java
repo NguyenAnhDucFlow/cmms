@@ -21,5 +21,6 @@ public class PurchaseOrderDetailDTO {
     BigDecimal totalPrice;
     String name;
     String unitName;
+    int receivedQuantity;
 }
 

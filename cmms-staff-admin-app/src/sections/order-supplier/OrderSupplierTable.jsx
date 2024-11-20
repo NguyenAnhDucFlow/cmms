@@ -216,7 +216,10 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
                                             {`${item.name} (${item.unitName})`}
                                           </div>
                                           <div className="p-2 w-[10%]">
-                                            {item.quantity}
+                                            <span className="text-blue-500">
+                                              {item.quantity}
+                                            </span>
+                                            /{item.receivedQuantity || 0}
                                           </div>
                                           <div className="p-2 w-[10%]">
                                             {item.costPrice}
@@ -284,6 +287,11 @@ const OrderSupplierTable = ({ products, handleProductCreated }) => {
                                     <Button
                                       type="primary"
                                       icon={<PlusOutlined />}
+                                      onClick={() =>
+                                        navigate(
+                                          `/purchase-order/PurchaseOrderByOrderSupplierGet/${row.id}`
+                                        )
+                                      }
                                     >
                                       Tạo phiếu nhâp
                                     </Button>

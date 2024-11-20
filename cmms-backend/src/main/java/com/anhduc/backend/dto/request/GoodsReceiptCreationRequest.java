@@ -16,7 +16,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GoodsReceiptCreationRequest {
 
-    String purchaseOrderCode;
+    UUID purchaseOrderId;
     UUID supplierId;
     UUID storeId;
     BigDecimal paidAmount;

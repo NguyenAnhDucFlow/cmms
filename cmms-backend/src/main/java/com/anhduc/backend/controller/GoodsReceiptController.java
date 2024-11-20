@@ -40,6 +40,14 @@ public class GoodsReceiptController {
                 .build();
     }
 
+    @PostMapping("/purchase-order")
+    ApiResponse<Void> createPurchaseOrderGoodsReceipt(@RequestBody GoodsReceiptCreationRequest request) {
+        goodsReceiptService.createPurchaseOrderGoodsReceipt(request);
+        return ApiResponse.<Void>builder()
+                .message("Tạo phiếu nhập hàng thành công !!")
+                .build();
+    }
+
 
     @PostMapping("/search")
     public ApiResponse<List<GoodsReceiptDTO>> listGoodsReceiptsWithFilters(

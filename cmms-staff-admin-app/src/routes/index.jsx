@@ -26,12 +26,18 @@ const OrderSupplierNew = Loadable(
 const OrderSupplierEdit = Loadable(
   lazy(() => import("../sections/order-supplier/OrderSupplierEdit"))
 );
+const PurchaseOrderByOrderSupplierGet = Loadable(
+  lazy(() =>
+    import("../sections/purchase-order/PurchaseOrderByOrderSupplierGet")
+  )
+);
 const OrderSupplier = Loadable(lazy(() => import("../pages/OrderSupplier")));
 const Stores = Loadable(lazy(() => import("../pages/Stores")));
 const Users = Loadable(lazy(() => import("../pages/Users")));
 const Login = Loadable(lazy(() => import("../pages/Login")));
 const PriceBook = Loadable(lazy(() => import("../pages/PriceBook")));
 const StockTakes = Loadable(lazy(() => import("../pages/StockTakes")));
+const Sale = Loadable(lazy(() => import("../layouts/sale/index")));
 
 const router = createBrowserRouter([
   {
@@ -57,6 +63,10 @@ const router = createBrowserRouter([
         path: "order-supplier",
         element: <OrderSupplier />,
       },
+      {
+        path: "purchase-order/PurchaseOrderByOrderSupplierGet/:id",
+        element: <PurchaseOrderByOrderSupplierGet />,
+      },
       { path: "order-supplier/new", element: <OrderSupplierNew /> },
       { path: "order-supplier/:id/edit", element: <OrderSupplierEdit /> },
       { path: "stores", element: <Stores /> },
@@ -64,6 +74,10 @@ const router = createBrowserRouter([
       { path: "price-book", element: <PriceBook /> },
       { path: "stock-takes", element: <StockTakes /> },
     ],
+  },
+  {
+    path: "/sale",
+    element: <Sale />,
   },
   {
     path: "/login",

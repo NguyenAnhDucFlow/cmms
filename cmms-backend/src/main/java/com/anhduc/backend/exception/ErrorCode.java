@@ -27,6 +27,9 @@ public enum ErrorCode {
     MATERIAL_NOT_FOUND(1017, "Material not existed", HttpStatus.NOT_FOUND),
     SUPPLIER_NOT_EXISTED(1017, "Supplier not existed", HttpStatus.NOT_FOUND),
     PURCHASE_ORDER_NOT_FOUND(1018, "Purchase order not existed", HttpStatus.NOT_FOUND),
+    INVALID_PURCHASE_ORDER_STATUS(1019, "Invalid Purchase Order Status", HttpStatus.BAD_REQUEST),
+    ORDER_DETAIL_NOT_FOUND(1020, "Order detail not found", HttpStatus.NOT_FOUND),
+    INVALID_QUANTITY(1021, "Received quantity exceeds ordered quantity for material", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

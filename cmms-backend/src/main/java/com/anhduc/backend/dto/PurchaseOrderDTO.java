@@ -29,6 +29,7 @@ public class PurchaseOrderDTO {
     String createdBy;
     Instant createdAt;
     Instant updatedAt;
+    String note;
     List<PurchaseOrderDetailDTO> details;
 }
 

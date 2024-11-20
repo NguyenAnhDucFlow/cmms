@@ -5,7 +5,7 @@ export function getOrderSupplierStatus(status) {
     case "CONFIRMED":
       return "Đã xác nhận";
     case "RECEIVED":
-      return "Đã nhận hàng";
+      return "Hoàn thành";
     case "CANCELLED":
       return "Đã hủy";
     default:

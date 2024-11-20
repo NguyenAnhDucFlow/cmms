@@ -28,6 +28,8 @@ public class PurchaseOrderDetail extends AuditAble{
     BigDecimal totalPrice;
     String name;
     String unitName;
+    int receivedQuantity;
+
 
 }
 
