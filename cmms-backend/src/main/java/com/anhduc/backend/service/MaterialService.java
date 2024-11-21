@@ -5,6 +5,7 @@ import com.anhduc.backend.dto.MaterialDetailDTO;
 import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
 import com.anhduc.backend.dto.request.MaterialUpdateRequest;
+import com.anhduc.backend.dto.response.ListMaterialForSaleDTO;
 import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.dto.response.MaterialResponse;
 import com.anhduc.backend.entity.*;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class MaterialService {
     StoreRepository storeRepository;
     StoreMaterialRepository storeMaterialRepository;
     CentralWarehouseRepository centralWarehouseRepository;
+    StoreWarehouseRepository storeWarehouseRepository;
 
     @Transactional
     public MaterialResponse create(MaterialCreationRequest request) throws IOException {
@@ -285,6 +288,110 @@ public class MaterialService {
         return materialDTOs;
     }
 
+    public List<ListMaterialForSaleDTO> getAllMaterialsForSale(UUID storeId) {
+
+        boolean isCentralWarehouse = storeRepository.isCentralWarehouse(storeId);
+        List<Material> materials = materialRepository.findAll();
+        List<ListMaterialForSaleDTO> materialDTOs = new ArrayList<>();
+
+        for (Material material : materials) {
+            double quantity;
+            if (isCentralWarehouse) {
+                CentralWarehouse centralWarehouse = centralWarehouseRepository.findByMaterialIdAndCompanyId(material.getId(), storeId);
+                quantity = centralWarehouse != null ? centralWarehouse.getQuantity() : 0;
+            } else {
+                StoreWarehouse storeWarehouse = storeWarehouseRepository.findByMaterialIdAndStoreId(material.getId(), storeId);
+                quantity = storeWarehouse != null ? storeWarehouse.getQuantity() : 0;
+            }
+
+            if (material.getBasicUnit() != null) {
+                ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
+                        material.getMaterialCode(),
+                        material.getName(),
+                        material.getCoverImageUrl(),
+                        material.getImages(),
+                        material.getSalePrice(),
+                        quantity,
+                        material.getBasicUnit().getName()
+                );
+                materialDTOs.add(baseUnitDto);
+            }
+
+            if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
+                for (MaterialUnit variant : material.getMaterialUnits()) {
+                    ListMaterialForSaleDTO variantDto = new ListMaterialForSaleDTO(
+                            variant.getVariantCode(),
+                            material.getName(),
+                            material.getCoverImageUrl(),
+                            material.getImages(),
+                            variant.getCostPrice(),
+                            quantity,
+                            variant.getUnit().getName()
+                    );
+                    materialDTOs.add(variantDto);
+                }
+            }
+        }
+
+        return materialDTOs;
+    }
+
+    public Page<ListMaterialForSaleDTO> searchMaterialsForSale(
+            UUID storeId,
+            String name,
+            List<String> categories,
+            int page,
+            int size) {
+
+        boolean isCentralWarehouse = storeRepository.isCentralWarehouse(storeId);
+
+        // Gọi repository để tìm kiếm
+        Page<Material> materials = materialRepository.searchMaterials(name, categories, PageRequest.of(page, size));
+        List<ListMaterialForSaleDTO> materialDTOs = new ArrayList<>();
+
+        // Lặp qua danh sách material để ánh xạ thành DTO
+        for (Material material : materials.getContent()) {
+            double quantity;
+            if (isCentralWarehouse) {
+                CentralWarehouse centralWarehouse = centralWarehouseRepository.findByMaterialIdAndCompanyId(material.getId(), storeId);
+                quantity = centralWarehouse != null ? centralWarehouse.getQuantity() : 0;
+            } else {
+                StoreWarehouse storeWarehouse = storeWarehouseRepository.findByMaterialIdAndStoreId(material.getId(), storeId);
+                quantity = storeWarehouse != null ? storeWarehouse.getQuantity() : 0;
+            }
+
+            if (material.getBasicUnit() != null) {
+                ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
+                        material.getMaterialCode(),
+                        material.getName(),
+                        material.getCoverImageUrl(),
+                        material.getImages(),
+                        material.getSalePrice(),
+                        quantity,
+                        material.getBasicUnit().getName()
+                );
+                materialDTOs.add(baseUnitDto);
+            }
+
+            if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
+                for (MaterialUnit variant : material.getMaterialUnits()) {
+                    ListMaterialForSaleDTO variantDto = new ListMaterialForSaleDTO(
+                            variant.getVariantCode(),
+                            material.getName(),
+                            material.getCoverImageUrl(),
+                            material.getImages(),
+                            variant.getCostPrice(),
+                            quantity,
+                            variant.getUnit().getName()
+                    );
+                    materialDTOs.add(variantDto);
+                }
+            }
+        }
+
+        // Trả về dữ liệu dạng Page
+        return new PageImpl<>(materialDTOs, PageRequest.of(page, size), materials.getTotalElements());
+    }
 
 
     //-------------------- PRIVATE METHOD ---------------------------------

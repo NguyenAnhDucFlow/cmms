@@ -6,6 +6,7 @@ import com.anhduc.backend.dto.MaterialFilterDTO;
 import com.anhduc.backend.dto.request.MaterialCreationRequest;
 import com.anhduc.backend.dto.request.MaterialUpdateRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
+import com.anhduc.backend.dto.response.ListMaterialForSaleDTO;
 import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.dto.response.MaterialResponse;
 import com.anhduc.backend.service.MaterialService;
@@ -89,5 +90,31 @@ public class MaterialController {
         return ApiResponse.<MaterialDetailDTO>builder()
                 .data(materialDetail).build();
     }
+
+    @GetMapping("/getAll/{storeId}")
+    public ApiResponse<List<ListMaterialForSaleDTO>> getAllMaterials(
+    @PathVariable UUID storeId) {
+        return ApiResponse.<List<ListMaterialForSaleDTO>>builder()
+                .data(materialService.getAllMaterialsForSale(storeId))
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<ListMaterialForSaleDTO>> searchMaterials(
+            @RequestParam UUID storeId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<ListMaterialForSaleDTO> result = materialService.searchMaterialsForSale(storeId, name, categories, page, size);
+        List<ListMaterialForSaleDTO> listMaterialForSaleDTOList = result.getContent();
+
+        return ApiResponse.<List<ListMaterialForSaleDTO>>builder()
+                .data(listMaterialForSaleDTOList)
+                .totalElements(result.getTotalElements())
+                .build();
+    }
+
 
 }

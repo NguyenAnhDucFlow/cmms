@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -72,5 +73,14 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
     String findMaxMaterialCodeWithPrefix(@Param("prefix") String prefix);
 
     Optional<Material> findByMaterialCode(String materialCode);
+
+    @Query("SELECT m FROM Material m " +
+            "JOIN m.category c " +
+            "WHERE (:name IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:categories IS NULL OR c.name IN :categories)")
+    Page<Material> searchMaterials(
+            @Param("name") String name,
+            @Param("categories") List<String> categories,
+            Pageable pageable);
 
 }

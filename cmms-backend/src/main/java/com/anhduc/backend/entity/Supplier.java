@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,6 @@ public class Supplier extends AuditAble{
     String district;
     String ward;
     String note;
+    BigDecimal totalDebt;
 
 }

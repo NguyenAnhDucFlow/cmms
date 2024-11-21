@@ -1,16 +1,11 @@
 package com.anhduc.backend.controller;
 
-import com.anhduc.backend.dto.MaterialFilterDTO;
-import com.anhduc.backend.dto.response.ApiResponse;
-import com.anhduc.backend.dto.response.ListStoreMaterialResponse;
 import com.anhduc.backend.service.StoreWarehouseService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/store-warehouses")
@@ -19,18 +14,5 @@ import java.util.List;
 public class StoreWarehouseController {
 
     StoreWarehouseService storeWarehouseService;
-
-    @GetMapping()
-    public ApiResponse<List<ListStoreMaterialResponse>> listMaterialsByStoreWithFilters(
-            @ModelAttribute MaterialFilterDTO filter
-    ) {
-        Page<ListStoreMaterialResponse> storeMaterialResponses = storeWarehouseService.listMaterialsByStoreWithFilters(filter);
-        List<ListStoreMaterialResponse> storeMaterialResponseList = storeMaterialResponses.getContent();
-        return ApiResponse.<List<ListStoreMaterialResponse>>builder()
-                .data(storeMaterialResponseList)
-                .totalElements(storeMaterialResponses.getTotalElements())
-                .totalPages(storeMaterialResponses.getTotalPages())
-                .build();
-    }
 
 }

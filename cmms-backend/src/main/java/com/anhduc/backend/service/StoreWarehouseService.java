@@ -17,8 +17,4 @@ public class StoreWarehouseService {
 
     StoreWarehouseRepository storeWarehouseRepository;
 
-    public Page<ListStoreMaterialResponse> listMaterialsByStoreWithFilters(MaterialFilterDTO filter) {
-        PageRequest pageRequest = PageRequest.of(filter.getCurrentPage(), filter.getSize());
-        return storeWarehouseRepository.listMaterialsByStoreWithFilters(filter, pageRequest);
-    }
 }

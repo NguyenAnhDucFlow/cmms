@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Select } from "antd";
+import { Select, Tabs } from "antd";
 
 export const CustomSelect = styled(Select)`
   && .ant-input-affix-wrapper {
@@ -16,5 +16,30 @@ export const CustomSelect = styled(Select)`
   }
   .ant-select-selector {
     padding: 0 0px !important;
+  }
+`;
+
+export const CustomTabs = styled(Tabs)`
+  .ant-tabs-nav {
+    margin: 0 !important;
+    background: unset !important;
+    border: unset !important;
+  }
+  .ant-tabs-tab-active {
+    background: #f3f4f6 !important;
+    border-bottom-color: #f3f4f6 !important;
+  }
+  .ant-tabs-nav-add {
+    border: unset !important;
+    border-radius: unset !important;
+  }
+  .ant-tabs-nav .ant-tabs-tab {
+    border: unset !important;
+  }
+`;
+
+export const TabFooter = styled(Tabs)`
+  .ant-tabs-nav {
+    margin-top: 0 !important;
   }
 `;

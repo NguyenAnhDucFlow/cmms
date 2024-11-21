@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface CentralWarehouseRepository extends JpaRepository<CentralWarehouse, UUID> {
     List<CentralWarehouse> findByMaterialId(UUID materialId);
     Optional<CentralWarehouse> findByCompanyAndMaterial(Store store, Material material);
+
+    CentralWarehouse findByMaterialIdAndCompanyId(UUID materialId, UUID companyId);
 }

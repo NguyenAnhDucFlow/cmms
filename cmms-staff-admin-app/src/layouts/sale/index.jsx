@@ -6,55 +6,22 @@ import {
   Drawer,
   Pagination,
   Button,
-  Flex,
   Tooltip,
   Select,
-  DatePicker,
   Switch,
   Divider,
 } from "antd";
+import { LiaPeopleCarrySolid } from "react-icons/lia";
 import {
   SearchOutlined,
   PlusOutlined,
   UnorderedListOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
-import {
-  PhoneOutlined,
-  UserOutlined,
-  EnvironmentOutlined,
-  DownOutlined,
-} from "@ant-design/icons";
-import { FaCircleDot } from "react-icons/fa6";
 import { RiTruckLine } from "react-icons/ri";
 import { IoIosTime } from "react-icons/io";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaPerson } from "react-icons/fa6";
-import styled from "styled-components";
-
-const CustomTabs = styled(Tabs)`
-  .ant-tabs-nav {
-    margin: 0 !important;
-    background: unset !important;
-    border: unset !important;
-  }
-  .ant-tabs-tab-active {
-    background: #f3f4f6 !important;
-    border-bottom-color: #f3f4f6 !important;
-  }
-  .ant-tabs-nav-add {
-    border: unset !important;
-    border-radius: unset !important;
-  }
-  .ant-tabs-nav .ant-tabs-tab {
-    border: unset !important;
-  }
-`;
-
-const TabFooter = styled(Tabs)`
-  .ant-tabs-nav {
-    margin-top: 0 !important;
-  }
-`;
+import { FaCircleDot, FaPerson, FaLocationDot } from "react-icons/fa6";
+import { CustomTabs, TabFooter } from "../../utils/Css-in-js";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -202,45 +169,64 @@ const Sale = () => {
             <Divider />
 
             {/* Payment Info */}
-            <div className="flex items-center justify-between">
-              <div>
-                <span>Khách thanh toán:</span>
-                <span className="ml-2 font-medium">20,000</span>
+            <div className="border-t border-gray-100 pt-2 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="font-bold flex items-center gap-4">
+                  <div className="whitespace-nowrap">Khách thanh toán</div>
+                  <Tooltip
+                    title="Thanh toán nhiều phương thức"
+                    color="blue"
+                    placement="bottom"
+                  >
+                    <Button
+                      icon={<MoreOutlined />}
+                      onClick={() => setOpen(true)}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="ml-2 font-medium border-b border-gray-200 pb-1">
+                  20,000
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span>Thu hộ tiền (COD):</span>
-                <Switch
-                  checked={codEnabled}
-                  onChange={(checked) => setCodEnabled(checked)}
-                />
-                <span className="font-medium">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between w-[44%]">
+                  <div className="font-bold whitespace-nowrap">
+                    Thu hộ tiền (COD)
+                  </div>
+                  <Switch
+                    style={{ width: 35 }}
+                    size="small"
+                    checked={codEnabled}
+                    onChange={(checked) => setCodEnabled(checked)}
+                  />
+                </div>
+                <div className="font-medium w-fit text-right">
                   {codEnabled ? "290,000" : "0"}
-                </span>
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex w-[50%] flex-col justify-between h-full shadow-md rounded-md p-4 bg-white">
-            <div className="flex items-center gap-8">
-              <Input
-                className="w-full"
-                placeholder="Tìm khách hàng"
-                prefix={<SearchOutlined />}
-              />
-              <Tooltip
-                title="Lọc theo nhóm hàng"
-                color="blue"
-                placement="bottom"
-              >
-                <Button
-                  shape="circle"
-                  icon={<UnorderedListOutlined />}
-                  onClick={() => setOpen(true)}
-                />
-              </Tooltip>
+          <div className="flex w-[50%] flex-col h-full shadow-md rounded-md p-4 bg-white">
+            <div className="flex items-center gap-2 justify-center border-b border-gray-200 pb-0.5">
+              <LiaPeopleCarrySolid className="text-primary" size={24} />
+              <div className="font-serif text-xl text-primary">
+                Tự giao hàng
+              </div>
             </div>
-            <Button size="large" type="primary" className="w-full h-[50px]">
-              Thanh toán
-            </Button>
+            <div className="flex flex-col h-full justify-between mt-8">
+              <div className="flex items-center justify-between">
+                <div className="w-1/3 whitespace-nowrap">
+                  Đối tác giao hàng:
+                </div>
+                <div className="w-2/3">
+                  <Select className="w-full" />
+                </div>
+              </div>
+
+              <Button size="large" type="primary" className="w-full h-[50px]">
+                Thanh toán
+              </Button>
+            </div>
           </div>
         </div>
       ),
@@ -334,10 +320,10 @@ const Sale = () => {
             ))}
           </TabFooter>
         </div>
-        <h2 className="flex items-center gap-2">
+        <h6 className="flex items-center gap-2">
           <FaLocationDot />
           Chi nhánh trung tâm
-        </h2>
+        </h6>
       </footer>
     </Layout>
   );
