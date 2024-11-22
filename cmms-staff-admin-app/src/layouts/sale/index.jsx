@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Tabs,
@@ -22,50 +22,34 @@ import { RiTruckLine } from "react-icons/ri";
 import { IoIosTime } from "react-icons/io";
 import { FaCircleDot, FaPerson, FaLocationDot } from "react-icons/fa6";
 import { CustomTabs, TabFooter } from "../../utils/Css-in-js";
+import SearchBar from "./SearchBar";
+import useStore from "../../store/posStore";
+import OrderContent from "./OrderContent";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 const Sale = () => {
-  const [tabs, setTabs] = useState([{ key: "1", title: "Hóa đơn 1" }]); // Danh sách hóa đơn
-  const [activeKey, setActiveKey] = useState("1"); // Hóa đơn đang được chọn
-  const [activeFooterTabKey, setActiveFooterTabKey] = useState("1"); // Tab footer đang chọn
+  const {
+    orders,
+    activeOrderId,
+    addOrder,
+    setActiveOrder,
+    removeOrder,
+    initializeStore,
+    setOrderFooterTab,
+  } = useStore();
+
+  // Initialize store with default order if needed
+  useEffect(() => {
+    initializeStore();
+  }, [initializeStore]);
+  const activeOrder = orders.find((order) => order.id === activeOrderId);
+
   const [open, setOpen] = useState(false);
   const [codEnabled, setCodEnabled] = useState(true);
-
   const onClose = () => {
     setOpen(false);
-  };
-
-  // Xử lý thêm hóa đơn mới
-  const addNewTab = () => {
-    const newKey = (tabs.length + 1).toString();
-    setTabs([...tabs, { key: newKey, title: `Hóa đơn ${newKey}` }]);
-    setActiveKey(newKey);
-  };
-
-  // Xử lý đóng hóa đơn
-  const removeTab = (targetKey) => {
-    let newActiveKey = activeKey;
-    let lastIndex = -1;
-
-    const newTabs = tabs.filter((tab, index) => {
-      if (tab.key === targetKey) {
-        lastIndex = index - 1;
-      }
-      return tab.key !== targetKey;
-    });
-
-    if (newTabs.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newTabs[lastIndex].key;
-      } else {
-        newActiveKey = newTabs[0].key;
-      }
-    }
-
-    setTabs(newTabs);
-    setActiveKey(newActiveKey);
   };
 
   const footerTabs = [
@@ -256,32 +240,34 @@ const Sale = () => {
       {/* Header Section */}
       <div className="flex items-center justify-between bg-primary px-2 py-2 relative">
         <div className="w-[26%]">
-          <Input
-            size="large"
-            className="w-full h-9"
-            placeholder="Tìm hàng hóa "
-            prefix={<SearchOutlined />}
-          />
+          <div className="w-full">
+            <SearchBar />
+          </div>
+
           <div className="absolute left-[28%] bottom-0">
             <CustomTabs
-              style={{
-                margin: 0,
-              }}
               type="editable-card"
-              activeKey={activeKey}
-              onChange={(key) => setActiveKey(key)}
-              onEdit={(key, action) =>
-                action === "add" ? addNewTab() : removeTab(key)
-              }
+              activeKey={activeOrderId?.toString()}
+              onChange={(key) => setActiveOrder(parseInt(key))}
+              onEdit={(targetKey, action) => {
+                if (action === "add") {
+                  addOrder();
+                } else if (orders.length > 1) {
+                  removeOrder(parseInt(targetKey));
+                }
+              }}
               addIcon={
-                <div className="rounded-full border border-white ">
+                <div className="rounded-full border border-white">
                   <PlusOutlined className="text-white w-3 h-3" />
                 </div>
               }
-              className="flex-1"
             >
-              {tabs.map((tab) => (
-                <TabPane tab={tab.title} key={tab.key} />
+              {orders.map((order) => (
+                <TabPane
+                  tab={`Hóa đơn #${order.id}`}
+                  key={order.id}
+                  closable={orders.length > 1}
+                />
               ))}
             </CustomTabs>
           </div>
@@ -295,15 +281,14 @@ const Sale = () => {
       <Content className="flex ">
         {/* Nội dung sản phẩm */}
         <div className="flex-1 ">
-          <h3 className="text-lg font-bold">
-            Nội dung {tabs.find((tab) => tab.key === activeKey)?.title}
-          </h3>
-          <p>Thông tin sản phẩm chọn hiển thị tại đây...</p>
+          <OrderContent />
         </div>
         {/* Nội dung bên phải: Nội dung Tab Footer */}
         <div className="m-3">
-          {footerTabs.find((tab) => tab.key === activeFooterTabKey)?.content ||
-            "Chưa chọn tab nào"}
+          {
+            footerTabs.find((tab) => tab.key === activeOrder?.footerTabKey)
+              ?.content
+          }
         </div>
       </Content>
 
@@ -312,8 +297,8 @@ const Sale = () => {
         <div className="ml-2">
           <TabFooter
             tabPosition="bottom"
-            activeKey={activeFooterTabKey}
-            onChange={setActiveFooterTabKey}
+            activeKey={activeOrder?.footerTabKey}
+            onChange={(key) => setOrderFooterTab(activeOrderId, key)}
           >
             {footerTabs.map((tab) => (
               <TabPane tab={tab.label} key={tab.key} />

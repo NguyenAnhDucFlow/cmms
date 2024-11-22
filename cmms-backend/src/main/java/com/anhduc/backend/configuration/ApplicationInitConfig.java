@@ -1,7 +1,9 @@
 package com.anhduc.backend.configuration;
 
 import com.anhduc.backend.entity.*;
+import com.anhduc.backend.enums.PartnerType;
 import com.anhduc.backend.enums.RoleType;
+import com.anhduc.backend.enums.ShipperStatus;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
 import com.anhduc.backend.repository.*;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +39,7 @@ public class ApplicationInitConfig {
     CategoryRepository categoryRepository;
     BrandRepository brandRepository;
     SupplierRepository supplierRepository;
+    ShipperRepository shipperRepository;
 
     @Bean
     ApplicationRunner applicationRunner() {
@@ -44,6 +48,7 @@ public class ApplicationInitConfig {
             initializeUsersAndStores();
             initializeMaterials();
             initializeSuppliers();
+            initializeShippers();
         };
     }
 
@@ -534,6 +539,89 @@ public class ApplicationInitConfig {
             supplierRepository.saveAll(suppliers);
             log.info("Đã khởi tạo dữ liệu mẫu cho nhà cung cấp");
         }
+    }
+
+    private void initializeShippers() {
+        if (shipperRepository.count() > 0) {
+            log.info("Shippers already initialized.");
+            return;
+        }
+
+        List<Shipper> shippers = List.of(
+                Shipper.builder()
+                        .shipperCode("DT0001")
+                        .name("Nguyen Van A")
+                        .phone("0987654321")
+                        .email("vana.shipper@example.com")
+                        .dateOfBirth(LocalDate.of(1990, 1, 15))
+                        .province("Hà Nội")
+                        .district("Ba Đình")
+                        .ward("Cống Vị")
+                        .address("Số 123, đường Đội Cấn")
+                        .note("Kinh nghiệm trên 5 năm")
+                        .partnerType(PartnerType.PERSONAL)
+                        .shipperStatus(ShipperStatus.INACTIVE)
+                        .build(),
+                Shipper.builder()
+                        .shipperCode("DT0002")
+                        .name("Le Thi B")
+                        .phone("0978123456")
+                        .email("lethi.shipper@example.com")
+                        .dateOfBirth(LocalDate.of(1992, 3, 12))
+                        .province("Hồ Chí Minh")
+                        .district("Quận 1")
+                        .ward("Phường Bến Nghé")
+                        .address("456 Lê Lợi")
+                        .note("Luôn đúng giờ")
+                        .partnerType(PartnerType.PERSONAL)
+                        .shipperStatus(ShipperStatus.ACTIVE)
+                        .build(),
+                Shipper.builder()
+                        .shipperCode("DT0003")
+                        .name("Tran Van C")
+                        .phone("0912345678")
+                        .email("tranvc.shipper@example.com")
+                        .dateOfBirth(LocalDate.of(1985, 7, 20))
+                        .province("Đà Nẵng")
+                        .district("Hải Châu")
+                        .ward("Phước Ninh")
+                        .address("789 Nguyễn Văn Linh")
+                        .note("Giao hàng nhanh")
+                        .partnerType(PartnerType.PERSONAL)
+                        .shipperStatus(ShipperStatus.ACTIVE)
+                        .build(),
+                Shipper.builder()
+                        .shipperCode("DT0004")
+                        .name("Pham Thi D")
+                        .phone("0908765432")
+                        .email("phamth.shipper@example.com")
+                        .dateOfBirth(LocalDate.of(1995, 5, 25))
+                        .province("Hải Phòng")
+                        .district("Lê Chân")
+                        .ward("Niệm Nghĩa")
+                        .address("Số 12, Trần Nguyên Hãn")
+                        .note("Chuyên khu vực miền Bắc")
+                        .partnerType(PartnerType.PERSONAL)
+                        .shipperStatus(ShipperStatus.ACTIVE)
+                        .build(),
+                Shipper.builder()
+                        .shipperCode("DT0005")
+                        .name("Hoang Van E")
+                        .phone("0945123456")
+                        .email("hoangve.shipper@example.com")
+                        .dateOfBirth(LocalDate.of(1988, 11, 30))
+                        .province("Cần Thơ")
+                        .district("Ninh Kiều")
+                        .ward("An Cư")
+                        .address("123 Mậu Thân")
+                        .note("Thành thạo nhiều tuyến đường")
+                        .partnerType(PartnerType.PERSONAL)
+                        .shipperStatus(ShipperStatus.ACTIVE)
+                        .build()
+        );
+
+        shipperRepository.saveAll(shippers);
+        log.info("Initialized 5 shippers successfully.");
     }
 
 

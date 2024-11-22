@@ -38,6 +38,7 @@ const Login = Loadable(lazy(() => import("../pages/Login")));
 const PriceBook = Loadable(lazy(() => import("../pages/PriceBook")));
 const StockTakes = Loadable(lazy(() => import("../pages/StockTakes")));
 const Sale = Loadable(lazy(() => import("../layouts/sale/index")));
+const PartnerDelivery = Loadable(lazy(() => import("../pages/Shipper")));
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
       { path: "users", element: <Users /> },
       { path: "price-book", element: <PriceBook /> },
       { path: "stock-takes", element: <StockTakes /> },
+      { path: "partner-delivery", element: <PartnerDelivery /> },
     ],
   },
   {
