@@ -25,6 +25,7 @@ public class Material extends AuditAble{
     @Column(nullable = false, unique = true)
     String materialCode;
     String barcode;
+    @Column(nullable = false, unique = true)
     String name;
     BigDecimal costPrice;
     BigDecimal salePrice;

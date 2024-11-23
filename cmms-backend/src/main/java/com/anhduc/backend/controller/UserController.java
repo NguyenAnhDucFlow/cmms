@@ -2,6 +2,7 @@ package com.anhduc.backend.controller;
 
 import com.anhduc.backend.dto.request.UserCreationRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
+import com.anhduc.backend.dto.response.CustomerResponse;
 import com.anhduc.backend.dto.response.UserCreationResponse;
 import com.anhduc.backend.service.UserService;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,6 +32,12 @@ public class UserController {
         userService.delete(userId);
         return ApiResponse.<Void>builder()
                 .message("Deleted user successfully").build();
+    }
+
+    @GetMapping("/by-role/{name}")
+    ApiResponse<List<CustomerResponse>> getAll(@PathVariable String name) {
+        return ApiResponse.<List<CustomerResponse>>builder()
+                .data(userService.getAllCustomer(name)).build();
     }
 
     @GetMapping("/my-info")

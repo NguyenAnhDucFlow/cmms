@@ -10,6 +10,7 @@ import { GoPencil } from "react-icons/go";
 const OrderContent = () => {
   const { orders, activeOrderId, updateItemQuantity, removeItem } = useStore();
   const activeOrder = orders.find((order) => order.id === activeOrderId);
+  console.log("sssssssss", activeOrder);
 
   if (!activeOrder?.items?.length) {
     return (
@@ -67,26 +68,61 @@ const OrderContent = () => {
           </div>
         </div>
       ))}
-      <div className="absolute right-0 bottom-9 w-full h-12">
-        <div className="flex items-center justify-between bg-white p-4 rounded-md shadow-md">
-          <div>
-            <Input
-              placeholder="Ghi chú đơn hàng"
-              size="large"
-              prefix={<GoPencil className="mr-2" />}
-              variant="borderless"
-            />
-          </div>
-          <div>
-            <div>
-              Tổng tiền hàng
-              <span className="font-bold text-[18px]">
-                {formatCurrency(totalAmount || 0)}
-              </span>
+      {activeOrder.footerTabKey === "1" ? (
+        <div className="absolute right-0 bottom-9 w-full h-12">
+          <div className="flex items-center justify-between bg-white p-4 rounded-md shadow-md">
+            <div className="w-2/3">
+              <Input
+                placeholder="Ghi chú đơn hàng"
+                size="large"
+                prefix={<GoPencil className="mr-2" />}
+                variant="borderless"
+              />
+            </div>
+            <div className="w-1/3">
+              <div className="flex items-center justify-between">
+                Tổng tiền hàng
+                <div className="font-bold text-[18px]">
+                  {formatCurrency(totalAmount || 0)}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="absolute right-0 bottom-[80px] w-full h-12">
+          <div className="flex items-center justify-between bg-white p-4 rounded-md shadow-md">
+            <div className="w-1/3">
+              <Input
+                placeholder="Ghi chú đơn hàng"
+                size="large"
+                prefix={<GoPencil className="mr-2" />}
+                variant="borderless"
+              />
+            </div>
+            <div className="w-2/3 space-y-2">
+              <div className="flex items-center justify-between">
+                Tổng tiền hàng
+                <div className="font-bold text-[18px]">
+                  {formatCurrency(totalAmount || 0)}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                Giảm giá
+                <div className="border-b w-12 text-right text-gray-300 text-[18px]">
+                  0
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                Khách hàng cần trả
+                <div className="font-bold text-primary text-[22px]">
+                  {formatCurrency(totalAmount || 0)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ package com.anhduc.backend.service;
 
 import com.anhduc.backend.dto.request.CustomerCreationRequest;
 import com.anhduc.backend.dto.request.UserCreationRequest;
+import com.anhduc.backend.dto.response.CustomerResponse;
 import com.anhduc.backend.dto.response.UserCreationResponse;
 import com.anhduc.backend.entity.Role;
 import com.anhduc.backend.entity.Store;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -74,6 +76,16 @@ public class UserService {
                 () -> new AppException(ErrorCode.USER_EXISTED)
         );
         return modelMapper.map(user, UserCreationResponse.class);
+    }
+
+    public List<CustomerResponse> getAllCustomer(String name) {
+        return userRepository.findByRoles_Name(name).stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
+
+    private CustomerResponse convertToResponse(User user) {
+        return modelMapper.map(user, CustomerResponse.class);
     }
 
     public String generateCustomerCode() {

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,5 +15,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT MAX(u.customerCode) FROM User u " +
             "WHERE u.customerCode LIKE :prefix%")
     String findMaxCustomerCodeWithPrefix(@Param("prefix") String prefix);
+
+    List<User> findByRoles_Name(String roleName);
 
 }

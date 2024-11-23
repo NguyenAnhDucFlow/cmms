@@ -37,6 +37,7 @@ import axios from "../../utils/axios";
 import ProductList from "./ProductList";
 import ItemGroupsCategoryDrawer from "./ItemGroupsCategoryDrawer";
 import useAuth from "../../hooks/useAuth";
+import SearchCustomer from "./SearchCustomer";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -192,16 +193,11 @@ const Sale = () => {
                 <FaPerson size={16} />
                 <div>Nhân sale</div>
               </div>
-              <Input
-                style={{ background: "#f3f4f6" }}
-                className="w-full "
-                placeholder="Tìm khách hàng"
-                prefix={<SearchOutlined />}
-              />
+              <SearchCustomer />
               <div className="flex items-center gap-2 ">
                 <FaCircleDot className="text-blue-500 text-lg " />
                 <span className="font-mono text-base border-b border-gray-100 py-1 w-full">
-                  +840886856851
+                  {user?.store?.address || "Cửa hàng trung tâm"}
                 </span>
               </div>
 

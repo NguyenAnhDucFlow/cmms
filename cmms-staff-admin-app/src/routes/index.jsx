@@ -79,7 +79,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/sale",
-    element: <Sale />,
+    element: (
+      <AuthGuard>
+        <Sale />
+      </AuthGuard>
+    ),
   },
   {
     path: "/login",
