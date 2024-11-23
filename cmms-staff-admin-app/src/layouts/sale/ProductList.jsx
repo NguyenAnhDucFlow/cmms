@@ -32,7 +32,7 @@ const ProductList = ({ products }) => {
 
   return (
     <div className="mt-4">
-      <div className="flex flex-wrap gap-9">
+      <div className="flex  flex-wrap gap-9">
         {Object.entries(groupedProducts).map(([name, productList]) => (
           <div span={8} key={name}>
             {productList.length > 1 ? (

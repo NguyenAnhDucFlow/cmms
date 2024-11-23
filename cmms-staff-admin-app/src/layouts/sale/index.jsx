@@ -35,6 +35,8 @@ import useRegionData from "../../hooks/useRegionData";
 import MenuDropdown from "./MenuDropdown";
 import axios from "../../utils/axios";
 import ProductList from "./ProductList";
+import ItemGroupsCategoryDrawer from "./ItemGroupsCategoryDrawer";
+import useAuth from "../../hooks/useAuth";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -51,8 +53,12 @@ const Sale = () => {
   } = useStore();
 
   const { shippers } = useData();
+  const { storeId, storeName } = Store();
   const [products, setProducts] = useState([]);
-  const { storeId } = Store();
+  const [totalElement, setTotalElement] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const { user } = useAuth();
 
   const { control, handleSubmit, reset, setValue, watch } = useForm();
   const { provinces, districts, wards, fetchDistricts, fetchWards } =
@@ -64,16 +70,26 @@ const Sale = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          `/materials/search?storeId=${storeId}&size=6`
-        );
+        const params = {
+          storeId,
+          size: 6,
+          page: currentPage - 1,
+        };
+
+        if (selectedGroups && selectedGroups.length > 0) {
+          params.categories = selectedGroups.join(",");
+        }
+
+        const response = await axios.get(`/materials/search`, { params });
         setProducts(response.data.data);
+        setProducts(response.data.data);
+        setTotalElement(response.data.totalElements);
       } catch (error) {
         console.error(error);
       }
     };
     fetchProducts();
-  }, []);
+  }, [currentPage, selectedGroups]);
 
   useEffect(() => {
     if (selectedProvinceCode) {
@@ -99,6 +115,15 @@ const Sale = () => {
   const [codEnabled, setCodEnabled] = useState(true);
   const onClose = () => {
     setOpen(false);
+  };
+
+  const handleFilterChange = (selected) => {
+    setSelectedGroups(selected);
+    onClose();
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const footerTabs = [
@@ -133,7 +158,13 @@ const Sale = () => {
             </div>
             <ProductList products={products} />
             <div className="flex items-center justify-between ">
-              <Pagination size="small" simple defaultCurrent={1} />
+              <Pagination
+                size="small"
+                simple
+                pageSize={6}
+                total={totalElement}
+                onChange={handlePageChange}
+              />
               <Button
                 size="large"
                 type="primary"
@@ -416,26 +447,13 @@ const Sale = () => {
       ),
     },
   ];
-
   return (
     <Layout className="h-screen bg-gray-100">
-      <Drawer
-        title="Lọc theo nhóm hàng"
-        placement="right"
-        closable={false}
-        onClose={onClose}
+      <ItemGroupsCategoryDrawer
         open={open}
-        key="right"
-      >
-        <div className="flex items-center gap-4">
-          <div className="font-semibold whitespace-nowrap">Nhóm hàng</div>
-          <Input
-            className="w-full"
-            placeholder="Tìm nhóm hàng"
-            prefix={<SearchOutlined />}
-          />
-        </div>
-      </Drawer>
+        onClose={onClose}
+        onFilterChange={handleFilterChange}
+      />
 
       {/* Header Section */}
       <div className="flex items-center justify-between bg-primary px-2 py-2 relative">
@@ -472,7 +490,7 @@ const Sale = () => {
             </CustomTabs>
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-3">
           <Tooltip color="blue" title="Xử lý đặt hàng">
             <Button
               type="primary"
@@ -487,6 +505,7 @@ const Sale = () => {
               icon={<IoArrowUndo size={19} />}
             />
           </Tooltip>
+          <div className="font-bold text-white">{user?.username}</div>
           <MenuDropdown />
         </div>
       </div>
@@ -521,7 +540,7 @@ const Sale = () => {
         </div>
         <h6 className="flex items-center gap-2">
           <FaLocationDot />
-          Chi nhánh trung tâm
+          {storeName}
         </h6>
       </footer>
     </Layout>

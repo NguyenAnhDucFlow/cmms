@@ -31,6 +31,12 @@ public class CategoryService {
                 .toList();
     }
 
+    public List<CategoryCreationResponse> search(String name) {
+        return categoryRepository.searchCategoriesByName(name).stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
+
     private CategoryCreationResponse convertToResponse(Category category) {
         return modelMapper.map(category, CategoryCreationResponse.class);
     }

@@ -27,9 +27,15 @@ public class CategoryController {
     }
 
     @GetMapping
-    ApiResponse<List<CategoryCreationResponse>> getAllRoles() {
+    ApiResponse<List<CategoryCreationResponse>> getAll() {
         return ApiResponse.<List<CategoryCreationResponse>>builder()
                 .data(categoryService.findAll()).build();
+    }
+
+    @GetMapping("/search")
+    ApiResponse<List<CategoryCreationResponse>> search(@RequestParam(required = false) String name) {
+        return ApiResponse.<List<CategoryCreationResponse>>builder()
+                .data(categoryService.search(name)).build();
     }
 
 }

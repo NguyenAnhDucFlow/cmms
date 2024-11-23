@@ -1,27 +1,27 @@
-import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AppRoutes from './routes/AppRoutes';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-
-const queryClient = new QueryClient();
+import { useState } from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import Footer from './components/Footer';
+import StoreSelector from './components/StoreSelector';
+import ProductsPage from './components/ProductsPage';
 
 function App() {
+  const [showStoreSelector, setShowStoreSelector] = useState(false);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <BrowserRouter>
-          <div className="min-h-screen bg-gray-50">
-            <Header />
-            <main className="container mx-auto px-4 py-8">
-              <AppRoutes />
-            </main>
-            <Footer />
-          </div>
-        </BrowserRouter>
-      </HelmetProvider>
-    </QueryClientProvider>
+    <div className="min-h-screen bg-white">
+      <Navbar onStoreSelect={() => setShowStoreSelector(true)} />
+      <Hero />
+      <ProductsPage />
+      <Features />
+      <Footer />
+      
+      <StoreSelector
+        isOpen={showStoreSelector}
+        onClose={() => setShowStoreSelector(false)}
+      />
+    </div>
   );
 }
 

@@ -11,12 +11,12 @@ const ProductCard = ({ product }) => (
         <img
           alt={product.name}
           src={product.coverImageUrl}
-          class="w-full h-2/3 object-cover transition-transform duration-300 group-hover:scale-110"
+          class="w-full h-28 object-cover transition-transform duration-300 group-hover:scale-110"
         />
       ) : (
         <img
           src="https://tse1.mm.bing.net/th?id=OIP.UYefmuqvYGCqQqZN9xaW8QHaGp&pid=Api"
-          class="w-full h-2/3 object-cover transition-transform duration-300 group-hover:scale-110"
+          class="w-full h-28 object-cover transition-transform duration-300 group-hover:scale-110"
         />
       )}
       <div className="absolute bottom-0 left-2 p-1 rounded-md text-primary bg-white">
