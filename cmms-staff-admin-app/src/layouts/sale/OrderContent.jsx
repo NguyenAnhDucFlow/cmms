@@ -32,7 +32,7 @@ const OrderContent = () => {
     <div className="pt-3 ml-3 relative h-full">
       {activeOrder.items.map((item, index) => (
         <div
-          key={item.id}
+          key={index}
           className="bg-white w-full rounded-md shadow-md p-2 flex items-center mb-2 hover:border hover:border-primary"
         >
           <div className="p-2 w-[3%]">{index + 1}</div>
@@ -79,7 +79,7 @@ const OrderContent = () => {
           </div>
           <div>
             <div>
-              Tổng tiền hàng{" "}
+              Tổng tiền hàng
               <span className="font-bold text-[18px]">
                 {formatCurrency(totalAmount || 0)}
               </span>

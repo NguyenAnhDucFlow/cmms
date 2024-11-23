@@ -24,6 +24,7 @@ public class StoreWarehouse {
     Material material;
     @ManyToOne
     Store store;
+    double reservedQuantity;
 
     public StoreWarehouse(Store store, Material material, double quantity) {
         this.store = store;

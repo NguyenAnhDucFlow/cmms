@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 import {
   Layout,
   Tabs,
@@ -9,22 +11,30 @@ import {
   Tooltip,
   Select,
   Switch,
-  Divider,
+  DatePicker,
 } from "antd";
 import { LiaPeopleCarrySolid } from "react-icons/lia";
+import { FaShoppingBag } from "react-icons/fa";
 import {
   SearchOutlined,
   PlusOutlined,
   UnorderedListOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
+import { IoArrowUndo } from "react-icons/io5";
 import { RiTruckLine } from "react-icons/ri";
 import { IoIosTime } from "react-icons/io";
 import { FaCircleDot, FaPerson, FaLocationDot } from "react-icons/fa6";
-import { CustomTabs, TabFooter } from "../../utils/Css-in-js";
+import { CustomSelect, CustomTabs, TabFooter } from "../../utils/Css-in-js";
 import SearchBar from "./SearchBar";
+import { useStore as Store } from "../../hooks/useStore";
 import useStore from "../../store/posStore";
 import OrderContent from "./OrderContent";
+import { useData } from "../../hooks/useData";
+import useRegionData from "../../hooks/useRegionData";
+import MenuDropdown from "./MenuDropdown";
+import axios from "../../utils/axios";
+import ProductList from "./ProductList";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -40,6 +50,45 @@ const Sale = () => {
     setOrderFooterTab,
   } = useStore();
 
+  const { shippers } = useData();
+  const [products, setProducts] = useState([]);
+  const { storeId } = Store();
+
+  const { control, handleSubmit, reset, setValue, watch } = useForm();
+  const { provinces, districts, wards, fetchDistricts, fetchWards } =
+    useRegionData();
+
+  const selectedProvinceCode = watch("provinceCode");
+  const selectedDistrictCode = watch("districtCode");
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `/materials/search?storeId=${storeId}&size=6`
+        );
+        setProducts(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvinceCode) {
+      fetchDistricts(selectedProvinceCode);
+      setValue("district", "");
+      setValue("ward", "");
+    }
+  }, [selectedProvinceCode]);
+
+  useEffect(() => {
+    if (selectedDistrictCode) {
+      fetchWards(selectedDistrictCode);
+      setValue("ward", "");
+    }
+  }, [selectedDistrictCode]);
   // Initialize store with default order if needed
   useEffect(() => {
     initializeStore();
@@ -82,8 +131,9 @@ const Sale = () => {
                 />
               </Tooltip>
             </div>
+            <ProductList products={products} />
             <div className="flex items-center justify-between ">
-              <Pagination size="small" simple defaultCurrent={2} total={50} />
+              <Pagination size="small" simple defaultCurrent={1} />
               <Button
                 size="large"
                 type="primary"
@@ -105,55 +155,173 @@ const Sale = () => {
       ),
       content: (
         <div className="w-[834px] h-full flex items-center gap-3">
-          <div className="flex flex-col  w-[50%] h-full shadow-md rounded-md p-4 bg-white space-y-3">
-            <div className="flex items-center gap-2">
-              <FaPerson size={16} />
-              <div>Nhân sale</div>
-            </div>
-            <Input
-              style={{ background: "#f3f4f6" }}
-              className="w-full "
-              placeholder="Tìm khách hàng"
-              prefix={<SearchOutlined />}
-            />
-            <div className="flex items-center gap-2 ">
-              <FaCircleDot className="text-blue-500 text-lg " />
-              <span className="font-mono text-base border-b border-gray-100 py-1 w-full">
-                +840886856851
-              </span>
-            </div>
-
-            <div className="mt-4 flex gap-4 items-center">
+          <div className="flex flex-col  w-[50%] h-full shadow-md rounded-md justify-between bg-white space-y-3  overflow-hidden">
+            <div className=" p-4 space-y-3">
               <div className="flex items-center gap-2">
-                <FaLocationDot className="text-green-500 text-lg" />
-                <Input placeholder="Tên người nhận" />
+                <FaPerson size={16} />
+                <div>Nhân sale</div>
               </div>
-              <div>
-                <Input placeholder="Số điện thoại" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <Input
-                placeholder="Địa chỉ chi tiết (Số nhà, ngõ, đường)"
-                className="col-span-2"
+                style={{ background: "#f3f4f6" }}
+                className="w-full "
+                placeholder="Tìm khách hàng"
+                prefix={<SearchOutlined />}
               />
-              <Input placeholder="Tỉnh/TP - Quận/Huyện" />
-              <Input placeholder="Phường/Xã" />
+              <div className="flex items-center gap-2 ">
+                <FaCircleDot className="text-blue-500 text-lg " />
+                <span className="font-mono text-base border-b border-gray-100 py-1 w-full">
+                  +840886856851
+                </span>
+              </div>
+
+              <div className="mt-4 flex gap-4 items-center">
+                <div className="flex items-center gap-2">
+                  <FaLocationDot className="text-green-500 text-lg" />
+                  <div className="border-b hover:border-primary ">
+                    <Input
+                      style={{ padding: "4px 0px" }}
+                      placeholder="Tên người nhận"
+                      variant="borderless"
+                    />
+                  </div>
+                </div>
+                <div className="border-b hover:border-primary ">
+                  <Input
+                    style={{ padding: "4px 0px" }}
+                    placeholder="Số điện thoại"
+                    variant="borderless"
+                  />
+                </div>
+              </div>
+
+              <div className="border-b hover:border-primary ml-6">
+                <Input
+                  style={{ padding: "4px 0px" }}
+                  placeholder="Địa chỉ chi tiết (số nhà, ngõ, đường)"
+                  variant="borderless"
+                />
+              </div>
+              <div className="ml-6">
+                <Controller
+                  name="province"
+                  control={control}
+                  render={({ field }) => {
+                    const [isFocused, setIsFocused] = useState(false);
+                    return (
+                      <CustomSelect
+                        {...field}
+                        className="w-full border-b"
+                        style={{
+                          borderColor: isFocused ? "#1E88E5" : undefined,
+                          padding: 0,
+                        }}
+                        showSearch
+                        optionFilterProp="label"
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        variant="borderless"
+                        options={provinces.map((prov) => ({
+                          value: prov.code,
+                          label: prov.name,
+                        }))}
+                        onChange={(value) => {
+                          const selectedProvince = provinces.find(
+                            (prov) => prov.code === value
+                          );
+                          field.onChange(selectedProvince?.name);
+                          setValue("provinceCode", value);
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
+              <div className="ml-6">
+                <Controller
+                  name="district"
+                  control={control}
+                  render={({ field }) => {
+                    const [isFocused, setIsFocused] = useState(false);
+                    return (
+                      <CustomSelect
+                        {...field}
+                        className="w-full border-b"
+                        style={{
+                          borderColor: isFocused ? "#1E88E5" : undefined,
+                          padding: 0,
+                        }}
+                        showSearch
+                        optionFilterProp="label"
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        variant="borderless"
+                        options={districts.map((dist) => ({
+                          value: dist.code,
+                          label: dist.name,
+                        }))}
+                        disabled={!selectedProvinceCode}
+                        onChange={(value) => {
+                          const selectedDistrict = districts.find(
+                            (dist) => dist.code === value
+                          );
+                          field.onChange(selectedDistrict?.name);
+                          setValue("districtCode", value);
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
+              <div className="ml-6">
+                <Controller
+                  name="ward"
+                  control={control}
+                  render={({ field }) => {
+                    const [isFocused, setIsFocused] = useState(false);
+                    return (
+                      <CustomSelect
+                        {...field}
+                        className="w-full border-b"
+                        style={{
+                          borderColor: isFocused ? "#1E88E5" : undefined,
+                          padding: 0,
+                        }}
+                        showSearch
+                        optionFilterProp="label"
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        variant="borderless"
+                        options={wards.map((ward) => ({
+                          value: ward.code,
+                          label: ward.name,
+                        }))}
+                        disabled={!selectedDistrictCode}
+                        onChange={(value) => {
+                          const selectedWard = wards.find(
+                            (ward) => ward.code === value
+                          );
+                          field.onChange(selectedWard?.name);
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+              <div className="border-b pb-2">
+                <Input
+                  placeholder="Ghi chú đơn hàng"
+                  style={{ padding: 0 }}
+                  size="large"
+                  prefix={<HiOutlinePencilSquare className="mr-2" />}
+                  variant="borderless"
+                />
+              </div>
             </div>
-
-            <Divider />
-
-            <Input.TextArea
-              placeholder="Ghi chú cho bưu tá"
-              className="mt-4"
-              rows={2}
-            />
-
-            <Divider />
 
             {/* Payment Info */}
-            <div className="border-t border-gray-100 pt-2 space-y-3">
+            <div className="border-t border-gray-100 pt-2  pb-8 space-y-3 p-4 ">
               <div className="flex items-center justify-between">
                 <div className="font-bold flex items-center gap-4">
                   <div className="whitespace-nowrap">Khách thanh toán</div>
@@ -191,22 +359,54 @@ const Sale = () => {
             </div>
           </div>
           <div className="flex w-[50%] flex-col h-full shadow-md rounded-md p-4 bg-white">
-            <div className="flex items-center gap-2 justify-center border-b border-gray-200 pb-0.5">
+            <div className="flex items-center gap-2  border-b border-gray-200 pb-2">
               <LiaPeopleCarrySolid className="text-primary" size={24} />
-              <div className="font-serif text-xl text-primary">
-                Tự giao hàng
-              </div>
+              <div className=" text-[17px] text-primary">Tự giao hàng</div>
             </div>
-            <div className="flex flex-col h-full justify-between mt-8">
-              <div className="flex items-center justify-between">
-                <div className="w-1/3 whitespace-nowrap">
-                  Đối tác giao hàng:
+            <div className="flex h-full flex-col justify-between">
+              <div className="space-y-4 mt-8">
+                <div className="flex items-center justify-between">
+                  <div className="w-[40%] whitespace-nowrap">
+                    Nhân viên giao hàng
+                  </div>
+                  <div className="w-[60%] border-b border-gray-200">
+                    <Select
+                      variant="borderless"
+                      placeholder="Chọn nhân viên giao hàng"
+                      className="w-full"
+                      options={shippers?.map((shipper) => ({
+                        value: shipper.id,
+                        label: shipper.name,
+                      }))}
+                    />
+                  </div>
                 </div>
-                <div className="w-2/3">
-                  <Select className="w-full" />
+                <div className="flex justify-between">
+                  <div className="w-[40%] whitespace-nowrap">Mã vận đơn</div>
+                  <div className="w-[60%] border-b border-gray-200"></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="w-[40%] whitespace-nowrap">
+                    Thời gian giao hàng
+                  </div>
+                  <div className="w-[60%] border-b border-gray-200">
+                    <DatePicker
+                      showTime
+                      variant="borderless"
+                      className="w-full"
+                      placeholder=""
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="w-[40%] whitespace-nowrap">
+                    Trạng thái giao hàng
+                  </div>
+                  <div className="w-[60%] pb-1 border-b text-gray-300 border-gray-200">
+                    Chờ xử lý
+                  </div>
                 </div>
               </div>
-
               <Button size="large" type="primary" className="w-full h-[50px]">
                 Thanh toán
               </Button>
@@ -273,7 +473,21 @@ const Sale = () => {
           </div>
         </div>
         <div>
-          <h1>Account</h1>
+          <Tooltip color="blue" title="Xử lý đặt hàng">
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<FaShoppingBag size={19} />}
+            />
+          </Tooltip>
+          <Tooltip color="blue" title="Trả hàng">
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoArrowUndo size={19} />}
+            />
+          </Tooltip>
+          <MenuDropdown />
         </div>
       </div>
 

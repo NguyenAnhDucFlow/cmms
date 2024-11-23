@@ -23,6 +23,7 @@ public class CentralWarehouse {
     Material material;
     @ManyToOne
     Store company;
+    double reservedQuantity;
 
     public CentralWarehouse(Store company, Material material, double quantity) {
         this.company = company;

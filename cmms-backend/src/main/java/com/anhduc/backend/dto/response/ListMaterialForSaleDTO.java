@@ -18,5 +18,7 @@ public class ListMaterialForSaleDTO {
     List<String> images;
     BigDecimal salePrice;
     double quantity;
+    double availableQuantity;
+    double reservedQuantity;
     String unitName;
 }

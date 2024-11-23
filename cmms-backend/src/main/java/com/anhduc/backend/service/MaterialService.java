@@ -295,14 +295,24 @@ public class MaterialService {
         List<ListMaterialForSaleDTO> materialDTOs = new ArrayList<>();
 
         for (Material material : materials) {
-            double quantity;
+            double quantity = 0;
+            double reservedQuantity = 0;
             if (isCentralWarehouse) {
                 CentralWarehouse centralWarehouse = centralWarehouseRepository.findByMaterialIdAndCompanyId(material.getId(), storeId);
-                quantity = centralWarehouse != null ? centralWarehouse.getQuantity() : 0;
+                if (centralWarehouse != null) {
+                    quantity = centralWarehouse.getQuantity();
+                    reservedQuantity = centralWarehouse.getReservedQuantity();
+                }
             } else {
                 StoreWarehouse storeWarehouse = storeWarehouseRepository.findByMaterialIdAndStoreId(material.getId(), storeId);
-                quantity = storeWarehouse != null ? storeWarehouse.getQuantity() : 0;
+                if (storeWarehouse != null) {
+                    quantity = storeWarehouse.getQuantity();
+                    reservedQuantity = storeWarehouse.getReservedQuantity();
+                }
             }
+
+            // Tính số lượng thực sự có sẵn
+            double availableQuantity = quantity - reservedQuantity;
 
             if (material.getBasicUnit() != null) {
                 ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
@@ -312,6 +322,8 @@ public class MaterialService {
                         material.getImages(),
                         material.getSalePrice(),
                         quantity,
+                        availableQuantity, // Số lượng còn lại
+                        reservedQuantity,
                         material.getBasicUnit().getName()
                 );
                 materialDTOs.add(baseUnitDto);
@@ -324,8 +336,10 @@ public class MaterialService {
                             material.getName(),
                             material.getCoverImageUrl(),
                             material.getImages(),
-                            variant.getCostPrice(),
-                            quantity,
+                            variant.getSalePrice(),
+                            (quantity / variant.getConversionRate()),
+                            (availableQuantity / variant.getConversionRate()),
+                            (reservedQuantity / variant.getConversionRate()),
                             variant.getUnit().getName()
                     );
                     materialDTOs.add(variantDto);
@@ -351,14 +365,24 @@ public class MaterialService {
 
         // Lặp qua danh sách material để ánh xạ thành DTO
         for (Material material : materials.getContent()) {
-            double quantity;
+            double quantity = 0;
+            double reservedQuantity = 0;
             if (isCentralWarehouse) {
                 CentralWarehouse centralWarehouse = centralWarehouseRepository.findByMaterialIdAndCompanyId(material.getId(), storeId);
-                quantity = centralWarehouse != null ? centralWarehouse.getQuantity() : 0;
+                if (centralWarehouse != null) {
+                    quantity = centralWarehouse.getQuantity();
+                    reservedQuantity = centralWarehouse.getReservedQuantity();
+                }
             } else {
                 StoreWarehouse storeWarehouse = storeWarehouseRepository.findByMaterialIdAndStoreId(material.getId(), storeId);
-                quantity = storeWarehouse != null ? storeWarehouse.getQuantity() : 0;
+                if (storeWarehouse != null) {
+                    quantity = storeWarehouse.getQuantity();
+                    reservedQuantity = storeWarehouse.getReservedQuantity();
+                }
             }
+
+            // Tính số lượng thực sự có sẵn
+            double availableQuantity = quantity - reservedQuantity;
 
             if (material.getBasicUnit() != null) {
                 ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
@@ -368,6 +392,8 @@ public class MaterialService {
                         material.getImages(),
                         material.getSalePrice(),
                         quantity,
+                        availableQuantity, // Số lượng còn lại
+                        reservedQuantity,
                         material.getBasicUnit().getName()
                 );
                 materialDTOs.add(baseUnitDto);
@@ -380,8 +406,10 @@ public class MaterialService {
                             material.getName(),
                             material.getCoverImageUrl(),
                             material.getImages(),
-                            variant.getCostPrice(),
-                            quantity,
+                            variant.getSalePrice(),
+                            (quantity / variant.getConversionRate()),
+                            (availableQuantity / variant.getConversionRate()),
+                            (reservedQuantity / variant.getConversionRate()),
                             variant.getUnit().getName()
                     );
                     materialDTOs.add(variantDto);
