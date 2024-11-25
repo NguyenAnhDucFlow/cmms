@@ -76,6 +76,11 @@
 			<artifactId>s3</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>vn.payos</groupId>
+			<artifactId>payos-java</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-crypto</artifactId>
 		</dependency>

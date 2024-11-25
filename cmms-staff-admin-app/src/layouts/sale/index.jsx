@@ -38,6 +38,7 @@ import ProductList from "./ProductList";
 import ItemGroupsCategoryDrawer from "./ItemGroupsCategoryDrawer";
 import useAuth from "../../hooks/useAuth";
 import SearchCustomer from "./SearchCustomer";
+import CkeckoutDrawer from "./CkeckoutDrawer";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -51,7 +52,15 @@ const Sale = () => {
     removeOrder,
     initializeStore,
     setOrderFooterTab,
+    updateCustomerInfo,
   } = useStore();
+  const { control, handleSubmit, reset, setValue, watch } = useForm();
+  const { provinces, districts, wards, fetchDistricts, fetchWards } =
+    useRegionData();
+
+  const customerInfo = orders.find(
+    (order) => order.id === activeOrderId
+  )?.customerInfo;
 
   const { shippers } = useData();
   const { storeId, storeName } = Store();
@@ -60,10 +69,6 @@ const Sale = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const { user } = useAuth();
-
-  const { control, handleSubmit, reset, setValue, watch } = useForm();
-  const { provinces, districts, wards, fetchDistricts, fetchWards } =
-    useRegionData();
 
   const selectedProvinceCode = watch("provinceCode");
   const selectedDistrictCode = watch("districtCode");
@@ -113,7 +118,13 @@ const Sale = () => {
   const activeOrder = orders.find((order) => order.id === activeOrderId);
 
   const [open, setOpen] = useState(false);
+  const [openCheckout, setOpenCheckout] = useState(false);
   const [codEnabled, setCodEnabled] = useState(true);
+
+  const onCloseCheckout = () => {
+    setOpenCheckout(false);
+  };
+
   const onClose = () => {
     setOpen(false);
   };
@@ -138,13 +149,10 @@ const Sale = () => {
       content: (
         <div className="w-[542px] h-full shadow-md rounded-md bg-white p-4">
           <div className="flex flex-col justify-between h-full">
-            <div className="flex items-center gap-8">
-              <Input
-                className="w-full"
-                placeholder="Tìm khách hàng"
-                prefix={<SearchOutlined />}
-                style={{ background: "#f3f4f6" }}
-              />
+            <div className="flex items-center justify-between gap-8 ">
+              <div className="w-full">
+                <SearchCustomer />
+              </div>
               <Tooltip
                 title="Lọc theo nhóm hàng"
                 color="blue"
@@ -170,6 +178,7 @@ const Sale = () => {
                 size="large"
                 type="primary"
                 className="w-[300px] h-[50px]"
+                onClick={() => setOpenCheckout(true)}
               >
                 Thanh toán
               </Button>
@@ -206,17 +215,23 @@ const Sale = () => {
                   <FaLocationDot className="text-green-500 text-lg" />
                   <div className="border-b hover:border-primary ">
                     <Input
-                      style={{ padding: "4px 0px" }}
-                      placeholder="Tên người nhận"
                       variant="borderless"
+                      value={customerInfo?.username || ""}
+                      onChange={(e) =>
+                        updateCustomerInfo("name", e.target.value)
+                      }
+                      placeholder="Nhập tên người nhận"
                     />
                   </div>
                 </div>
                 <div className="border-b hover:border-primary ">
                   <Input
-                    style={{ padding: "4px 0px" }}
-                    placeholder="Số điện thoại"
                     variant="borderless"
+                    value={customerInfo?.phone || ""}
+                    onChange={(e) =>
+                      updateCustomerInfo("phone", e.target.value)
+                    }
+                    placeholder="Nhập số điện thoại"
                   />
                 </div>
               </div>
@@ -224,8 +239,12 @@ const Sale = () => {
               <div className="border-b hover:border-primary ml-6">
                 <Input
                   style={{ padding: "4px 0px" }}
+                  value={customerInfo?.address || ""}
                   placeholder="Địa chỉ chi tiết (số nhà, ngõ, đường)"
                   variant="borderless"
+                  onChange={(e) =>
+                    updateCustomerInfo("address", e.target.value)
+                  }
                 />
               </div>
               <div className="ml-6">
@@ -256,6 +275,10 @@ const Sale = () => {
                             (prov) => prov.code === value
                           );
                           field.onChange(selectedProvince?.name);
+                          updateCustomerInfo(
+                            "province",
+                            selectedProvince?.name
+                          );
                           setValue("provinceCode", value);
                         }}
                       />
@@ -293,6 +316,10 @@ const Sale = () => {
                             (dist) => dist.code === value
                           );
                           field.onChange(selectedDistrict?.name);
+                          updateCustomerInfo(
+                            "district",
+                            selectedDistrict?.name
+                          );
                           setValue("districtCode", value);
                         }}
                       />
@@ -330,6 +357,7 @@ const Sale = () => {
                             (ward) => ward.code === value
                           );
                           field.onChange(selectedWard?.name);
+                          updateCustomerInfo("ward", selectedWard?.name);
                         }}
                       />
                     );
@@ -338,7 +366,7 @@ const Sale = () => {
               </div>
               <div className="border-b pb-2">
                 <Input
-                  placeholder="Ghi chú đơn hàng"
+                  placeholder="Ghi chú cho bưu tá"
                   style={{ padding: 0 }}
                   size="large"
                   prefix={<HiOutlinePencilSquare className="mr-2" />}
@@ -450,6 +478,7 @@ const Sale = () => {
         onClose={onClose}
         onFilterChange={handleFilterChange}
       />
+      <CkeckoutDrawer open={openCheckout} onClose={onCloseCheckout} />
 
       {/* Header Section */}
       <div className="flex items-center justify-between bg-primary px-2 py-2 relative">

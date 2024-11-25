@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Select, Tabs } from "antd";
+import { InputNumber, Select, Tabs } from "antd";
 
 export const CustomSelect = styled(Select)`
   && .ant-input-affix-wrapper {
@@ -41,5 +41,14 @@ export const CustomTabs = styled(Tabs)`
 export const TabFooter = styled(Tabs)`
   .ant-tabs-nav {
     margin-top: 0 !important;
+  }
+`;
+
+export const CustomInput = styled(InputNumber)`
+  .ant-input-number-input {
+    border-radius: 0px !important;
+  }
+  .ant-input-number-input {
+    padding: 4px 0px;
   }
 `;

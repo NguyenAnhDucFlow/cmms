@@ -1,12 +1,20 @@
-import { Input, List } from "antd";
+import { Form, Input, List, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  UserOutlined,
+  CloseCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import axios from "../../utils/axios";
 import useStore from "../../store/posStore";
+import CreateCustomerModal from "../../components/modal/CreateCustomerModal";
 
 const SearchCustomer = () => {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const setCustomerInfo = useStore((state) => state.setCustomerInfo);
 
   useEffect(() => {
@@ -21,13 +29,38 @@ const SearchCustomer = () => {
     loadCustomer();
   }, []);
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
+    setSelectedCustomer(null);
   };
 
   const handleCustomerSelect = (customer) => {
     setCustomerInfo(customer);
+    setSelectedCustomer(customer);
+    setSearchTerm(customer?.username);
+  };
+
+  const handleClearSelection = () => {
     setSearchTerm("");
+    setSelectedCustomer(null);
+  };
+
+  const openCreateCustomerModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCreateCustomer = async (values) => {
+    try {
+      await axios.post("/users/register", values);
+      message.success("Thêm mới khách hàng thành công");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create customer:", error);
+    }
   };
 
   const filteredList = customers.filter((item) =>
@@ -37,15 +70,28 @@ const SearchCustomer = () => {
   return (
     <div style={{ position: "relative" }}>
       <Input
-        style={{ background: "#f3f4f6" }}
+        style={{ background: "#f3f4f6", width: "100%" }}
         placeholder="Tìm khách hàng"
         className="w-full "
-        prefix={<SearchOutlined />}
+        prefix={selectedCustomer ? <UserOutlined /> : <SearchOutlined />}
         value={searchTerm}
         onChange={handleInputChange}
+        suffix={
+          selectedCustomer ? (
+            <CloseCircleOutlined
+              style={{ cursor: "pointer", color: "#aaa" }}
+              onClick={handleClearSelection}
+            />
+          ) : (
+            <PlusOutlined
+              style={{ cursor: "pointer", color: "#aaa" }}
+              onClick={openCreateCustomerModal}
+            />
+          )
+        }
       />
 
-      {searchTerm && (
+      {searchTerm && !selectedCustomer && (
         <div
           style={{
             position: "absolute",
@@ -75,6 +121,11 @@ const SearchCustomer = () => {
           />
         </div>
       )}
+      <CreateCustomerModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onCreateCustomer={handleCreateCustomer}
+      />
     </div>
   );
 };

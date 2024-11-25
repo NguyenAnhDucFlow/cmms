@@ -97,7 +97,10 @@ const useStore = create(
               return {
                 ...order,
                 items,
-                total: items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+                total: items.reduce(
+                  (sum, i) => sum + i.salePrice * i.quantity,
+                  0
+                ),
               };
             }
             return order;
@@ -119,7 +122,7 @@ const useStore = create(
                   total: order.items.reduce(
                     (sum, item) =>
                       sum +
-                      item.price *
+                      item.salePrice *
                         (item.materialCode === materialCode
                           ? quantity
                           : item.quantity),
@@ -141,7 +144,10 @@ const useStore = create(
                   ),
                   total: order.items
                     .filter((item) => item.materialCode !== materialCode)
-                    .reduce((sum, item) => sum + item.price * item.quantity, 0),
+                    .reduce(
+                      (sum, item) => sum + item.salePrice * item.quantity,
+                      0
+                    ),
                 }
               : order
           ),
@@ -176,6 +182,21 @@ const useStore = create(
           orders: state.orders.map((order) =>
             order.id === state.activeOrderId
               ? { ...order, customerInfo }
+              : order
+          ),
+        })),
+
+      updateCustomerInfo: (field, value) =>
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === state.activeOrderId
+              ? {
+                  ...order,
+                  customerInfo: {
+                    ...order.customerInfo,
+                    [field]: value, // Cập nhật field cụ thể
+                  },
+                }
               : order
           ),
         })),

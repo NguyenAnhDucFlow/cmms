@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerResponse {
+    UUID id;
     String username;
     String phone;
     String email;

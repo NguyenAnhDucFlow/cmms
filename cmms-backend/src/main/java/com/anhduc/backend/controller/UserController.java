@@ -1,5 +1,6 @@
 package com.anhduc.backend.controller;
 
+import com.anhduc.backend.dto.request.CustomerCreationRequest;
 import com.anhduc.backend.dto.request.UserCreationRequest;
 import com.anhduc.backend.dto.response.ApiResponse;
 import com.anhduc.backend.dto.response.CustomerResponse;
@@ -25,6 +26,12 @@ public class UserController {
     ApiResponse<UserCreationResponse> create(@RequestBody UserCreationRequest request) {
         return ApiResponse.<UserCreationResponse>builder()
                 .data(userService.create(request)).build();
+    }
+
+    @PostMapping("/register")
+    ApiResponse<UserCreationResponse> createCustomer(@RequestBody CustomerCreationRequest request) {
+        return ApiResponse.<UserCreationResponse>builder()
+                .data(userService.createCustomer(request)).build();
     }
 
     @DeleteMapping("/{userId}")

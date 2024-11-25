@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerCreationRequest {
-    String name;
+    String username;
     String phone;
     String email;
     String password;

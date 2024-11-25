@@ -54,7 +54,6 @@ public class UserService {
 
     public UserCreationResponse createCustomer(CustomerCreationRequest request) {
         User user = modelMapper.map(request, User.class);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
         HashSet<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName(RoleType.CUSTOMER.name()).orElseThrow(
                 () -> new AppException(ErrorCode.USER_ROLE_NOT_EXISTED)
