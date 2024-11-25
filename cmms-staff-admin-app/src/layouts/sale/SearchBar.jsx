@@ -33,7 +33,7 @@ const SearchBar = () => {
     setSearchTerm("");
   };
 
-  const filteredList = materials.filter((item) =>
+  const filteredList = materials?.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

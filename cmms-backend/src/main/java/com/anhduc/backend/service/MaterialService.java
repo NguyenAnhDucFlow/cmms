@@ -316,6 +316,7 @@ public class MaterialService {
 
             if (material.getBasicUnit() != null) {
                 ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
+                        material.getId(),
                         material.getMaterialCode(),
                         material.getName(),
                         material.getCoverImageUrl(),
@@ -324,7 +325,8 @@ public class MaterialService {
                         quantity,
                         availableQuantity, // Số lượng còn lại
                         reservedQuantity,
-                        material.getBasicUnit().getName()
+                        material.getBasicUnit().getName(),
+                        material.getCategory().getName()
                 );
                 materialDTOs.add(baseUnitDto);
             }
@@ -332,6 +334,7 @@ public class MaterialService {
             if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
                 for (MaterialUnit variant : material.getMaterialUnits()) {
                     ListMaterialForSaleDTO variantDto = new ListMaterialForSaleDTO(
+                            material.getId(),
                             variant.getVariantCode(),
                             material.getName(),
                             material.getCoverImageUrl(),
@@ -340,7 +343,8 @@ public class MaterialService {
                             (quantity / variant.getConversionRate()),
                             (availableQuantity / variant.getConversionRate()),
                             (reservedQuantity / variant.getConversionRate()),
-                            variant.getUnit().getName()
+                            variant.getUnit().getName(),
+                            material.getCategory().getName()
                     );
                     materialDTOs.add(variantDto);
                 }
@@ -386,6 +390,7 @@ public class MaterialService {
 
             if (material.getBasicUnit() != null) {
                 ListMaterialForSaleDTO baseUnitDto = new ListMaterialForSaleDTO(
+                        material.getId(),
                         material.getMaterialCode(),
                         material.getName(),
                         material.getCoverImageUrl(),
@@ -394,7 +399,8 @@ public class MaterialService {
                         quantity,
                         availableQuantity, // Số lượng còn lại
                         reservedQuantity,
-                        material.getBasicUnit().getName()
+                        material.getBasicUnit().getName(),
+                        material.getCategory().getName()
                 );
                 materialDTOs.add(baseUnitDto);
             }
@@ -402,6 +408,7 @@ public class MaterialService {
             if (material.getMaterialUnits() != null && !material.getMaterialUnits().isEmpty()) {
                 for (MaterialUnit variant : material.getMaterialUnits()) {
                     ListMaterialForSaleDTO variantDto = new ListMaterialForSaleDTO(
+                            material.getId(),
                             variant.getVariantCode(),
                             material.getName(),
                             material.getCoverImageUrl(),
@@ -410,7 +417,8 @@ public class MaterialService {
                             (quantity / variant.getConversionRate()),
                             (availableQuantity / variant.getConversionRate()),
                             (reservedQuantity / variant.getConversionRate()),
-                            variant.getUnit().getName()
+                            variant.getUnit().getName(),
+                            material.getCategory().getName()
                     );
                     materialDTOs.add(variantDto);
                 }

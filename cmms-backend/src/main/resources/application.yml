@@ -25,14 +25,17 @@ cloud:
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
   valid-duration: 3600 # in second
+  tokenExpiryTime: 3600 #in seco
+  refreshTokenExpiration: 36000
   refreshable-duration: 36000 # in seconds
+
 
 
 oauth2:
   google:
     client-id: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
     client-secret: "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"
-    redirect-uri: "http://localhost:5173/authenticate"
+    redirect-uri: "http://localhost:5173"
 
 PAYOS_CLIENT_ID: e358e1d6-1166-41f2-ad96-a4d903d281fa
 PAYOS_API_KEY: 6bcd54c7-9652-4928-8003-22a247c10572

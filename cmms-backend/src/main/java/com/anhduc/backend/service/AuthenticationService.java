@@ -1,17 +1,18 @@
 package com.anhduc.backend.service;
 
-import com.anhduc.backend.dto.request.AuthenticationRequest;
-import com.anhduc.backend.dto.request.IntrospectRequest;
-import com.anhduc.backend.dto.request.LogoutRequest;
-import com.anhduc.backend.dto.request.RefreshRequest;
+import com.anhduc.backend.dto.request.*;
 import com.anhduc.backend.dto.response.AuthenticationResponse;
 import com.anhduc.backend.dto.response.IntrospectResponse;
 import com.anhduc.backend.entity.InvalidatedToken;
+import com.anhduc.backend.entity.Role;
 import com.anhduc.backend.entity.User;
 import com.anhduc.backend.exception.AppException;
 import com.anhduc.backend.exception.ErrorCode;
 import com.anhduc.backend.repository.InvalidatedTokenRepository;
+import com.anhduc.backend.repository.RoleRepository;
 import com.anhduc.backend.repository.UserRepository;
+import com.anhduc.backend.repository.httpclient.OutboundIdentityClient;
+import com.anhduc.backend.repository.httpclient.OutboundUserClient;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -30,9 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +39,35 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
-    InvalidatedTokenRepository invalidatedTokenRepository;
     PasswordEncoder passwordEncoder;
+    InvalidatedTokenRepository invalidatedTokenRepository;
+    OutboundIdentityClient outboundIdentityClient;
+    OutboundUserClient outboundUserClient;
+    RoleRepository roleRepository;
+
+    @NonFinal // dont inject in constructor
+    @Value("${jwt.signerKey}")
+    protected String signerKey;
+
+    @NonFinal
+    @Value("${jwt.tokenExpiryTime}")
+    protected long tokenExpiryTime;
+
+    @NonFinal
+    @Value("${jwt.refreshTokenExpiration}")
+    protected long refreshTokenExpiration;
+
+    @NonFinal
+    @Value("${oauth2.google.client-id}")
+    private String CLIENT_ID;
+
+    @NonFinal
+    @Value("${oauth2.google.client-secret}")
+    protected String CLIENT_SECRET;
+
+    @NonFinal
+    @Value("${oauth2.google.redirect-uri}")
+    protected String REDIRECT_URI;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -145,23 +171,20 @@ public class AuthenticationService {
         }
     }
 
-    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+    private SignedJWT verifyToken(String token, boolean isRefresh) throws ParseException, JOSEException {
+        JWSVerifier verifier = new MACVerifier(signerKey);
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = (isRefresh)
-                ? new Date(signedJWT
-                .getJWTClaimsSet()
-                .getIssueTime()
-                .toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
-                .toEpochMilli())
+        Date expiryTime = isRefresh
+                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant()
+                .plus(refreshTokenExpiration, ChronoUnit.SECONDS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        var verified = signedJWT.verify(verifier);
+        var verified = signedJWT.verify(verifier); // return true or false
 
-        if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!(verified && expiryTime.after(new Date())))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         if (invalidatedTokenRepository.existsById(UUID.fromString(signedJWT.getJWTClaimsSet().getJWTID())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -180,5 +203,35 @@ public class AuthenticationService {
             });
 
         return stringJoiner.toString();
+    }
+
+    public AuthenticationResponse outboundLoginGoogle(String code) {
+        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                .code(code)
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .redirectUri(REDIRECT_URI)
+                .grantType("authorization_code")
+                .build());
+        log.info("token: {}", response);
+        var userInfo = outboundUserClient.getUserInfo("json",response.getAccessToken());
+
+        log.info("userInfo: {}", userInfo);
+        Set<Role> roles = new HashSet<>();
+        Role roleDefault = roleRepository.findByName("CUSTOMER").orElseThrow(
+                () -> new AppException(ErrorCode.USER_ROLE_NOT_EXISTED)
+        );
+        roles.add(roleDefault);
+        var user = userRepository.findByEmail(userInfo.getEmail()).orElseGet(
+                () -> userRepository.save(User.builder()
+                        .email(userInfo.getEmail())
+                        .firstName(userInfo.getGiveName())
+                        .lastName(userInfo.getFamilyName())
+                        .roles(roles)
+                        .build())
+        );
+
+        var token = generateToken(user);
+        return AuthenticationResponse.builder().token(token).user(user).build();
     }
 }

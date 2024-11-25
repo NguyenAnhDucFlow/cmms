@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +13,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListMaterialForSaleDTO {
+    UUID id;
     String materialCode;
     String name;
     String coverImageUrl;
@@ -21,4 +23,5 @@ public class ListMaterialForSaleDTO {
     double availableQuantity;
     double reservedQuantity;
     String unitName;
+    String category;
 }
