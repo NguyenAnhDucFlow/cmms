@@ -37,7 +37,7 @@ const useCart = create(
       getTotal: () => {
         const items = get().items;
         return items.reduce(
-          (total, item) => total + item.price * item.quantity,
+          (total, item) => total + item.salePrice * item.quantity,
           0
         );
       },

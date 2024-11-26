@@ -1,7 +1,8 @@
-import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import useCart from '../stores/useCart';
+import { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import useCart from "../stores/useCart";
+import { Link } from "react-router-dom";
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { items, removeItem, updateQuantity, getTotal } = useCart();
@@ -37,7 +38,9 @@ export default function CartDrawer({ isOpen, onClose }) {
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-start justify-between">
-                        <Dialog.Title className="text-lg font-medium text-gray-900">Shopping cart</Dialog.Title>
+                        <Dialog.Title className="text-lg font-medium text-gray-900">
+                          Giỏ hàng của bạn
+                        </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
@@ -45,7 +48,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                             onClick={onClose}
                           >
                             <span className="absolute -inset-0.5" />
-                            <span className="sr-only">Close panel</span>
+                            <span className="sr-only">Đóng bảng</span>
                             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                           </button>
                         </div>
@@ -53,12 +56,15 @@ export default function CartDrawer({ isOpen, onClose }) {
 
                       <div className="mt-8">
                         <div className="flow-root">
-                          <ul role="list" className="-my-6 divide-y divide-gray-200">
+                          <ul
+                            role="list"
+                            className="-my-6 divide-y divide-gray-200"
+                          >
                             {items.map((item) => (
                               <li key={item.id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <img
-                                    src={item.image}
+                                    src={item.coverImageUrl}
                                     alt={item.name}
                                     className="h-full w-full object-cover object-center"
                                   />
@@ -68,14 +74,28 @@ export default function CartDrawer({ isOpen, onClose }) {
                                   <div>
                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                       <h3>{item.name}</h3>
-                                      <p className="ml-4">${(item.price * item.quantity).toFixed(2)}</p>
+                                      <p className="ml-4">
+                                        {(
+                                          item.salePrice * item.quantity
+                                        ).toLocaleString("vi-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })}
+                                      </p>
                                     </div>
-                                    <p className="mt-1 text-sm text-gray-500">{item.category}</p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      {item.category}
+                                    </p>
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
                                     <div className="flex items-center">
                                       <button
-                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                        onClick={() =>
+                                          updateQuantity(
+                                            item.id,
+                                            item.quantity - 1
+                                          )
+                                        }
                                         className="px-2 py-1 border rounded-l"
                                       >
                                         -
@@ -84,7 +104,12 @@ export default function CartDrawer({ isOpen, onClose }) {
                                         {item.quantity}
                                       </span>
                                       <button
-                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        onClick={() =>
+                                          updateQuantity(
+                                            item.id,
+                                            item.quantity + 1
+                                          )
+                                        }
                                         className="px-2 py-1 border rounded-r"
                                       >
                                         +
@@ -96,7 +121,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                                       onClick={() => removeItem(item.id)}
                                       className="font-medium text-blue-600 hover:text-blue-500"
                                     >
-                                      Remove
+                                      Xóa
                                     </button>
                                   </div>
                                 </div>
@@ -109,27 +134,34 @@ export default function CartDrawer({ isOpen, onClose }) {
 
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
-                        <p>Subtotal</p>
-                        <p>${getTotal().toFixed(2)}</p>
+                        <p>Tạm tính</p>
+                        <p>
+                          {getTotal().toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </p>
                       </div>
-                      <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+                      <p className="mt-0.5 text-sm text-gray-500">
+                        Phí vận chuyển và thuế sẽ được tính tại bước thanh toán.
+                      </p>
                       <div className="mt-6">
-                        <a
-                          href="#"
+                        <Link
+                          to="checkout"
                           className="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700"
                         >
-                          Checkout
-                        </a>
+                          Thanh toán
+                        </Link>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>
-                          or{' '}
+                          hoặc{" "}
                           <button
                             type="button"
                             className="font-medium text-blue-600 hover:text-blue-500"
                             onClick={onClose}
                           >
-                            Continue Shopping
+                            Tiếp tục mua sắm
                             <span aria-hidden="true"> &rarr;</span>
                           </button>
                         </p>

@@ -1,27 +1,67 @@
-import { useState } from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
-import Footer from "./components/Footer";
-import StoreSelector from "./components/StoreSelector";
-import ProductsPage from "./components/ProductsPage";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import MainLayout from "./layouts";
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetail from "./pages/ProductDetail";
+import CheckoutPage from "./pages/CheckoutPage";
+import LoginPage from "./pages/LoginPage";
+import useAuth from "./hooks/useAuth";
+import OrderPage from "./pages/OrdersPage";
+
+const GOOGLE_CLIENT_ID =
+  "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com";
+
+function PrivateRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  return children;
+}
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "products",
+        element: <ProductsPage />,
+      },
+      {
+        path: "product/:id",
+        element: <ProductDetail />,
+      },
+      {
+        path: "checkout",
+        element: (
+          // <PrivateRoute>
+          <CheckoutPage />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: <OrderPage />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+]);
 
 function App() {
-  const [showStoreSelector, setShowStoreSelector] = useState(true);
-
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar onStoreSelect={() => setShowStoreSelector(true)} />
-      <Hero />
-      <ProductsPage />
-      <Features />
-      <Footer />
-
-      <StoreSelector
-        isOpen={showStoreSelector}
-        onClose={() => setShowStoreSelector(false)}
-      />
-    </div>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
   );
 }
 

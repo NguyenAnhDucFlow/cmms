@@ -1,14 +1,18 @@
-import { useState } from 'react';
-import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import useStoreLocation from '../stores/useStoreLocation';
-import useCart from '../stores/useCart';
-import CartDrawer from './CartDrawer';
+import { useState } from "react";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
+import useStoreLocation from "../stores/useStoreLocation";
+import useCart from "../stores/useCart";
+import CartDrawer from "./CartDrawer";
+import AccountPopover from "./AccountPopover";
+import { Link } from "react-router-dom";
 
 const navigation = [
-  { name: 'Products', href: '#' },
-  { name: 'Services', href: '#' },
-  { name: 'Projects', href: '#' },
-  { name: 'Contact', href: '#' },
+  { name: "Sản phẩm", href: "/products" },
+  { name: "Liên hệ", href: "#" },
 ];
 
 export default function Navbar({ onStoreSelect }) {
@@ -17,17 +21,24 @@ export default function Navbar({ onStoreSelect }) {
   const { selectedStore } = useStoreLocation();
   const { items } = useCart();
 
-  const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+  const cartItemsCount = items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   return (
     <>
       <nav className="fixed w-full bg-white shadow z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between items-center">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Construction Supply Co.</h1>
-            </div>
-            
+            {/* Logo */}
+            <Link to="/" className="flex items-center">
+              <h1 className="text-2xl font-bold text-blue-600">
+                Construction Supply Co.
+              </h1>
+            </Link>
+
+            {/* Menu trên desktop */}
             <div className="hidden md:flex md:items-center md:space-x-6">
               {navigation.map((item) => (
                 <a
@@ -58,8 +69,10 @@ export default function Navbar({ onStoreSelect }) {
                   </span>
                 )}
               </button>
+              <AccountPopover />
             </div>
 
+            {/* Menu trên mobile */}
             <div className="md:hidden flex items-center gap-4">
               <button
                 onClick={() => setCartOpen(true)}
@@ -72,6 +85,7 @@ export default function Navbar({ onStoreSelect }) {
                   </span>
                 )}
               </button>
+              <AccountPopover />
               <button
                 type="button"
                 className="text-gray-700"
@@ -87,8 +101,8 @@ export default function Navbar({ onStoreSelect }) {
           </div>
         </div>
 
-        {/* Mobile menu */}
-        <div className={`md:hidden ${mobileMenuOpen ? 'block' : 'hidden'}`}>
+        {/* Menu mobile */}
+        <div className={`md:hidden ${mobileMenuOpen ? "block" : "hidden"}`}>
           <div className="space-y-1 px-4 pb-3 pt-2">
             {navigation.map((item) => (
               <a
@@ -112,6 +126,7 @@ export default function Navbar({ onStoreSelect }) {
         </div>
       </nav>
 
+      {/* Drawer giỏ hàng */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
