@@ -89,6 +89,7 @@ public class GoodsReceiptService {
             goodsReceipt.getDetails().add(goodsReceiptDetail);
 
             if (GoodsReceiptStatus.COMPLETED.equals(goodsReceipt.getStatus())) {
+                updateMaterialCostAndLastPrice(item.getMaterialCode(), item.getCostPrice(), item.getQuantity());
                 updateWarehouse(store, item.getMaterialCode(), item.getQuantity());
             }
         }
@@ -265,6 +266,37 @@ public class GoodsReceiptService {
             storeWarehouseRepository.save(warehouse);
         }
     }
+
+    private void updateMaterialCostAndLastPrice(String materialCode, BigDecimal purchasePrice, int quantity) {
+        Optional<Material> materialOpt = materialRepository.findByMaterialCode(materialCode);
+
+        if (materialOpt.isPresent()) {
+            Material material = materialOpt.get();
+
+            // Tính toán giá vốn bình quân gia quyền mới
+            BigDecimal currentTotalCost = material.getCostPrice().multiply(new BigDecimal(material.getMinStock()));
+            BigDecimal newTotalCost = purchasePrice.multiply(new BigDecimal(quantity));
+            BigDecimal totalStock = new BigDecimal(material.getMinStock() + quantity);
+
+            BigDecimal updatedCostPrice = currentTotalCost.add(newTotalCost).divide(totalStock, BigDecimal.ROUND_HALF_UP);
+
+            // Cập nhật giá vốn và giá nhập cuối
+            material.setCostPrice(updatedCostPrice);
+            material.setLastPurchasePrice(purchasePrice);
+            material.setMinStock(material.getMinStock() + quantity); // Cập nhật tồn kho tối thiểu
+
+            materialRepository.save(material);
+
+            // Cập nhật cho MaterialUnit nếu có
+            List<MaterialUnit> materialUnits = materialUnitRepository.findByMaterial(material);
+            for (MaterialUnit unit : materialUnits) {
+                unit.setCostPrice(material.getCostPrice().multiply(BigDecimal.valueOf(unit.getConversionRate())));
+                unit.setLastPurchasePrice(purchasePrice.multiply(BigDecimal.valueOf(unit.getConversionRate())));
+                materialUnitRepository.save(unit);
+            }
+        }
+    }
+
 
 }
 

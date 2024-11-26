@@ -25,8 +25,9 @@ public class MaterialUnit {
     Material material;
     String variantCode;
     double conversionRate;
-    BigDecimal costPrice;
+    BigDecimal costPrice = BigDecimal.ZERO;
     BigDecimal salePrice;
+    BigDecimal lastPurchasePrice;
 
 
 }

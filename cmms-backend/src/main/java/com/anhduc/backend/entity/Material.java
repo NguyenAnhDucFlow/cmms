@@ -41,6 +41,7 @@ public class Material extends AuditAble{
     String coverImageUrl;
     boolean isPoint;
     Boolean isActive = true;
+    BigDecimal lastPurchasePrice;
     @ManyToOne
     Unit basicUnit;
     @OneToMany(mappedBy = "material" , cascade = CascadeType.ALL, orphanRemoval = true)

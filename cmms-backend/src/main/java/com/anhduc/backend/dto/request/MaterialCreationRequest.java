@@ -18,7 +18,8 @@ public class MaterialCreationRequest {
     String materialCode;
     String barcode;
     String name;
-    BigDecimal costPrice;
+    @Builder.Default
+    BigDecimal costPrice = BigDecimal.ZERO;
     BigDecimal salePrice;
     List<MultipartFile> imagesFile;
     float weightValue;

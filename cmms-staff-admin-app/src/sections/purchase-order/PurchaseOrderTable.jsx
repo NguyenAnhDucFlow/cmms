@@ -3,7 +3,7 @@ import { Divider, Button, Modal, message, Empty } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import UpdateProductModal from "../../components/modal/UpdateProductModal";
 import { formatDate, formatDateVN } from "../../utils/formatDate";
-import { getOrderSupplierStatus } from "../../utils/getStatusLabel";
+import { getOrderStatus } from "../../utils/getStatusLabel";
 import { useNavigate } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import { IoArrowRedo } from "react-icons/io5";
@@ -147,7 +147,7 @@ const PurchaseOrderTable = ({ products, handleProductCreated }) => {
                                         Trạng thái:
                                       </div>
                                       <div className="text-sm w-2/3 ">
-                                        {getOrderSupplierStatus(row.status)}
+                                        {getOrderStatus(row.status)}
                                       </div>
                                     </div>
                                     <div className="flex items-center">

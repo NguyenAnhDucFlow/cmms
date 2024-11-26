@@ -1,6 +1,6 @@
 package com.anhduc.backend.dto;
 
-import com.anhduc.backend.enums.PurchaseOrderStatus;
+import com.anhduc.backend.enums.GoodsReceiptStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ public class GoodsReceiptDTO {
     String storeName;
     int totalQuantity;
     BigDecimal totalAmount;
-    PurchaseOrderStatus status;
+    GoodsReceiptStatus status;
     BigDecimal paidAmount;
     int totalItems;
     String createdBy;
