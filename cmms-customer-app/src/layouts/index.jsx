@@ -4,6 +4,7 @@ import StoreSelector from "../components/StoreSelector";
 import useStoreLocation from "../stores/useStoreLocation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ChatbotButton from "../components/Chatbot/ChatbotButton";
 
 const MainLayout = () => {
   const { selectedStore } = useStoreLocation();
@@ -17,12 +18,14 @@ const MainLayout = () => {
   const [showStoreSelector, setShowStoreSelector] = React.useState(
     !selectedStore
   );
+
   return (
     <>
       <div className="min-h-screen bg-white">
         <Navbar onStoreSelect={() => setShowStoreSelector(true)} />
         <Outlet />
         <Footer />
+        <ChatbotButton />
         <StoreSelector
           isOpen={showStoreSelector}
           onClose={() => {

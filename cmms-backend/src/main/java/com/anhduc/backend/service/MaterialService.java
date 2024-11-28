@@ -85,7 +85,7 @@ public class MaterialService {
                                 .variantCode(variantCode)
                                 .material(material)
                                 .conversionRate(materialUnitDto.getConversionRate())
-                                .salePrice(BigDecimal.valueOf(materialUnitDto.getPrice()))
+                                .salePrice(materialUnitDto.getPrice() != null ? materialUnitDto.getPrice() : BigDecimal.ZERO)
                                 .build();
                     }
             ).toList();

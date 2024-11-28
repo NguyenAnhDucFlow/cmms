@@ -3,6 +3,7 @@ package com.anhduc.backend.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -12,8 +13,9 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MaterialUnitDto {
 
-    private UUID unitId;
-    private double conversionRate;
-    private double price;
+    UUID unitId;
+    double conversionRate;
+    @Builder.Default
+    BigDecimal price = BigDecimal.ZERO;
 
 }

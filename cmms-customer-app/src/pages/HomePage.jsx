@@ -1,25 +1,35 @@
-import React from "react";
-import { motion } from "framer-motion";
-import Hero from "../components/Hero";
-import Features from "../components/Features";
+import { useEffect } from "react";
+import { motion, useScroll } from "framer-motion";
+import Navigation3D from "../components/home/Navigation3D";
+import HeroSection from "../components/home/HeroSection";
+import FeaturedProducts from "../components/home/FeaturedProducts";
+import FeaturedProjects from "../components/home/FeaturedProjects";
 import FeaturedCategories from "../components/FeaturedCategories";
 import SpecialOffers from "../components/SpecialOffers";
-import Breadcrumb from "../components/Breadcrumb";
 
 export default function HomePage() {
-  const breadcrumbItems = [{ name: "Home", href: "/", current: true }];
+  const { scrollYProgress } = useScroll();
+
+  useEffect(() => {
+    // Preload video
+    const video = new Image();
+    video.src = "/videos/construction-bg.mp4";
+  }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Breadcrumb items={breadcrumbItems} />
-      <Hero />
+    <div className="relative">
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-blue-600 origin-left z-50"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      <Navigation3D />
+      <HeroSection />
       <FeaturedCategories />
       <SpecialOffers />
-      <Features />
-    </motion.div>
+      <FeaturedProducts />
+      <FeaturedProjects />
+    </div>
   );
 }

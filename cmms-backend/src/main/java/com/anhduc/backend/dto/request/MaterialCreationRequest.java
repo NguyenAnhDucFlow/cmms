@@ -15,7 +15,6 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MaterialCreationRequest {
 
-    String materialCode;
     String barcode;
     String name;
     @Builder.Default
