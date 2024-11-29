@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import ProductCard from "./ProductCard";
+import ProductCard from "./ProductCard/index";
 
 const container = {
   hidden: { opacity: 0 },

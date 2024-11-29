@@ -6,6 +6,7 @@ import FeaturedProducts from "../components/home/FeaturedProducts";
 import FeaturedProjects from "../components/home/FeaturedProjects";
 import FeaturedCategories from "../components/FeaturedCategories";
 import SpecialOffers from "../components/SpecialOffers";
+import video from "../assets/856350-hd_1920_1080_30fps.mp4";
 
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
@@ -13,7 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     // Preload video
     const video = new Image();
-    video.src = "/videos/construction-bg.mp4";
+    video.src = { video };
   }, []);
 
   return (

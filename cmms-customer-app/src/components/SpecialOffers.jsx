@@ -55,7 +55,7 @@ export default function SpecialOffers() {
                   </div>
                   <div className="mt-6">
                     <a
-                      href={offer.href}
+                      href="#"
                       className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
                     >
                       Tìm hiểu thêm

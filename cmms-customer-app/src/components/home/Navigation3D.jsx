@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 
 const menuItems = [
   { name: "Sản Phẩm", href: "/products" },
-  { name: "Dự Án", href: "/projects" },
-  { name: "Giới Thiệu", href: "/about" },
-  { name: "Liên Hệ", href: "/contact" },
+  { name: "Dự Án", href: "#" },
+  { name: "Giới Thiệu", href: "#" },
+  { name: "Liên Hệ", href: "#" },
 ];
 
 export default function Navigation3D() {
