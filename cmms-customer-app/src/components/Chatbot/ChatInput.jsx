@@ -18,7 +18,7 @@ export default function ChatInput({ onSend, isTyping }) {
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message..."
+        placeholder="Nhập tin nhắn của bạn..."
         disabled={isTyping}
         className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50"
       />

@@ -1,34 +1,61 @@
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useLocation } from "react-router-dom";
-import TransactionDetails from "../components/payment/TransactionDetails";
 import ActionButtons from "../components/payment/ActionButtons";
-import { trackPaymentSuccess } from "../utils/analytics";
+import useCart from "../stores/useCart";
+import axios from "../utils/axios";
+import { useEffect } from "react";
 
 export default function PaymentSuccessPage() {
+  const { items, getTotal, clearCart, setCustomerInfo, customerInfo } =
+    useCart();
   const location = useLocation();
-  const transaction = location.state?.transaction;
 
   useEffect(() => {
-    if (transaction) {
-      trackPaymentSuccess(transaction);
-    }
-  }, [transaction]);
+    // Lấy query parameter từ URL
+    const queryParams = new URLSearchParams(location.search);
+    const code = queryParams.get("code");
 
-  if (!transaction) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Invalid Transaction
-          </h2>
-          <p className="mt-2 text-gray-600">No transaction details found.</p>
-          <ActionButtons type="success" />
-        </div>
-      </div>
-    );
-  }
+    if (code === "00") {
+      const price = Math.round(getTotal() * 1.1);
+      const createOrder = async () => {
+        try {
+          const orderDetails = items.map((item) => ({
+            materialCode: item.materialCode,
+            quantity: item.quantity,
+            costPrice: item.salePrice,
+            totalPrice: price,
+            name: item.name,
+            unitName: item.basicUnit,
+          }));
+
+          const orderData = {
+            shippingAddress: customerInfo.address,
+            paymentMethod: "BANK_TRANSFER",
+            orderDetails,
+          };
+
+          const response = await axios.post("/orders", orderData);
+
+          if (response.data && response.data.code === 1000) {
+            clearCart();
+            setCustomerInfo({
+              email: "",
+              address: "",
+              paymentMethod: "COD",
+            });
+          } else {
+            throw new Error("Không thể tạo đơn hàng.");
+          }
+        } catch (error) {
+          console.error("Lỗi khi tạo đơn hàng:", error);
+          alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại.");
+        }
+      };
+
+      createOrder();
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
@@ -49,16 +76,11 @@ export default function PaymentSuccessPage() {
           </motion.div>
 
           <h1 className="mt-4 text-3xl font-bold text-gray-900">
-            Payment Successful!
+            Thanh toán thành công!
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Thank you for your purchase. Your payment has been processed
-            successfully.
+            Cảm ơn bạn đã mua hàng. Thanh toán của bạn đã được xử lý thành công.
           </p>
-
-          <div className="mt-8">
-            <TransactionDetails transaction={transaction} />
-          </div>
 
           <div className="mt-8">
             <ActionButtons type="success" />

@@ -12,28 +12,33 @@ const reviews = [
   {
     id: 1,
     userName: "Nguyễn Văn A",
-    userAvatar: "https://via.placeholder.com/40", // Link ảnh đại diện
+    userAvatar:
+      "https://banner2.cleanpng.com/20240229/agb/transparent-pokemon-sad-pikachu-with-red-nose-black-1710858214400.webp",
     rating: 5,
     date: "2024-11-25",
     comment: "Sản phẩm tuyệt vời, chất lượng vượt mong đợi!",
     images: [
-      "https://via.placeholder.com/80", // Link ảnh review 1
-      "https://via.placeholder.com/80", // Link ảnh review 2
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG6L83I_BbhEfqUnKbLeTEbE-tenH9nzarrA&s",
+      "https://aicahpl.com/content_hpl/upload/Image/vat-lieu-xay-dung-gom-nhung-gi-1.jpg",
     ],
   },
   {
     id: 2,
     userName: "Trần Thị B",
-    userAvatar: "https://via.placeholder.com/40",
+    userAvatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxKiEZ7J913NSX4e5toOV1QlZ1M8tDQR92eQ&s",
     rating: 4,
     date: "2024-11-20",
     comment: "Giao hàng nhanh, sản phẩm tốt nhưng đóng gói chưa kỹ.",
-    images: ["https://via.placeholder.com/80"],
+    images: [
+      "https://aicahpl.com/content_hpl/upload/Image/vat-lieu-xay-dung-gom-nhung-gi-2.jpg",
+    ],
   },
   {
     id: 3,
     userName: "Phạm Minh C",
-    userAvatar: "https://via.placeholder.com/40",
+    userAvatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfh7q3kjxmKQj5_qwHpOpzA6bzjQptPtI0BA&s",
     rating: 3,
     date: "2024-11-18",
     comment:
@@ -43,19 +48,21 @@ const reviews = [
   {
     id: 4,
     userName: "Lê Hồng D",
-    userAvatar: "https://via.placeholder.com/40",
+    userAvatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfh7q3kjxmKQj5_qwHpOpzA6bzjQptPtI0BA&s",
     rating: 5,
     date: "2024-11-10",
     comment: "Mua lần thứ 2 rồi, vẫn rất hài lòng. 5 sao!",
     images: [
-      "https://via.placeholder.com/80",
-      "https://via.placeholder.com/80",
+      "https://aicahpl.com/content_hpl/upload/Image/vat-lieu-xay-dung-gom-nhung-gi-4.jpg",
+      "https://aicahpl.com/content_hpl/upload/Image/vat-lieu-xay-dung-gom-nhung-gi-5.jpg",
     ],
   },
   {
     id: 5,
     userName: "Hoàng Văn E",
-    userAvatar: "https://via.placeholder.com/40",
+    userAvatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR_AJ6ktBWyLwyHqchThEBNZ4xiT57dBtopQ&s",
     rating: 2,
     date: "2024-11-05",
     comment: "Sản phẩm không đạt như kỳ vọng, giao hàng chậm.",
@@ -72,7 +79,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const { selectedStore } = useStoreLocation();
-  const [activeImage, setActiveImage] = useState(""); // State cho ảnh trung tâm
+  const [activeImage, setActiveImage] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -81,19 +88,23 @@ export default function ProductDetail() {
 
       setLoading(true);
       try {
-        const [productResponse, relatedResponse] = await Promise.all([
-          axios.get(`/materials/${id}/stores/${selectedStore.id}`),
-          axios.get("/materials/search", {
-            params: { storeId: selectedStore.id },
-          }),
-        ]);
-
-        setProduct(productResponse.data.data);
-        setRelatedProducts(relatedResponse.data.data);
-        setActiveImage(
-          productResponse.data.data.coverImageUrl ||
-            productResponse.data.data.images[0]
+        const productResponse = await axios.get(
+          `/materials/${id}/stores/${selectedStore.id}`
         );
+        const productData = productResponse.data.data;
+
+        setProduct(productData);
+
+        const categories = productData.category;
+        const size = 4;
+        const relatedResponse = await axios.get("/materials/search", {
+          params: { storeId: selectedStore.id, categories, size },
+        });
+
+        setRelatedProducts(relatedResponse.data.data);
+
+        // Đặt hình ảnh chính
+        setActiveImage(productData.coverImageUrl || productData.images[0]);
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -111,8 +122,6 @@ export default function ProductDetail() {
       </div>
     );
   }
-  console.log('"dwwwwwwwwwwwwwwwwwww"', product);
-
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">

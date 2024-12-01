@@ -1,21 +1,11 @@
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ActionButtons from "../components/payment/ActionButtons";
 import { getErrorMessage } from "../utils/paymentHelpers";
-import { trackPaymentFailure } from "../utils/analytics";
 
 export default function PaymentCancelPage() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const errorData = location.state?.error;
-
-  useEffect(() => {
-    if (errorData) {
-      trackPaymentFailure(errorData);
-    }
-  }, [errorData]);
 
   const handleRetry = () => {
     navigate("/checkout");
@@ -40,19 +30,8 @@ export default function PaymentCancelPage() {
           </motion.div>
 
           <h1 className="mt-4 text-3xl font-bold text-gray-900">
-            Payment Unsuccessful
+            Thanh toán không thành công
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            {errorData
-              ? getErrorMessage(errorData.errorCode)
-              : "Your payment could not be processed."}
-          </p>
-
-          {errorData?.details && (
-            <div className="mt-4 p-4 bg-white rounded-lg shadow-sm">
-              <p className="text-sm text-gray-600">{errorData.details}</p>
-            </div>
-          )}
 
           <div className="mt-8">
             <ActionButtons type="cancel" onRetry={handleRetry} />

@@ -9,7 +9,7 @@ import { generateResponse } from "../../utils/chatbot";
 const GREETING_MESSAGE = {
   role: "assistant",
   content:
-    "👋 Hi there! I'm here to help with any questions about our products, orders, or services. How can I assist you today?",
+    "👋 Xin chào! Tôi là trợ lý ảo của Nguyễn Anh Đức, sẵn sàng hỗ trợ bạn tìm kiếm sản phẩm xây dựng phù hợp công trình của bạn. Bạn cần tôi giúp gì hôm nay?",
   timestamp: new Date(),
 };
 
@@ -54,11 +54,11 @@ export default function ChatWindow({ isOpen, onClose }) {
         timestamp: new Date(),
       });
     } catch (error) {
-      console.error("Chat error:", error);
+      console.error("Lỗi kết nối chatbot:", error);
       addMessage({
         role: "assistant",
         content:
-          "I apologize, but I'm having trouble connecting right now. Please try again in a moment, or contact our support team for immediate assistance.",
+          "Xin lỗi, hiện tại tôi đang gặp sự cố kết nối. Vui lòng thử lại sau hoặc liên hệ với đội ngũ hỗ trợ để được trợ giúp ngay lập tức.",
         timestamp: new Date(),
       });
     } finally {
@@ -98,7 +98,7 @@ export default function ChatWindow({ isOpen, onClose }) {
                   <div className="border-b border-gray-200 px-4 py-3 sm:px-6">
                     <div className="flex items-center justify-between">
                       <Dialog.Title className="text-lg font-semibold text-gray-900">
-                        Customer Support
+                        Hỗ trợ khách hàng
                       </Dialog.Title>
                       <button
                         onClick={onClose}

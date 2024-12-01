@@ -227,11 +227,26 @@ public class AuthenticationService {
                         .email(userInfo.getEmail())
                         .firstName(userInfo.getGiveName())
                         .lastName(userInfo.getFamilyName())
+                        .customerCode(generatecCustomerCode())
+                        .username(userInfo.getName())
                         .roles(roles)
                         .build())
         );
 
         var token = generateToken(user);
         return AuthenticationResponse.builder().token(token).user(user).build();
+    }
+
+
+    // ------------------------------ PRIVATE METHOD ----------------------------
+    private String generatecCustomerCode() {
+        String prefix = "KH";
+        String lastCode = userRepository.findMaxCustomerCodeWithPrefix(prefix);
+        int nextNumber = 1;
+        if (lastCode != null) {
+            String lastNumberStr = lastCode.replace(prefix, "");
+            nextNumber = Integer.parseInt(lastNumberStr) + 1;
+        }
+        return  prefix + String.format("%04d", nextNumber);
     }
 }

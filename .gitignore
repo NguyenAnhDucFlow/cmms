@@ -1,2 +1,4 @@
 
 cmms-customer-app/.env
+cmms-backend/src/main/resources/application.yml
+cmms-backend/src/main/resources/application.yml

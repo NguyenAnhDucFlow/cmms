@@ -5,6 +5,7 @@ const useCart = create(
   persist(
     (set, get) => ({
       items: [],
+      customerInfo: { email: "", address: "", paymentMethod: "COD" },
       addItem: (product) =>
         set((state) => {
           const existingItem = state.items.find(
@@ -41,6 +42,7 @@ const useCart = create(
           0
         );
       },
+      setCustomerInfo: (customerData) => set({ customerInfo: customerData }),
     }),
     {
       name: "shopping-cart",

@@ -63,10 +63,6 @@ export default function ProductInfo({ product }) {
 
   const { addItem } = useCart();
 
-  const handleAddToCart = () => {
-    addItem({ ...product, quantity });
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -99,7 +95,7 @@ export default function ProductInfo({ product }) {
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={handleAddToCart}
+        onClick={() => addItem(product)}
         className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
       >
         <ShoppingCartIcon className="h-5 w-5" />

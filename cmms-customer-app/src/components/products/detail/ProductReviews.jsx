@@ -62,7 +62,7 @@ export default function ProductReviews({ reviews }) {
                       key={idx}
                       src={image}
                       alt={`Review image ${idx + 1}`}
-                      className="h-20 w-20 object-cover rounded-lg"
+                      className="h-10 w-10 object-cover rounded-lg"
                     />
                   ))}
                 </div>

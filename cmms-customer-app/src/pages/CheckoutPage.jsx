@@ -8,19 +8,14 @@ import Breadcrumb from "../components/Breadcrumb";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, getTotal, clearCart } = useCart();
+  const { items, getTotal, clearCart, setCustomerInfo } = useCart();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     email: user?.email || "",
-    firstName: "",
-    lastName: "",
     address: "",
-    city: "",
-    state: "",
     paymentMethod: "COD", // Default to COD
   });
   const [isProcessing, setIsProcessing] = useState(false); // Loading state
-
   const breadcrumbItems = [
     { name: "Thanh toán", href: "/checkouts", current: true },
   ];
@@ -31,14 +26,17 @@ export default function CheckoutPage() {
   };
 
   const handleSubmit = async (e) => {
+    setCustomerInfo({
+      email: formData.email,
+      address: formData.address,
+      paymentMethod: formData.paymentMethod,
+    });
+    const price = Math.round(getTotal() * 1.1); // Tổng giá bao gồm thuế (10%)
     e.preventDefault();
     try {
       if (formData.paymentMethod === "OnlinePayment") {
-        // Gọi API để tạo link thanh toán online
         setIsProcessing(true);
-        console.log("ngu");
         const baseUrl = window.location.origin; // Lấy URL gốc của ứng dụng
-        const price = Math.round(getTotal() * 1.1); // Tổng giá bao gồm thuế (10%)
         const response = await axios.post(
           "/checkout-payos/create-payment-link",
           {
@@ -55,9 +53,34 @@ export default function CheckoutPage() {
           throw new Error("Không nhận được URL thanh toán.");
         }
       } else {
-        // Thanh toán COD
-        clearCart();
-        navigate("/xac-nhan-don-hang");
+        const orderDetails = items.map((item) => ({
+          materialCode: item.materialCode,
+          quantity: item.quantity,
+          costPrice: item.salePrice,
+          totalPrice: price,
+          name: item.name,
+          unitName: item.basicUnit,
+        }));
+
+        const orderData = {
+          shippingAddress: formData.address,
+          paymentMethod: "COD",
+          orderDetails,
+        };
+
+        const response = await axios.post("/orders", orderData);
+
+        if (response.data && (response.data.code = 1000)) {
+          clearCart();
+          setCustomerInfo({
+            email: "",
+            address: "",
+            paymentMethod: "COD",
+          });
+          navigate("/success");
+        } else {
+          throw new Error("Không thể tạo đơn hàng. Vui lòng thử lại.");
+        }
       }
     } catch (error) {
       console.error("Lỗi thanh toán:", error);
@@ -141,35 +164,6 @@ export default function CheckoutPage() {
                   required
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Thành phố
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Tỉnh/Thành
-                  </label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
               </div>
 
               <div className="border-t pt-4 mt-6">
