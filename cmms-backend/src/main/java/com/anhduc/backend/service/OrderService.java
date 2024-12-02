@@ -2,6 +2,7 @@ package com.anhduc.backend.service;
 
 import com.anhduc.backend.dto.request.OrderDetailRequest;
 import com.anhduc.backend.dto.request.OrderRequest;
+import com.anhduc.backend.dto.response.OrderResponse;
 import com.anhduc.backend.entity.Order;
 import com.anhduc.backend.entity.OrderDetail;
 import com.anhduc.backend.enums.OrderStatus;
@@ -11,6 +12,7 @@ import com.anhduc.backend.utils.UserUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,15 +26,19 @@ public class OrderService {
 
     OrderRepository orderRepository;
     UserUtils userUtils;
+    ModelMapper modelMapper;
 
     public void createOrder(OrderRequest orderRequest) {
         // Tạo đơn hàng
         Order order = new Order();
         order.setShippingAddress(orderRequest.getShippingAddress());
         order.setPaymentMethod(orderRequest.getPaymentMethod());
-        order.setStatus(OrderStatus.PENDING); // Trạng thái mặc định khi tạo đơn
+        order.setStatus(OrderStatus.PENDING);
         order.setOrderCode(generateOrderCode());
         order.setCreatedBy(userUtils.getCurrentUser());
+        order.setEmail(orderRequest.getEmail());
+        order.setLastName(orderRequest.getLastName());
+        order.setFirstName(orderRequest.getFirstName());
 
         // Thêm chi tiết sản phẩm vào đơn hàng
         List<OrderDetail> orderDetails = new ArrayList<>();
@@ -43,15 +49,16 @@ public class OrderService {
             orderDetail.setMaterialCode(detailRequest.getMaterialCode());
             orderDetail.setQuantity(detailRequest.getQuantity());
             orderDetail.setCostPrice(detailRequest.getCostPrice());
-            orderDetail.setTotalPrice(detailRequest.getTotalPrice());
+            orderDetail.setTotalPrice(detailRequest.getCostPrice().multiply(BigDecimal.valueOf(detailRequest.getQuantity())));
             orderDetail.setName(detailRequest.getName());
             orderDetail.setUnitName(detailRequest.getUnitName());
             orderDetail.setOrder(order);
             orderDetails.add(orderDetail);
-            totalAmount = totalAmount.add(detailRequest.getTotalPrice());
+            totalAmount = totalAmount.add(detailRequest.getCostPrice().multiply(BigDecimal.valueOf(detailRequest.getQuantity())));
         }
         order.setDetails(orderDetails);
-        order.setTotalAmount(totalAmount);
+        order.setTotalAmount(totalAmount.add(BigDecimal.valueOf(orderRequest.getTax())));
+        order.setTax(orderRequest.getTax());
 
         // Xử lý thanh toán ngay lập tức
         if (order.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
@@ -67,8 +74,18 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public List<OrderResponse> getOrders(String createdBy) {
+        return orderRepository.findByCreatedBy(createdBy).stream()
+                .map(this::convertToResponse).toList();
+    }
+
 
     // ----------------------PRIVATE METHOD ----------------------------------
+
+    private OrderResponse convertToResponse(Order order) {
+        return modelMapper.map(order, OrderResponse.class);
+    }
+
     private String generateOrderCode() {
         String prefix = "DH";
         String lastCode = orderRepository.findMaxOrderCodeWithPrefix(prefix);

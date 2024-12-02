@@ -33,6 +33,10 @@ public class Order {
     String orderCode;
 
     String createdBy;
+    String firstName;
+    String lastName;
+    String email;
+    double tax;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

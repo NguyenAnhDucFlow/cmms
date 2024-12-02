@@ -12,6 +12,10 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
+    String firstName;
+    String lastName;
+    String email;
+    double tax;
     String shippingAddress;
     PaymentMethod paymentMethod;
     List<OrderDetailRequest> orderDetails;

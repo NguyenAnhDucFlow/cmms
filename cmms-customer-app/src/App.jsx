@@ -3,17 +3,33 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import MainLayout from "./layouts";
-import HomePage from "./pages/HomePage";
-import ProductsPage from "./pages/ProductsPage";
-import ProductDetail from "./pages/ProductDetail";
-import CheckoutPage from "./pages/CheckoutPage";
-import LoginPage from "./pages/LoginPage";
+import LoadingScreen from "./components/Loading";
 import useAuth from "./hooks/useAuth";
-import OrderPage from "./pages/OrdersPage";
-import PaymentSuccessPage from "./pages/PaymentSuccessPage";
-import PaymentCancelPage from "./pages/PaymentCancelPage";
+
+const Loadable = (Component) => (props) => {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <Component {...props} />
+    </Suspense>
+  );
+};
+
+// Lazy-loaded components
+const MainLayout = Loadable(lazy(() => import("./layouts")));
+const HomePage = Loadable(lazy(() => import("./pages/HomePage")));
+const ProductsPage = Loadable(lazy(() => import("./pages/ProductsPage")));
+const ProductDetail = Loadable(lazy(() => import("./pages/ProductDetail")));
+const CheckoutPage = Loadable(lazy(() => import("./pages/CheckoutPage")));
+const LoginPage = Loadable(lazy(() => import("./pages/LoginPage")));
+const PaymentSuccessPage = Loadable(
+  lazy(() => import("./pages/PaymentSuccessPage"))
+);
+const PaymentCancelPage = Loadable(
+  lazy(() => import("./pages/PaymentCancelPage"))
+);
+const MyOrdersPage = Loadable(lazy(() => import("./pages/MyOrdersPage")));
 
 const GOOGLE_CLIENT_ID =
   "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com";
@@ -51,9 +67,10 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+
       {
-        path: "orders",
-        element: <OrderPage />,
+        path: "my-orders",
+        element: <MyOrdersPage />,
       },
       {
         path: "cancel",

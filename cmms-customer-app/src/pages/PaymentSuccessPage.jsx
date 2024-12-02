@@ -18,6 +18,7 @@ export default function PaymentSuccessPage() {
 
     if (code === "00") {
       const price = Math.round(getTotal() * 1.1);
+      const tax = Math.round(getTotal() * 0.1);
       const createOrder = async () => {
         try {
           const orderDetails = items.map((item) => ({
@@ -33,6 +34,9 @@ export default function PaymentSuccessPage() {
             shippingAddress: customerInfo.address,
             paymentMethod: "BANK_TRANSFER",
             orderDetails,
+            firstName: customerInfo.firstName,
+            lastName: customerInfo.lastName,
+            tax,
           };
 
           const response = await axios.post("/orders", orderData);

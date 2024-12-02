@@ -271,8 +271,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0001")
                             .barcode("123456789001")
                             .name("Cát xây dựng")
-                            .costPrice(new BigDecimal("50"))
-                            .salePrice(new BigDecimal("70"))
+                            .costPrice(new BigDecimal("50000"))
+                            .salePrice(new BigDecimal("70000"))
                             .images(List.of("https://www.utihouse.com/wp-content/uploads/2018/03/Cat-1024x768.jpg", "https://bizweb.dktcdn.net/100/369/827/files/0-seezgwvk9cglo3wg.jpg?v=1602754440331"))
                             .weightValue(1.0f)
                             .weightUnit("kg")
@@ -291,8 +291,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0002")
                             .barcode("123456789002")
                             .name("Xi măng PCB40")
-                            .costPrice(new BigDecimal("75"))
-                            .salePrice(new BigDecimal("95"))
+                            .costPrice(new BigDecimal("75000"))
+                            .salePrice(new BigDecimal("95000"))
                             .images(List.of("https://vatlieuxaydungsymanh.com/wp-content/uploads/2020/09/xi-mang-bao-nhieu-kg.png", "https://vatlieuxaydungsymanh.com/wp-content/uploads/2020/10/unnamed-2.png"))
                             .weightValue(50.0f)
                             .weightUnit("Bao")
@@ -311,8 +311,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0003")
                             .barcode("123456789003")
                             .name("Gạch đỏ xây dựng")
-                            .costPrice(new BigDecimal("3"))
-                            .salePrice(new BigDecimal("5"))
+                            .costPrice(new BigDecimal("3000"))
+                            .salePrice(new BigDecimal("5000"))
                             .images(List.of(
                                     "https://xaydungso.vn/webroot/img/images/2(65).jpg",
                                     "https://tse1.mm.bing.net/th?id=OIP.T0khP45LrU-4UzCDqiTKhQHaFj&pid=Api"
@@ -334,8 +334,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0004")
                             .barcode("123456789004")
                             .name("Thép cây phi 16")
-                            .costPrice(new BigDecimal("120"))
-                            .salePrice(new BigDecimal("150"))
+                            .costPrice(new BigDecimal("120000"))
+                            .salePrice(new BigDecimal("150000"))
                             .images(List.of(
                                     "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-2.jpg",
                                     "https://theptriviet.com.vn/wp-content/uploads/2022/10/sat-phi-16-3.jpg"
@@ -357,8 +357,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0005")
                             .barcode("123456789005")
                             .name("Cát san lấp")
-                            .costPrice(new BigDecimal("30"))
-                            .salePrice(new BigDecimal("50"))
+                            .costPrice(new BigDecimal("30000"))
+                            .salePrice(new BigDecimal("50000"))
                             .images(List.of(
                                     "https://dungphatdat.vn/wp-content/uploads/2022/01/cat2.jpg",
                                     "https://static1.cafeland.vn/cafelandnew/hinh-anh/2020/09/09/95/image-20200909141842-1.png"
@@ -380,8 +380,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0006")
                             .barcode("123456789006")
                             .name("Ống nước nhựa PVC D25")
-                            .costPrice(new BigDecimal("10"))
-                            .salePrice(new BigDecimal("15"))
+                            .costPrice(new BigDecimal("10000"))
+                            .salePrice(new BigDecimal("15000"))
                             .images(List.of(
                                     "https://reemart.vn/upload/sanpham/ong-dien-1529391799.png",
                                     "https://thietbidienlegrand.com/wp-content/uploads/2017/12/ong-dien-PVC-legrand.jpg"
@@ -403,8 +403,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0007")
                             .barcode("123456789007")
                             .name("Kính cường lực 8mm")
-                            .costPrice(new BigDecimal("150"))
-                            .salePrice(new BigDecimal("200"))
+                            .costPrice(new BigDecimal("150000"))
+                            .salePrice(new BigDecimal("200000"))
                             .images(List.of(
                                     "https://havaco.vn/wp-content/uploads/mai-kinh-cap-treo-chan-nhen-spider.jpg",
                                     "https://havaco.vn/wp-content/uploads/lan-can-ban-cong.jpg"
@@ -425,8 +425,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0008")
                             .barcode("123456789008")
                             .name("Xi măng trắng")
-                            .costPrice(new BigDecimal("80"))
-                            .salePrice(new BigDecimal("100"))
+                            .costPrice(new BigDecimal("80000"))
+                            .salePrice(new BigDecimal("100000"))
                             .images(List.of(
                                     "https://tse3.mm.bing.net/th?id=OIP.CkaWQqSUZDH-yvAbebXEnwHaC8&pid=Api&P=0&h=220",
                                     "https://tse3.mm.bing.net/th?id=OIP.0bJDzCN4wTxqSwuEnLSHSgHaD9&pid=Api&P=0&h=220"
@@ -448,8 +448,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0009")
                             .barcode("123456789009")
                             .name("Vữa xây dựng")
-                            .costPrice(new BigDecimal("40"))
-                            .salePrice(new BigDecimal("55"))
+                            .costPrice(new BigDecimal("40000"))
+                            .salePrice(new BigDecimal("55000"))
                             .images(List.of(
                                     "https://tse4.mm.bing.net/th?id=OIP.wir26qm-YxXPrLoPeONsWgHaFD&pid=Api&P=0&h=220",
                                     "https://tse1.mm.bing.net/th?id=OIP.L_qFbOrH4PGLrbVB1bjzhQHaEj&pid=Api&P=0&h=220"
@@ -471,8 +471,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0010")
                             .barcode("123456789010")
                             .name("Thép hộp vuông 30x30")
-                            .costPrice(new BigDecimal("90"))
-                            .salePrice(new BigDecimal("120"))
+                            .costPrice(new BigDecimal("90000"))
+                            .salePrice(new BigDecimal("120000"))
                             .images(List.of(
                                     "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs2-400x400.jpg",
                                     "https://vinhtansteel.vn/wp-content/uploads/2022/11/hs5.jpg"
@@ -494,8 +494,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0011")
                             .barcode("123456789011")
                             .name("Cát đen san lấp")
-                            .costPrice(new BigDecimal("25"))
-                            .salePrice(new BigDecimal("35"))
+                            .costPrice(new BigDecimal("25000"))
+                            .salePrice(new BigDecimal("35000"))
                             .images(List.of(
                                     "https://up.yimg.com/ib/th?id=OIP.qjsxagelonUE5nIXhtm-awHaE8&pid=Api&rs=1&c=1&qlt=95&w=161&h=107",
                                     "https://tse1.mm.bing.net/th?id=OIP.oQMber3ajjuLEKgl-8gb0gHaFj&pid=Api&P=0&h=220"
@@ -517,8 +517,8 @@ public class ApplicationInitConfig {
                             .materialCode("SP0012")
                             .barcode("123456789012")
                             .name("Ống nhựa PVC D32")
-                            .costPrice(new BigDecimal("12"))
-                            .salePrice(new BigDecimal("18"))
+                            .costPrice(new BigDecimal("12000"))
+                            .salePrice(new BigDecimal("18000"))
                             .images(List.of(
                                     "https://tse4.mm.bing.net/th?id=OIP.8rfycKeEHpk9UYkQScx3rwHaHa&pid=Api&P=0&h=220",
                                     "https://tse3.mm.bing.net/th?id=OIP.OAlMgrceaB3aubP_71sRMwAAAA&pid=Api&P=0&h=220"

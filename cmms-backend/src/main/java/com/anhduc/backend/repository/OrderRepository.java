@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
@@ -12,4 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     @Query("SELECT MAX(o.orderCode) FROM Order o " +
             "WHERE o.orderCode LIKE :prefix%")
     String findMaxOrderCodeWithPrefix(@Param("prefix") String prefix);
+
+    List<Order> findByCreatedBy(String createdBy);
 }

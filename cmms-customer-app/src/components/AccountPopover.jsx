@@ -8,12 +8,10 @@ export default function AccountPopover() {
   const { user, isAuthenticated, logout } = useAuth();
 
   const navigation = [
-    { name: "Đơn hàng của tôi", href: "/orders" },
-    { name: "Cài đặt tài khoản", href: "/profile" },
-    { name: "Địa chỉ đã lưu", href: "/addresses" },
+    { name: "Đơn hàng của tôi", href: "/my-orders" },
+    { name: "Cài đặt tài khoản", href: "#" },
+    { name: "Địa chỉ đã lưu", href: "#" },
   ];
-  console.log("first", user);
-
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center text-gray-700 hover:text-blue-600 focus:outline-none">

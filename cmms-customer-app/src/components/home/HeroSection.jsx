@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import video from "../../assets/856350-hd_1920_1080_30fps.mp4";
+import { Link } from "react-router-dom";
 
 export default function HeroSection() {
   const { scrollY } = useScroll();
@@ -43,7 +44,9 @@ export default function HeroSection() {
             whileTap={{ scale: 0.95 }}
             className="bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-500 transition-colors relative overflow-hidden group"
           >
-            <span className="relative z-10">Khám Phá Ngay</span>
+            <Link to="/products" className="relative z-10">
+              Khám Phá Ngay
+            </Link>
             <div className="absolute inset-0 bg-blue-400 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
           </motion.button>
         </motion.div>

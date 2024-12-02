@@ -62,7 +62,7 @@ export default function FeaturedProducts() {
               onHoverEnd={() => setHoveredId(null)}
               className="bg-white rounded-xl shadow-lg overflow-hidden transform-gpu"
             >
-              <Link to={`/product/${product.id}`} className="block">
+              <div>
                 <div className="relative aspect-w-4 aspect-h-3">
                   <img
                     src={product.image}
@@ -93,7 +93,7 @@ export default function FeaturedProducts() {
                     </motion.button>
                   </div>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </div>

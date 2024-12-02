@@ -13,9 +13,11 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState({
     email: user?.email || "",
     address: "",
-    paymentMethod: "COD", // Default to COD
+    paymentMethod: "COD",
+    firstName: "",
+    lastName: "",
   });
-  const [isProcessing, setIsProcessing] = useState(false); // Loading state
+  const [isProcessing, setIsProcessing] = useState(false);
   const breadcrumbItems = [
     { name: "Thanh toán", href: "/checkouts", current: true },
   ];
@@ -30,8 +32,12 @@ export default function CheckoutPage() {
       email: formData.email,
       address: formData.address,
       paymentMethod: formData.paymentMethod,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
     });
     const price = Math.round(getTotal() * 1.1); // Tổng giá bao gồm thuế (10%)
+    const tax = Math.round(getTotal() * 0.1);
+
     e.preventDefault();
     try {
       if (formData.paymentMethod === "OnlinePayment") {
@@ -63,9 +69,13 @@ export default function CheckoutPage() {
         }));
 
         const orderData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
           shippingAddress: formData.address,
           paymentMethod: "COD",
           orderDetails,
+          tax,
         };
 
         const response = await axios.post("/orders", orderData);
