@@ -70,10 +70,7 @@ export default function AccountPopover() {
                   </Link>
                   <p className="text-center text-sm text-gray-500">
                     Khách hàng mới?{" "}
-                    <Link
-                      to="/register"
-                      className="text-blue-600 hover:text-blue-500"
-                    >
+                    <Link to="#" className="text-blue-600 hover:text-blue-500">
                       Tạo tài khoản
                     </Link>
                   </p>
