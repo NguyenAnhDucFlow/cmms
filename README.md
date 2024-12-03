@@ -63,18 +63,25 @@
 ---
 
 ## 📸 Hình Ảnh Minh Họa
-*Dưới đây là một số hình ảnh minh họa các phần của hệ thống:*
 
 ### Dashboard Quản Lý
-![Dashboard](https://github.com/NguyenAnhDucFlow/cmms/blob/main/images/quanlidanhmuc.png)
+- **Danh mục sản phẩm:**  
+  ![Danh mục sản phẩm](https://raw.githubusercontent.com/NguyenAnhDucFlow/cmms/main/images/quanlidanhmuc.png)
+
+- **Đặt hàng nhà cung cấp:**  
+  ![Đặt hàng nhà cung cấp](https://raw.githubusercontent.com/NguyenAnhDucFlow/cmms/main/images/dathangnhacungcap.png)
+
+- **Phiếu đặt hàng nhà cung cấp:**  
+  ![Phiếu đặt hàng nhà cung cấp](https://raw.githubusercontent.com/NguyenAnhDucFlow/cmms/main/images/phieudathangnhap.png)
 
 ### Giao Diện Bán Hàng
-![Sales Interface](repository-path/sales-interface.png)
+- **Màn hình bán hàng:**  
+  ![Màn hình bán hàng](https://raw.githubusercontent.com/NguyenAnhDucFlow/cmms/main/images/manhinhbanhang.png)
 
-### Báo Cáo Hiệu Quả
-![Reports](repository-path/reports.png)
+- **Màn hình thanh toán:**  
+  ![Màn hình thanh toán](https://raw.githubusercontent.com/NguyenAnhDucFlow/cmms/main/images/manhinhthanhtoan.png)
 
 ---
 
 ## 📋 Liên Hệ
-Nếu bạn có thắc mắc hoặc cần hỗ trợ, vui lòng liên hệ qua email [contact@example.com](mailto:contact@example.com).
+Nếu bạn có thắc mắc hoặc cần hỗ trợ, vui lòng liên hệ qua email [anhduc000321@gmail.com](mailto:anhduc000321@gmail.com).
