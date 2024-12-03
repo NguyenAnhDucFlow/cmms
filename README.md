@@ -66,7 +66,7 @@
 *Dưới đây là một số hình ảnh minh họa các phần của hệ thống:*
 
 ### Dashboard Quản Lý
-![Dashboard]([repository-path/dashboard.png](https://github.com/NguyenAnhDucFlow/cmms/blob/main/images/quanlidanhmuc.png))
+![Dashboard](https://github.com/NguyenAnhDucFlow/cmms/blob/main/images/quanlidanhmuc.png)
 
 ### Giao Diện Bán Hàng
 ![Sales Interface](repository-path/sales-interface.png)
