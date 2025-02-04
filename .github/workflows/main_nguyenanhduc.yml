@@ -23,7 +23,7 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-         run:
+        run:
            cd "cmms-backend" &&
            mvn clean install
 
