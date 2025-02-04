@@ -20,15 +20,12 @@ cloud:
     s3:
       bucket-name: mutantorchid
 
-
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
   valid-duration: 3600 # in second
   tokenExpiryTime: 3600 #in seco
   refreshTokenExpiration: 36000
   refreshable-duration: 36000 # in seconds
-
-
 
 oauth2:
   google:

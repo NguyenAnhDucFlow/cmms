@@ -12,8 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -26,8 +24,8 @@ jobs:
 
       - name: Build with Maven
         run:
-          cd "cmms-backend" &&
-          mvn clean install
+           cd "cmms-backend" &&
+           mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -65,4 +63,3 @@ jobs:
           app-name: 'nguyenanhduc'
           slot-name: 'Production'
           package: '*.jar'
-          
