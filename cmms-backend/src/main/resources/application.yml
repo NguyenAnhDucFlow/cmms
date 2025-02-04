@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:mysql://cmms-db.mysql.database.azure.com:3306/cmms?createDatabaseIfNotExist=true
+    username: cmms
+    password: Anhduc120101
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -13,30 +13,33 @@ spring:
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
+      accessKey: AKIA4MTWL3ET3M4ZYFYP
+      secretKey: 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
     region:
-      static: ${AWS_REGION}
+      static: ap-southeast-1
     s3:
-      bucket-name: ${AWS_S3_BUCKET_NAME}
+      bucket-name: mutantorchid
+
 
 jwt:
-  signerKey: ${JWT_SIGNER_KEY}
-  valid-duration: ${JWT_VALID_DURATION}
-  tokenExpiryTime: ${JWT_TOKEN_EXPIRY_TIME}
-  refreshTokenExpiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
-  refreshable-duration: ${JWT_REFRESHABLE_DURATION}
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # in second
+  tokenExpiryTime: 3600 #in seco
+  refreshTokenExpiration: 36000
+  refreshable-duration: 36000 # in seconds
+
+
 
 oauth2:
   google:
-    client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
-    client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
-    redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI}
+    client-id: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
+    client-secret: "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"
+    redirect-uri: "http://localhost:5173"
 
-PAYOS_CLIENT_ID: ${PAYOS_CLIENT_ID}
-PAYOS_API_KEY: ${PAYOS_API_KEY}
-PAYOS_CHECKSUM_KEY: ${PAYOS_CHECKSUM_KEY}
+PAYOS_CLIENT_ID: e358e1d6-1166-41f2-ad96-a4d903d281fa
+PAYOS_API_KEY: 6bcd54c7-9652-4928-8003-22a247c10572
+PAYOS_CHECKSUM_KEY: ece006721f5cacdbe5f7a4b05715e915462b20251670a8e3c6ead9464b694e20
 
 openai:
   api:
-    key: ${OPENAI_API_KEY}
+    key: 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
