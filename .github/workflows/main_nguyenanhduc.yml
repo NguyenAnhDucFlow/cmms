@@ -19,7 +19,7 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'microsoft'
 
       - name: Build with Maven
@@ -63,25 +63,3 @@ jobs:
           app-name: 'nguyenanhduc'
           slot-name: 'Production'
           package: '*.jar'
-
-          env: |
-            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
-            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
-            AWS_REGION=${{ secrets.AWS_REGION }}
-            AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
-            JWT_SIGNER_KEY=${{ secrets.JWT_SIGNER_KEY }}
-            JWT_VALID_DURATION=${{ secrets.JWT_VALID_DURATION }}
-            JWT_TOKEN_EXPIRY_TIME=${{ secrets.JWT_TOKEN_EXPIRY_TIME }}
-            JWT_REFRESH_TOKEN_EXPIRATION=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION }}
-            JWT_REFRESHABLE_DURATION=${{ secrets.JWT_REFRESHABLE_DURATION }}
-            OAUTH2_GOOGLE_CLIENT_ID=${{ secrets.OAUTH2_GOOGLE_CLIENT_ID }}
-            OAUTH2_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH2_GOOGLE_CLIENT_SECRET }}
-            OAUTH2_GOOGLE_REDIRECT_URI=${{ secrets.OAUTH2_GOOGLE_REDIRECT_URI }}
-            PAYOS_CLIENT_ID=${{ secrets.PAYOS_CLIENT_ID }}
-            PAYOS_API_KEY=${{ secrets.PAYOS_API_KEY }}
-            PAYOS_CHECKSUM_KEY=${{ secrets.PAYOS_CHECKSUM_KEY }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-          
